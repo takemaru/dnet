@@ -1,3 +1,12 @@
+import yaml
+
+class Data:
+    def __init__(self, str):
+        obj = yaml.load(str)
+        self.nodes = obj["nodes"]
+        self.switches = obj["switches"]
+        self.sections = obj["sections"]
+
 neighbor_cache = {}
 
 def find_neighbors(s, nodes): # XXX cache depends on nodes as well as s

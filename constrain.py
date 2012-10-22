@@ -2,23 +2,14 @@
 
 import math
 import sys
-import yaml
 
 import util
 
-max_current = 300
+max_current     = 300
 sending_voltage = 6600 / math.sqrt(3)
-min_voltage = 6300 / math.sqrt(3)
+min_voltage     = 6300 / math.sqrt(3)
 
-obj = yaml.load(sys.stdin)
-
-class Data:
-    def __init__(self, obj):
-        self.nodes = obj["nodes"]
-        self.switches = obj["switches"]
-        self.sections = obj["sections"]
-
-data = Data(obj)
+data = util.Data(sys.stdin)
 
 for s in data.sections.values():
     l = s["load"]
@@ -205,8 +196,7 @@ def satisfies_electric_constraints(root, closed_switches):
 
 def write_bitmap(f, closed_switches, open_switches):
     bits = []
-    for v in range(1, len(data.switches) + 1):
-        s = "switch_%04d" % v
+    for s in sorted(data.switches.keys()):
         if s in closed_switches:
             bits.append("1")
         elif s in open_switches:
