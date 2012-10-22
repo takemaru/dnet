@@ -5,6 +5,8 @@ import sys
 
 import util
 
+dir = sys.argv[1] + "/" if len(sys.argv) > 1 else "./"
+
 max_current     = 300
 sending_voltage = 6600 / math.sqrt(3)
 min_voltage     = 6300 / math.sqrt(3)
@@ -48,7 +50,7 @@ def define_subgraphs():
             roots.add(sorted_sections.index(s) + 1)
     assert len(roots) == len([s for s in data.sections.values() if s["substation"]])
 
-    f = open("grid.subgraphs", "w")
+    f = open(dir + "grid.subgraphs", "w")
     f.write("rforest " + " ".join([str(r) for r in sorted(roots)]) + "\n")
     f.write("%d\n" % len(sorted_sections))
     for edge in edges:
@@ -218,7 +220,7 @@ def do_enumerate_bitmaps(root, f, closed_switches, fixed_switches):
         do_enumerate_bitmaps(root, f, closed_switches.copy(), fixed_switches.copy())
 
 def enumerate_bitmaps(root):
-    f = open("grid-%s.bitmaps" % root, "w")
+    f = open(dir + "grid-%s.bitmaps" % root, "w")
     if satisfies_electric_constraints(root, set()):
         write_bitmap(f, set(), find_surrounding_switches(root, set()))
     do_enumerate_bitmaps(root, f, set(), find_border_switches(root))
@@ -229,9 +231,9 @@ define_subgraphs()
 for root in sorted([s for s in data.sections if data.sections[s]["substation"]]):
     enumerate_bitmaps(root)
 
-print "solver -n %d -t diagram grid.subgraphs '&'" % len(data.switches),
-print " '&' ".join(sorted(["grid-%s.bitmaps" % s for s in data.sections if data.sections[s]["substation"]])),
-print "> grid.diagram"
+print "solver -n %d -t diagram %sgrid.subgraphs '&'" % (len(data.switches), dir),
+print " '&' ".join(sorted([dir + "grid-%s.bitmaps" % s for s in data.sections if data.sections[s]["substation"]])),
+print "> %sgrid.diagram" % dir
 
 #assert find_neighbor_switches("section_0305", set()) == set(['switch_0015', 'switch_0014'])
 #assert find_neighbor_switches("section_-001", set()) == set(['switch_0010', 'switch_0014'])

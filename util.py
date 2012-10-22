@@ -1,8 +1,8 @@
 import yaml
 
 class Data:
-    def __init__(self, str):
-        obj = yaml.load(str)
+    def __init__(self, f):
+        obj = yaml.load(f)
         self.nodes = obj["nodes"]
         self.switches = obj["switches"]
         self.sections = obj["sections"]

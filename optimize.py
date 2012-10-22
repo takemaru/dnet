@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import networkx as nx
 import re
 import sys
 import unionfind
@@ -63,3 +64,5 @@ for line in open(sys.argv[1]):
 
 for c in comps:
     entries = rebuild(entries, c)
+
+# build a graph by networkx
