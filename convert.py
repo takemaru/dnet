@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
+import sys
 import unionfind
 import yaml
 
 import util
 
-dir = "t/"
+dir = sys.argv[1] + "/" if len(sys.argv) > 1 else "t/"
 
 files = {
     "switch"   : dir + "sw_list.dat",
