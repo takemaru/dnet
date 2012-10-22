@@ -1,0 +1,156 @@
+nodes:
+- [section_-001, section_0302, section_0303]
+- [section_-002, section_0001, section_0002]
+- [section_-003, section_0008, section_0309]
+- [section_0302, switch_0010]
+- [section_0300, switch_0010]
+- [section_0298, section_0299, section_0300]
+- [section_0299, switch_0006]
+- [section_1057, switch_0006]
+- [section_1057, switch_0004]
+- [section_0298, switch_0009]
+- [section_0296, switch_0009]
+- [section_0296, switch_0008]
+- [section_0294, switch_0008]
+- [section_0294, switch_0007]
+- [section_0001, switch_0001]
+- [section_1063, switch_0001]
+- [section_1061, section_1062, section_1063]
+- [section_1061, switch_0002]
+- [section_1059, switch_0002]
+- [section_1059, switch_0004]
+- [section_1062, switch_0003]
+- [section_1066, switch_0003]
+- [section_1066, switch_0005]
+- [section_1068, switch_0005]
+- [section_1068, switch_0007]
+- [section_0002, switch_0011]
+- [section_0004, switch_0011]
+- [section_0004, switch_0012]
+- [section_0008, switch_0013]
+- [section_0006, switch_0013]
+- [section_0006, switch_0012]
+- [section_0309, switch_0016]
+- [section_0307, switch_0016]
+- [section_0307, switch_0015]
+- [section_0303, switch_0014]
+- [section_0305, switch_0014]
+- [section_0305, switch_0015]
+sections:
+  section_-001:
+    impedance: [0.0864, 0.3678805, 0.0864, 0.3678805, 0.0864, 0.3678805]
+    load: [16.3225894, 0, 16.3225894, 0, 1.29105e-11, 0]
+    substation: true
+  section_-002:
+    impedance: [0.0864, 0.3678805, 0.0864, 0.3678805, 0.0864, 0.3678805]
+    load: [41.21753365, 0, 16.02966235, 0, 31.33198201, 0]
+    substation: true
+  section_-003:
+    impedance: [0.0864, 0.3678805, 0.0864, 0.3678805, 0.0864, 0.3678805]
+    load: [16.08928793, 0, 41.75345413, 0, 31.2387695, 0]
+    substation: true
+  section_0001:
+    impedance: [0.1539, 0.4512584, 0.1539, 0.4512584, 0.1539, 0.4512584]
+    load: [31.40049186, 5.706346643, 30.73864637, 5.586070826, 31.42931299, 5.711584247]
+    substation: false
+  section_0002:
+    impedance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    load: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    substation: false
+  section_0004:
+    impedance: [0.0308, 0.0901009, 0.0308, 0.0901009, 0.0308, 0.0901009]
+    load: [20.42042417, 3.710961581, 20.06612407, 3.646575355, 20.40028338, 3.707301436]
+    substation: false
+  section_0006:
+    impedance: [0.0308, 0.0901009, 0.0308, 0.0901009, 0.0308, 0.0901009]
+    load: [20.39497836, 3.706337367, 20.36942256, 3.701693163, 20.07218254, 3.647676348]
+    substation: false
+  section_0008:
+    impedance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    load: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    substation: false
+  section_0294:
+    impedance: [0.1539, 0.4512584, 0.1539, 0.4512584, 0.1539, 0.4512584]
+    load: [34.20866687, 6.783318004, 34.64111424, 6.869069023, 5.493935021, 1.089405456]
+    substation: false
+  section_0296:
+    impedance: [0.1539, 0.4512584, 0.1539, 0.4512584, 0.1539, 0.4512584]
+    load: [10.63990947, 2.109812982, 14.16570414, 2.808951202, 34.82629365, 6.905788689]
+    substation: false
+  section_0298:
+    impedance: [0.1539, 0.4512584, 0.1539, 0.4512584, 0.1539, 0.4512584]
+    load: [34.30076446, 6.801580255, 34.73977483, 6.888632668, 34.90301866, 6.921002675]
+    substation: false
+  section_0299:
+    impedance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    load: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    substation: false
+  section_0300:
+    impedance: [0.1539, 0.4512584, 0.1539, 0.4512584, 0.1539, 0.4512584]
+    load: [5.446728907, 1.080044844, 10.87070486, 2.155577951, 14.37665731, 2.85078161]
+    substation: false
+  section_0302:
+    impedance: [0.1539, 0.4512584, 0.1539, 0.4512584, 0.1539, 0.4512584]
+    load: [39.57928042, 7.848269754, 40.0886147, 7.949266859, 40.24320577, 7.979921091]
+    substation: false
+  section_0303:
+    impedance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    load: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    substation: false
+  section_0305:
+    impedance: [0.0308, 0.0901009, 0.0308, 0.0901009, 0.0308, 0.0901009]
+    load: [34.75270268, 6.89119616, 35.17067631, 6.974077147, 35.30382301, 7.000479123]
+    substation: false
+  section_0307:
+    impedance: [0.0308, 0.0901009, 0.0308, 0.0901009, 0.0308, 0.0901009]
+    load: [35.19646721, 6.979191285, 35.15732551, 6.971429785, 34.82091116, 6.904721382]
+    substation: false
+  section_0309:
+    impedance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    load: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    substation: false
+  section_1057:
+    impedance: [0.0924, 0.2706796, 0.0924, 0.2706796, 0.0924, 0.2706796]
+    load: [20.62493504, 4.089767476, 20.89430331, 4.143181153, 20.97984574, 4.160143565]
+    substation: false
+  section_1059:
+    impedance: [0.0924, 0.2706796, 0.0924, 0.2706796, 0.0924, 0.2706796]
+    load: [20.21547767, 3.673717077, 19.70940575, 3.581749669, 20.27113847, 3.683832199]
+    substation: false
+  section_1061:
+    impedance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    load: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    substation: false
+  section_1062:
+    impedance: [0.1539, 0.4512584, 0.1539, 0.4512584, 0.1539, 0.4512584]
+    load: [23.9360393, 4.349847069, 23.2910946, 4.232642599, 24.03419858, 4.367685352]
+    substation: false
+  section_1063:
+    impedance: [0.1539, 0.4512584, 0.1539, 0.4512584, 0.1539, 0.4512584]
+    load: [44.97881888, 8.173908016, 44.97881888, 8.173908016, 4.1877e-12, 7.61022e-13]
+    substation: false
+  section_1066:
+    impedance: [0.1539, 0.4512584, 0.1539, 0.4512584, 0.1539, 0.4512584]
+    load: [44.66392127, 8.116682323, 44.66392127, 8.116682323, 24.00272553, 4.361965821]
+    substation: false
+  section_1068:
+    impedance: [0.1539, 0.4512584, 0.1539, 0.4512584, 0.1539, 0.4512584]
+    load: [23.87780659, 4.33926456, 23.1904931, 4.214360495, 2.2606e-12, 4.10814e-13]
+    substation: false
+switches:
+  switch_0001: {original_number: 1064}
+  switch_0002: {original_number: 1060}
+  switch_0003: {original_number: 1065}
+  switch_0004: {original_number: 1058}
+  switch_0005: {original_number: 1067}
+  switch_0006: {original_number: 1056}
+  switch_0007: {original_number: 1069}
+  switch_0008: {original_number: 295}
+  switch_0009: {original_number: 297}
+  switch_0010: {original_number: 301}
+  switch_0011: {original_number: 3}
+  switch_0012: {original_number: 5}
+  switch_0013: {original_number: 7}
+  switch_0014: {original_number: 304}
+  switch_0015: {original_number: 306}
+  switch_0016: {original_number: 308}
