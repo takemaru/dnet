@@ -118,18 +118,13 @@ def satisfies_electric_constraints(root, closed_switches):
 
     leaves = set(grid.core.flatten(branches)) - set([b[0] for b in branches])
     for s in leaves:
-        voltage_drop = [
-            current[s][0] * data.sections[s]["impedance"][0] / 2,
-            current[s][1] * data.sections[s]["impedance"][1] / 2,
-            current[s][2] * data.sections[s]["impedance"][2] / 2,
-        ]
+        voltage_drop = [current[s][i] * data.sections[s]["impedance"][i] / 2 for i in range(3)]
         bs = [b for b in branches if b[1] == s]
         assert len(bs) == 1
         s, t = bs[0]
         while True:
-            voltage_drop[0] += current[s][0] * data.sections[s]["impedance"][0]
-            voltage_drop[1] += current[s][1] * data.sections[s]["impedance"][1]
-            voltage_drop[2] += current[s][2] * data.sections[s]["impedance"][2]
+            voltage_drop = \
+                [voltage_drop[i] + current[s][i] * data.sections[s]["impedance"][i] for i in range(3)]
             upper_branch = [b for b in branches if b[1] == s]
             assert len(upper_branch) <= 1
             if len(upper_branch) == 1:

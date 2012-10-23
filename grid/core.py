@@ -85,15 +85,11 @@ class Data:
             load = self.sections[t]["load"]
             if t not in current:
                 current[t] = [0, 0, 0]
-            current[t][0] += load[0]
-            current[t][1] += load[1]
-            current[t][2] += load[2]
+            current[t] = [current[t][i] + load[i] for i in range(3)]
             while True:
                 if s not in current:
                     current[s] = [0, 0, 0]
-                current[s][0] += load[0]
-                current[s][1] += load[1]
-                current[s][2] += load[2]
+                current[s] = [current[s][i] + load[i] for i in range(3)]
                 upper_branch = [b for b in branches if b[1] == s]
                 assert len(upper_branch) <= 1
                 if len(upper_branch) == 1:
@@ -101,9 +97,7 @@ class Data:
                 else:
                     break
         load = self.sections[root]["load"]
-        current[root][0] += load[0]
-        current[root][1] += load[1]
-        current[root][2] += load[2]
+        current[root] = [current[root][i] + load[i] for i in range(3)]
         return current
 
     def calc_loss(self, root, closed_switches, barrier):
