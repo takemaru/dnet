@@ -5,12 +5,11 @@ import sys
 
 import util
 
-dir = sys.argv[1] + "/" if len(sys.argv) > 1 else "./"
-
 max_current     = 300
 sending_voltage = 6600 / math.sqrt(3)
 min_voltage     = 6300 / math.sqrt(3)
 
+dir = sys.argv[1] + "/" if len(sys.argv) > 1 else "./"
 data = util.Data(sys.stdin)
 
 def define_subgraphs():
@@ -42,7 +41,7 @@ def define_subgraphs():
                 if t < s:
                     s = t
             roots.add(sorted_sections.index(s) + 1)
-    assert len(roots) == len([s for s in data.sections.values() if s["substation"]])
+    assert len(roots) == len(data.get_root_sections())
 
     f = open(dir + "grid.subgraphs", "w")
     f.write("rforest " + " ".join([str(r) for r in sorted(roots)]) + "\n")
@@ -51,21 +50,21 @@ def define_subgraphs():
         f.write("%d %d\n" % (edge[0], edge[1]))
     f.close()
 
-def find_neighbor_switches(s, passed_sections):
+def find_neighbor_switches(s, processed_sections):
     switches = set()
     if s in data.switches:
-        for t in data.find_neighbors(s) - passed_sections:
+        for t in data.find_neighbors(s) - processed_sections:
             assert t in data.sections
-            passed_sections.add(t)
-            for u in find_neighbor_switches(t, passed_sections.copy()):
+            processed_sections.add(t)
+            for u in find_neighbor_switches(t, processed_sections.copy()):
                 switches.add(u)
     else:
-        passed_sections.add(s)
-        for t in data.find_neighbors(s) - passed_sections:
+        processed_sections.add(s)
+        for t in data.find_neighbors(s) - processed_sections:
             if t in data.switches:
                 switches.add(t)
             else:
-                for u in find_neighbor_switches(t, passed_sections.copy()):
+                for u in find_neighbor_switches(t, processed_sections.copy()):
                     switches.add(u)
     return switches - set([s])
 
@@ -78,9 +77,8 @@ def find_surrounding_switches(root, closed_switches):
 
 def find_border_switches(root):
     assert data.sections[root]["substation"]
-    other_roots = [_ for _ in data.sections.keys() if data.sections[_]["substation"] and _ <> root]
     border = set()
-    for r in other_roots:
+    for r in data.get_root_sections() - set([root]):
         for s in find_neighbor_switches(r, set()):
             border.add(s)
     return border
@@ -180,29 +178,11 @@ def enumerate_bitmaps(root):
 
 define_subgraphs()
 
-for root in sorted([s for s in data.sections if data.sections[s]["substation"]]):
+for root in data.get_root_sections():
     enumerate_bitmaps(root)
 
-print "solver -n %d -t diagram %sgrid.subgraphs '&'" % (len(data.switches), dir),
-print " '&' ".join(sorted([dir + "grid-%s.bitmaps" % s for s in data.sections if data.sections[s]["substation"]])),
-print "> %sgrid.diagram" % dir
-
-#assert find_neighbor_switches("section_0305", set()) == set(['switch_0015', 'switch_0014'])
-#assert find_neighbor_switches("section_-001", set()) == set(['switch_0010', 'switch_0014'])
-#assert find_neighbor_switches("switch_0008", set()) == set(['switch_0009', 'switch_0007'])
-#assert find_neighbor_switches("switch_0009", set()) == set(['switch_0008', 'switch_0010', 'switch_0006'])
-#
-#assert find_surrounding_switches("section_-001", set()) == set(['switch_0010', 'switch_0014'])
-#assert find_surrounding_switches("section_-001", set(["switch_0009", "switch_0010", "switch_0014"])) == set(['switch_0008', 'switch_0006', 'switch_0015'])
-#
-#assert find_border_switches("section_-001") == set(['switch_0013', 'switch_0001', 'switch_0011', 'switch_0016'])
-#
-#assert build_tree("section_-001", set(), set()) == [('section_-001', 'section_0303'), ('section_-001', 'section_0302')]
-#assert build_tree("section_-001", set(["switch_0009", "switch_0010", "switch_0014"]), set()) == [('section_-001', 'section_0303'), ('section_-001', 'section_0302'), ('section_0303', 'section_0305'), ('section_0302', 'section_0300'), ('section_0300', 'section_0299'), ('section_0300', 'section_0298'), ('section_0298', 'section_0296')]
-#
-#assert is_tree([("section_-001", "section_0302"), ("section_-001", "section_0303"), ("section_0302", "section_0300")])
-#assert not is_tree([("section_-001", "section_0302"), ("section_-001", "section_0303"), ("section_0302", "section_0300"), ("section_0300", "section_0303")])
-#
-#assert satisfies_electric_constraints("section_-001", set())
-#assert satisfies_electric_constraints("section_-001", set(["switch_0009", "switch_0010", "switch_0014"]))
-#assert not satisfies_electric_constraints("section_-001", set(["switch_0006", "switch_0007", "switch_0008", "switch_0009", "switch_0010", "switch_0014"]))
+msg = "Build a diagram by the following command:\n"
+cmd = "  /path/to/solver -n %d -t diagram %sgrid.subgraphs '&' " % (len(data.switches), dir) + \
+    " '&' ".join(sorted([dir + "grid-%s.bitmaps" % s for s in data.sections if data.sections[s]["substation"]])) + \
+    " > %sgrid.diagram\n" % dir
+sys.stderr.write(msg + cmd)

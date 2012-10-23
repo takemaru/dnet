@@ -48,28 +48,33 @@ class Data:
             s["impedance"] = [i[0] + i[1] * 1j, i[2] + i[3] * 1j, i[4] + i[5] * 1j]
         self.neighbor_cache = {}
 
+    def get_root_sections(self):
+        return set([s for s in self.sections if self.sections[s]["substation"]])
+
     def find_neighbors(self, s):
         if s not in self.neighbor_cache:
             self.neighbor_cache[s] = set(flatten([n for n in self.nodes if s in n])) - set([s])
         return self.neighbor_cache[s]
 
-    def build_tree(self, root, closed_switches, passed):
+    def build_tree(self, root, closed_switches, processed_elems):
         branches = []
-        neighbors = self.find_neighbors(root) - passed
+        neighbors = self.find_neighbors(root) - processed_elems
         if len(neighbors) == 1:
             s = neighbors.pop()
             assert s in self.switches
             if s in closed_switches:
                 t = (self.find_neighbors(s) - set([root])).pop()
                 branches.append((root, t))
-                bs = self.build_tree(t, closed_switches - set([s]), passed | set([root, s, t]))
+                ps = processed_elems | set([root, s, t])
+                bs = self.build_tree(t, closed_switches - set([s]), ps)
                 branches.extend(bs)
         elif len(neighbors) > 1: # junction
             for s in neighbors:
                 assert s in self.sections, (root, neighbors, s)
                 branches.append((root, s))
             for s in neighbors:
-                bs = self.build_tree(s, closed_switches.copy(), passed | set([root]) | neighbors)
+                ps = processed_elems | set([root]) | neighbors
+                bs = self.build_tree(s, closed_switches.copy(), ps)
                 branches.extend(bs)
         return branches
 
