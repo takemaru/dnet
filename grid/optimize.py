@@ -5,7 +5,7 @@ import re
 import sys
 import unionfind
 
-import util
+import grid.core
 
 class Node:
     def __init__(self, str):
@@ -102,7 +102,7 @@ def rebuild(entries, comp):
     return next_entries
 
 if __name__ == '__main__':
-    data = util.Data(sys.stdin)
+    data = grid.core.Data(sys.stdin)
 
     comps = find_components()
 

@@ -3,7 +3,7 @@
 import math
 import sys
 
-import util
+import grid.core
 
 max_current     = 300
 sending_voltage = 6600 / math.sqrt(3)
@@ -82,7 +82,7 @@ def find_border_switches(root):
 
 def is_tree(branches):
     '''inspired by networkx.algorithms.cycles'''
-    gnodes = set(util.flatten(branches))
+    gnodes = set(grid.core.flatten(branches))
     while gnodes:
         root = gnodes.pop()
         stack = [root]
@@ -106,7 +106,7 @@ def is_tree(branches):
 
 def satisfies_electric_constraints(root, closed_switches):
     branches = data.build_tree(root, closed_switches, set())
-    if not util.is_tree(branches):
+    if not grid.core.is_tree(branches):
         return False
 
     current = data.calc_current(root, branches)
@@ -114,9 +114,9 @@ def satisfies_electric_constraints(root, closed_switches):
             abs(current[root][1]) > max_current or \
             abs(current[root][2]) > max_current:
         return False
-    assert len(current) == len(set(util.flatten(branches)))
+    assert len(current) == len(set(grid.core.flatten(branches)))
 
-    leaves = set(util.flatten(branches)) - set([b[0] for b in branches])
+    leaves = set(grid.core.flatten(branches)) - set([b[0] for b in branches])
     for s in leaves:
         voltage_drop = [
             current[s][0] * data.sections[s]["impedance"][0] / 2,
@@ -175,7 +175,7 @@ def enumerate_bitmaps(root):
 
 if __name__ == '__main__':
     dir = sys.argv[1] + "/" if len(sys.argv) > 1 else "./"
-    data = util.Data(sys.stdin)
+    data = grid.core.Data(sys.stdin)
 
     define_subgraphs()
 
