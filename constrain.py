@@ -9,9 +9,6 @@ max_current     = 300
 sending_voltage = 6600 / math.sqrt(3)
 min_voltage     = 6300 / math.sqrt(3)
 
-dir = sys.argv[1] + "/" if len(sys.argv) > 1 else "./"
-data = util.Data(sys.stdin)
-
 def define_subgraphs():
     edges = []
     sorted_sections = []
@@ -176,13 +173,17 @@ def enumerate_bitmaps(root):
     do_enumerate_bitmaps(root, f, set(), find_border_switches(root))
     f.close()
 
-define_subgraphs()
+if __name__ == '__main__':
+    dir = sys.argv[1] + "/" if len(sys.argv) > 1 else "./"
+    data = util.Data(sys.stdin)
 
-for root in data.get_root_sections():
-    enumerate_bitmaps(root)
+    define_subgraphs()
 
-msg = "Build a diagram by the following command:\n"
-cmd = "  /path/to/solver -n %d -t diagram %sgrid.subgraphs '&' " % (len(data.switches), dir) + \
-    " '&' ".join(sorted([dir + "grid-%s.bitmaps" % s for s in data.sections if data.sections[s]["substation"]])) + \
-    " > %sgrid.diagram\n" % dir
-sys.stderr.write(msg + cmd)
+    for root in data.get_root_sections():
+        enumerate_bitmaps(root)
+
+    msg = "Build a diagram by the following command:\n"
+    cmd = "  /path/to/solver -n %d -t diagram %sgrid.subgraphs '&' " % (len(data.switches), dir) + \
+        " '&' ".join(sorted([dir + "grid-%s.bitmaps" % s for s in data.sections if data.sections[s]["substation"]])) + \
+        " > %sgrid.diagram\n" % dir
+    sys.stderr.write(msg + cmd)

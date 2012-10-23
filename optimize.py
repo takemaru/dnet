@@ -7,9 +7,6 @@ import unionfind
 
 import util
 
-data = util.Data(sys.stdin)
-diagram_file = sys.argv[1]
-
 class Node:
     def __init__(self, str):
         n, v, l, h, _ = re.split(r"[\W]+", str)
@@ -17,9 +14,6 @@ class Node:
         self.v = int(v)
         self.l = l
         self.h = h
-
-nodes = { "1": Node("1: (~0?1:1)") }
-g = nx.DiGraph()
 
 def find_components():
     switches = set(data.switches.keys())
@@ -102,52 +96,58 @@ def rebuild(entries, comp):
                 loss = loss_cache[key]
             else:
                 loss = calc_component_loss(comp_roots, closed_switches)
-            if not(n in g and m in g[n] and loss > g[n][m]["weight"]):
-                g.add_edge(n, m, weight=loss, config=closed_switches)
+            if not(n in graph and m in graph[n] and loss > graph[n][m]["weight"]):
+                graph.add_edge(n, m, weight=loss, config=closed_switches)
 
     return next_entries
 
-comps = find_components()
+if __name__ == '__main__':
+    data = util.Data(sys.stdin)
 
-for line in open(diagram_file):
-    n = Node(line)
-    nodes[n.n] = n
-    if n.v == 1:
-        root = n.n
+    comps = find_components()
 
-entries = set([root])
-for comp in comps:
-    entries = rebuild(entries, comp)
+    nodes = { "1": Node("1: (~0?1:1)") }
+    for line in open(sys.argv[1]):
+        n = Node(line)
+        nodes[n.n] = n
+        if n.v == 1:
+            root = n.n
 
-path = nx.dijkstra_path(g, root, "1")
+    graph = nx.DiGraph()
 
-comp_loss = 0
-closed_switches = []
-for i in range(len(path) - 1):
-    x, y = path[i], path[i + 1]
-    comp_loss += g[x][y]["weight"]
-    closed_switches.extend(list(g[x][y]["config"]))
-closed_switches = set(closed_switches)
-open_switches = sorted(set(data.switches.keys()) - closed_switches)
+    entries = set([root])
+    for comp in comps:
+        entries = rebuild(entries, comp)
 
-loss = 0
-for root in data.get_root_sections():
-    loss += data.calc_loss(root, closed_switches, set())
+    path = nx.dijkstra_path(graph, root, "1")
 
-lower_bound = 0
-for i in range(3):
-    total_loads = sum([data.sections[s]["load"][i] for s in data.sections])
-    resistance_sum = \
-        sum([1 / data.sections[s]["impedance"][i].real for s in data.get_root_sections()])
+    comp_loss = 0
+    closed_switches = []
+    for i in range(len(path) - 1):
+        x, y = path[i], path[i + 1]
+        comp_loss += graph[x][y]["weight"]
+        closed_switches.extend(list(graph[x][y]["config"]))
+    closed_switches = set(closed_switches)
+    open_switches = sorted(set(data.switches.keys()) - closed_switches)
+
+    loss = 0
     for root in data.get_root_sections():
-        resistance = data.sections[root]["impedance"][i].real
-        current = total_loads / (resistance * resistance_sum)
-        lower_bound += abs(current ** 2 * resistance)
+        loss += data.calc_loss(root, closed_switches, set())
 
-print "minimum_loss:", "%g" % loss
-print "loss_without_root_sections:", "%g" % comp_loss
-print "lower_bound_of_minimum_loss:", "%g" % (lower_bound + comp_loss)
-print "open_switches:", open_switches
-if "original_number" in data.switches.values()[0]:
-    print "open_switches_in_original_numbers:", \
-        [data.switches[s]["original_number"] for s in open_switches]
+    lower_bound = 0
+    for i in range(3):
+        total_loads = sum([data.sections[s]["load"][i] for s in data.sections])
+        resistance_sum = \
+            sum([1 / data.sections[s]["impedance"][i].real for s in data.get_root_sections()])
+        for root in data.get_root_sections():
+            resistance = data.sections[root]["impedance"][i].real
+            current = total_loads / (resistance * resistance_sum)
+            lower_bound += abs(current ** 2 * resistance)
+
+    print "minimum_loss:", "%g" % loss
+    print "loss_without_root_sections:", "%g" % comp_loss
+    print "lower_bound_of_minimum_loss:", "%g" % (lower_bound + comp_loss)
+    print "open_switches:", open_switches
+    if "original_number" in data.switches.values()[0]:
+        print "open_switches_in_original_numbers:", \
+            [data.switches[s]["original_number"] for s in open_switches]
