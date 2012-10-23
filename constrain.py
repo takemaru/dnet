@@ -13,12 +13,6 @@ min_voltage     = 6300 / math.sqrt(3)
 
 data = util.Data(sys.stdin)
 
-for s in data.sections.values():
-    l = s["load"]
-    i = s["impedance"]
-    s["load"]      = [l[0] + l[1] * 1j, l[2] + l[3] * 1j, l[4] + l[5] * 1j]
-    s["impedance"] = [i[0] + i[1] * 1j, i[2] + i[3] * 1j, i[4] + i[5] * 1j]
-
 def define_subgraphs():
     edges = []
     sorted_sections = []
@@ -133,12 +127,7 @@ def is_tree(branches):
         root = None
     return True
 
-def satisfies_electric_constraints(root, closed_switches):
-    branches = build_tree(root, closed_switches, set())
-    if not is_tree(branches):
-        return False
-    leaves = set(util.flatten(branches)) - set([b[0] for b in branches])
-
+def calc_current(branches):
     current = {}
     for branch in branches:
         s, t = branch
@@ -164,12 +153,21 @@ def satisfies_electric_constraints(root, closed_switches):
     current[root][0] += load[0]
     current[root][1] += load[1]
     current[root][2] += load[2]
+    return current
+
+def satisfies_electric_constraints(root, closed_switches):
+    branches = build_tree(root, closed_switches, set())
+    if not is_tree(branches):
+        return False
+
+    current = calc_current(branches)
     if abs(current[root][0]) > max_current or \
             abs(current[root][1]) > max_current or \
             abs(current[root][2]) > max_current:
         return False
     assert len(current) == len(set(util.flatten(branches)))
 
+    leaves = set(util.flatten(branches)) - set([b[0] for b in branches])
     for s in leaves:
         voltage_drop = [
             current[s][0] * data.sections[s]["impedance"][0] / 2,

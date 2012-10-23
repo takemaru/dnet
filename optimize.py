@@ -55,14 +55,76 @@ class Node:
         self.l = l
         self.h = h
 
-nodes = {}
+    def __repr__(self):
+        return "%s: (~%d?%s:%s)" % (self.n, self.v, self.l, self.h)
+
+nodes = { "1": Node("1: (~0?1:1)") }
 for line in open(sys.argv[1]):
     n = Node(line)
     nodes[n.n] = n
     if n.v == 1:
-        entries = set([n])
+        root = n.n
 
-for c in comps:
-    entries = rebuild(entries, c)
+g = nx.DiGraph()
 
-# build a graph by networkx
+def calc_loss(closed_switches, comp, roots):
+    current = {}
+    for root in roots:
+        passed = set([s for s in util.find_neighbors(root, data.nodes) if s in data.sections])
+        branches = build_tree(tree, closed_switches, passed)
+        assert is_tree(branches)
+        current.update(calc_current(branches))
+    sections = [s for s in comp if s in data.sections]
+    return sum([abs(current[s][i]**2 * data.sections[s]["impedance"][i].real)
+                    for s in sections for i in range(3)])
+
+def find_configs(n, comp, closed_switches):
+    n = nodes[n]
+    configs = []
+    if "switch_%04d" % n.v not in comp:
+        configs.append((closed_switches, n.n))
+    else:
+        if n.l <> "0":
+            configs.extend(find_configs(n.l, comp, closed_switches.copy()))
+        assert n.h <> "0"
+        closed_switches.add(n.v)
+        configs.extend(find_configs(n.h, comp, closed_switches.copy()))
+    return configs
+
+def rebuild(entries, comp):
+    roots = set()
+    for s in comp:
+        if s in data.sections:
+            for t in util.find_neighbors(s, data.nodes):
+                if t in data.sections and data.sections[t]["substation"]:
+                    roots.add(s)
+                    break
+    next_entries = set()
+    loss_cache = {}
+    for n in entries:
+        for closed_switches, m in find_configs(n, comp, set()):
+            next_entries.add(m)
+            key = ','.join([str(s) for s in sorted(closed_switches)])
+            loss = loss_cache[key] if key in loss_cache else calc_loss(closed_switches, comp, roots)
+            if not(n in g and m in g[n] and loss > g[n][m]["weight"]):
+                g.add_edge(n, m, weight=loss, config=closed_switches)
+    return next_entries
+
+entries = set([root])
+for comp in comps:
+    entries = rebuild(entries, comp)
+
+path = nx.dijkstra_path(g, root, "1")
+
+loss = 0
+closed_switches = []
+for i in range(len(path) - 1):
+    x, y = path[i], path[i + 1]
+    loss += g[x][y]["weight"]
+    closed_switches.extend(list(g[x][y]["config"]))
+print loss
+print sorted(closed_switches)
+
+#assert find_configs(root, comps[0], set()) == [(set([1, 4, 5, 6, 7, 8, 9, 10]), '1e'), (set([1, 3, 4, 6, 7, 8, 9, 10]), '2b'), (set([1, 3, 4, 5, 6, 8, 9, 10]), '2b'), (set([1, 3, 4, 5, 6, 7, 9, 10]), '2b'), (set([1, 3, 4, 5, 6, 7, 8, 10]), '2b'), (set([1, 2, 5, 6, 7, 8, 9, 10]), '1e'), (set([1, 2, 4, 5, 7, 8, 9, 10]), '2b'), (set([1, 2, 3, 6, 7, 8, 9, 10]), '2b'), (set([1, 2, 3, 5, 6, 8, 9, 10]), '2b'), (set([1, 2, 3, 5, 6, 7, 9, 10]), '11'), (set([1, 2, 3, 5, 6, 7, 8, 10]), '11'), (set([1, 2, 3, 4, 7, 8, 9, 10]), '2b'), (set([1, 2, 3, 4, 5, 8, 9, 10]), '2b'), (set([1, 2, 3, 4, 5, 7, 9, 10]), '2d'), (set([1, 2, 3, 4, 5, 7, 8, 10]), '2d')]
+#assert find_configs("2b", comps[1], set()) == [(set([12, 13]), '2f'), (set([11, 13]), '2f'), (set([11, 12]), '2f')]
+#assert find_configs("2f", comps[2], set()) == [(set([16, 15]), '1'), (set([16, 14]), '1'), (set([14, 15]), '1')]

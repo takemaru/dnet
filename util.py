@@ -6,6 +6,11 @@ class Data:
         self.nodes = obj["nodes"]
         self.switches = obj["switches"]
         self.sections = obj["sections"]
+        for s in self.sections.values():
+            l = s["load"]
+            i = s["impedance"]
+            s["load"]      = [l[0] + l[1] * 1j, l[2] + l[3] * 1j, l[4] + l[5] * 1j]
+            s["impedance"] = [i[0] + i[1] * 1j, i[2] + i[3] * 1j, i[4] + i[5] * 1j]
 
 neighbor_cache = {}
 
