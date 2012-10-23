@@ -105,3 +105,11 @@ class Data:
         current[root][1] += load[1]
         current[root][2] += load[2]
         return current
+
+    def calc_loss(self, root, closed_switches, barrier):
+        branches = self.build_tree(root, closed_switches, barrier)
+        assert is_tree(branches)
+        sections = set([root] + flatten(branches))
+        current = self.calc_current(root, branches)
+        return sum([abs(current[s][i]**2 * self.sections[s]["impedance"][i].real)
+                    for s in sections for i in range(3)])

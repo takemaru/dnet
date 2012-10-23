@@ -75,18 +75,10 @@ def find_configs(n, comp, closed_switches):
         configs.extend(find_configs(n.h, comp, closed_switches.copy()))
     return configs
 
-def calc_loss(root, closed_switches, barrier):
-    branches = data.build_tree(root, closed_switches, barrier)
-    assert util.is_tree(branches)
-    sections = set([root] + util.flatten(branches))
-    current = data.calc_current(root, branches)
-    return sum([abs(current[s][i]**2 * data.sections[s]["impedance"][i].real)
-                for s in sections for i in range(3)])
-
 def calc_component_loss(comp_roots, closed_switches):
     loss = 0
     for root, barrier in comp_roots:
-        loss += calc_loss(root, closed_switches, barrier)
+        loss += data.calc_loss(root, closed_switches, barrier)
     return loss
 
 def rebuild(entries, comp):
@@ -99,6 +91,7 @@ def rebuild(entries, comp):
                     barrier = set([u for u in data.find_neighbors(s) if u in data.sections])
                     comp_roots.append((s, barrier))
                     break
+
     next_entries = set()
     loss_cache = {}
     for n in entries:
@@ -111,6 +104,7 @@ def rebuild(entries, comp):
                 loss = calc_component_loss(comp_roots, closed_switches)
             if not(n in g and m in g[n] and loss > g[n][m]["weight"]):
                 g.add_edge(n, m, weight=loss, config=closed_switches)
+
     return next_entries
 
 comps = find_components()
@@ -138,7 +132,7 @@ open_switches = sorted(set(data.switches.keys()) - closed_switches)
 
 loss = 0
 for root in data.get_root_sections():
-    loss += calc_loss(root, closed_switches, set())
+    loss += data.calc_loss(root, closed_switches, set())
 
 lower_bound = 0
 for i in range(3):
