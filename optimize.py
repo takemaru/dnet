@@ -116,7 +116,6 @@ for comp in comps:
     entries = rebuild(entries, comp)
 
 path = nx.dijkstra_path(g, root, "1")
-
 loss = 0
 closed_switches = []
 for i in range(len(path) - 1):
@@ -124,12 +123,14 @@ for i in range(len(path) - 1):
     loss += g[x][y]["weight"]
     closed_switches.extend(list(g[x][y]["config"]))
 open_switches = sorted(set(data.switches.keys()) - set(closed_switches))
+
 obj = {
     "loss"         : float("%g" % loss),
     "open_switches": open_switches,
 }
 if "original_number" in data.switches.values()[0]:
-    obj["open_switches_in_original_numbers"] = [data.switches[s]["original_number"] for s in open_switches]
+    obj["open_switches_in_original_numbers"] = \
+        [data.switches[s]["original_number"] for s in open_switches]
 print yaml.dump(obj)
 
 #assert find_configs(root, comps[0], set()) == [(set([1, 4, 5, 6, 7, 8, 9, 10]), '1e'), (set([1, 3, 4, 6, 7, 8, 9, 10]), '2b'), (set([1, 3, 4, 5, 6, 8, 9, 10]), '2b'), (set([1, 3, 4, 5, 6, 7, 9, 10]), '2b'), (set([1, 3, 4, 5, 6, 7, 8, 10]), '2b'), (set([1, 2, 5, 6, 7, 8, 9, 10]), '1e'), (set([1, 2, 4, 5, 7, 8, 9, 10]), '2b'), (set([1, 2, 3, 6, 7, 8, 9, 10]), '2b'), (set([1, 2, 3, 5, 6, 8, 9, 10]), '2b'), (set([1, 2, 3, 5, 6, 7, 9, 10]), '11'), (set([1, 2, 3, 5, 6, 7, 8, 10]), '11'), (set([1, 2, 3, 4, 7, 8, 9, 10]), '2b'), (set([1, 2, 3, 4, 5, 8, 9, 10]), '2b'), (set([1, 2, 3, 4, 5, 7, 9, 10]), '2d'), (set([1, 2, 3, 4, 5, 7, 8, 10]), '2d')]
