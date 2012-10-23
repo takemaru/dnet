@@ -74,7 +74,7 @@ class Data:
         return branches
 
     def calc_current(self, root, branches):
-        current = {}
+        current = { root: [0, 0, 0] }
         for branch in branches:
             s, t = branch
             load = self.sections[t]["load"]

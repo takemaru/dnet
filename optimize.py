@@ -4,6 +4,7 @@ import networkx as nx
 import re
 import sys
 import unionfind
+import yaml
 
 import util
 
@@ -87,7 +88,7 @@ def find_configs(n, comp, closed_switches):
         if n.l <> "0":
             configs.extend(find_configs(n.l, comp, closed_switches.copy()))
         assert n.h <> "0"
-        closed_switches.add(n.v)
+        closed_switches.add("switch_%04d" % n.v)
         configs.extend(find_configs(n.h, comp, closed_switches.copy()))
     return configs
 
@@ -122,8 +123,14 @@ for i in range(len(path) - 1):
     x, y = path[i], path[i + 1]
     loss += g[x][y]["weight"]
     closed_switches.extend(list(g[x][y]["config"]))
-print loss
-print sorted(closed_switches)
+open_switches = sorted(set(data.switches.keys()) - set(closed_switches))
+obj = {
+    "loss"         : loss,
+    "open_switches": open_switches,
+}
+if "original_number" in data.switches.values()[0]:
+    obj["open_switches_in_original_numbers"] = [data.switches[s]["original_number"] for s in open_switches]
+print yaml.dump(obj)
 
 #assert find_configs(root, comps[0], set()) == [(set([1, 4, 5, 6, 7, 8, 9, 10]), '1e'), (set([1, 3, 4, 6, 7, 8, 9, 10]), '2b'), (set([1, 3, 4, 5, 6, 8, 9, 10]), '2b'), (set([1, 3, 4, 5, 6, 7, 9, 10]), '2b'), (set([1, 3, 4, 5, 6, 7, 8, 10]), '2b'), (set([1, 2, 5, 6, 7, 8, 9, 10]), '1e'), (set([1, 2, 4, 5, 7, 8, 9, 10]), '2b'), (set([1, 2, 3, 6, 7, 8, 9, 10]), '2b'), (set([1, 2, 3, 5, 6, 8, 9, 10]), '2b'), (set([1, 2, 3, 5, 6, 7, 9, 10]), '11'), (set([1, 2, 3, 5, 6, 7, 8, 10]), '11'), (set([1, 2, 3, 4, 7, 8, 9, 10]), '2b'), (set([1, 2, 3, 4, 5, 8, 9, 10]), '2b'), (set([1, 2, 3, 4, 5, 7, 9, 10]), '2d'), (set([1, 2, 3, 4, 5, 7, 8, 10]), '2d')]
 #assert find_configs("2b", comps[1], set()) == [(set([12, 13]), '2f'), (set([11, 13]), '2f'), (set([11, 12]), '2f')]
