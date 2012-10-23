@@ -12,16 +12,16 @@ min_voltage     = 6300 / math.sqrt(3)
 def define_subgraphs():
     edges = []
     sorted_sections = []
-    for s in sorted(data.switches):
+    for s in sorted(nw.switches):
         ns = set()
-        for t in data.find_neighbors(s):
-            if t in data.sections:
+        for t in nw.find_neighbors(s):
+            if t in nw.sections:
                 ns.add(t)
         neighbors = set()
         is_root = False
         for t in sorted(ns):
-            for u in data.find_neighbors(t):
-                if u in data.sections and u < t:
+            for u in nw.find_neighbors(t):
+                if u in nw.sections and u < t:
                     t = u
             neighbors.add(t)
             if t not in sorted_sections:
@@ -29,16 +29,16 @@ def define_subgraphs():
         edge = [sorted_sections.index(t) + 1 for t in sorted(neighbors)]
         assert len(edge) == 2
         edges.append(edge)
-    assert len(edges) == len(data.switches)
+    assert len(edges) == len(nw.switches)
 
     roots = set()
-    for s in data.sections:
-        if data.sections[s]["substation"]:
-            for t in data.find_neighbors(s):
+    for s in nw.sections:
+        if nw.sections[s]["substation"]:
+            for t in nw.find_neighbors(s):
                 if t < s:
                     s = t
             roots.add(sorted_sections.index(s) + 1)
-    assert len(roots) == len(data.get_root_sections())
+    assert len(roots) == len(nw.get_root_sections())
 
     f = open(dir + "grid.subgraphs", "w")
     f.write("rforest " + " ".join([str(r) for r in sorted(roots)]) + "\n")
@@ -49,16 +49,16 @@ def define_subgraphs():
 
 def find_neighbor_switches(s, processed_sections):
     switches = set()
-    if s in data.switches:
-        for t in data.find_neighbors(s) - processed_sections:
-            assert t in data.sections
+    if s in nw.switches:
+        for t in nw.find_neighbors(s) - processed_sections:
+            assert t in nw.sections
             processed_sections.add(t)
             for u in find_neighbor_switches(t, processed_sections.copy()):
                 switches.add(u)
     else:
         processed_sections.add(s)
-        for t in data.find_neighbors(s) - processed_sections:
-            if t in data.switches:
+        for t in nw.find_neighbors(s) - processed_sections:
+            if t in nw.switches:
                 switches.add(t)
             else:
                 for u in find_neighbor_switches(t, processed_sections.copy()):
@@ -73,9 +73,9 @@ def find_surrounding_switches(root, closed_switches):
         return find_neighbor_switches(root, set())
 
 def find_border_switches(root):
-    assert data.sections[root]["substation"]
+    assert nw.sections[root]["substation"]
     border = set()
-    for r in data.get_root_sections() - set([root]):
+    for r in nw.get_root_sections() - set([root]):
         for s in find_neighbor_switches(r, set()):
             border.add(s)
     return border
@@ -105,11 +105,11 @@ def is_tree(branches):
     return True
 
 def satisfies_electric_constraints(root, closed_switches):
-    branches = data.build_tree(root, closed_switches, set())
+    branches = nw.build_tree(root, closed_switches, set())
     if not grid.core.is_tree(branches):
         return False
 
-    current = data.calc_current(root, branches)
+    current = nw.calc_current(root, branches)
     if abs(current[root][0]) > max_current or \
             abs(current[root][1]) > max_current or \
             abs(current[root][2]) > max_current:
@@ -118,13 +118,13 @@ def satisfies_electric_constraints(root, closed_switches):
 
     leaves = set(grid.core.flatten(branches)) - set([b[0] for b in branches])
     for s in leaves:
-        voltage_drop = [current[s][i] * data.sections[s]["impedance"][i] / 2 for i in range(3)]
+        voltage_drop = [current[s][i] * nw.sections[s]["impedance"][i] / 2 for i in range(3)]
         bs = [b for b in branches if b[1] == s]
         assert len(bs) == 1
         s, t = bs[0]
         while True:
             voltage_drop = \
-                [voltage_drop[i] + current[s][i] * data.sections[s]["impedance"][i] for i in range(3)]
+                [voltage_drop[i] + current[s][i] * nw.sections[s]["impedance"][i] for i in range(3)]
             upper_branch = [b for b in branches if b[1] == s]
             assert len(upper_branch) <= 1
             if len(upper_branch) == 1:
@@ -140,7 +140,7 @@ def satisfies_electric_constraints(root, closed_switches):
 
 def write_bitmap(f, closed_switches, open_switches):
     bits = []
-    for s in sorted(data.switches.keys()):
+    for s in sorted(nw.switches.keys()):
         if s in closed_switches:
             bits.append("1")
         elif s in open_switches:
@@ -170,15 +170,15 @@ def enumerate_bitmaps(root):
 
 if __name__ == '__main__':
     dir = sys.argv[1] + "/" if len(sys.argv) > 1 else "./"
-    data = grid.core.Data(sys.stdin)
+    nw = grid.core.Network(sys.stdin)
 
     define_subgraphs()
 
-    for root in data.get_root_sections():
+    for root in nw.get_root_sections():
         enumerate_bitmaps(root)
 
     msg = "Build a diagram by the following command:\n"
-    cmd = "  /path/to/solver -n %d -t diagram %sgrid.subgraphs '&' " % (len(data.switches), dir) + \
-        " '&' ".join(sorted([dir + "grid-%s.bitmaps" % s for s in data.sections if data.sections[s]["substation"]])) + \
+    cmd = "  /path/to/solver -n %d -t diagram %sgrid.subgraphs '&' " % (len(nw.switches), dir) + \
+        " '&' ".join(sorted([dir + "grid-%s.bitmaps" % s for s in nw.sections if nw.sections[s]["substation"]])) + \
         " > %sgrid.diagram\n" % dir
     sys.stderr.write(msg + cmd)

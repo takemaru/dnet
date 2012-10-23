@@ -16,14 +16,14 @@ class Node:
         self.h = h
 
 def find_components():
-    switches = set(data.switches.keys())
-    sections = set(data.sections.keys())
-    roots = data.get_root_sections()
+    switches = set(nw.switches.keys())
+    sections = set(nw.sections.keys())
+    roots = nw.get_root_sections()
     uf = unionfind.UnionFind()
     uf.insert_objects(switches | sections - roots)
     for s in sorted(switches | sections - roots):
         neighbors = set()
-        for n in [m for m in data.nodes if s in m]:
+        for n in [m for m in nw.nodes if s in m]:
             if [t for t in n if t in roots] == []:
                 for t in n:
                     neighbors.add(t)
@@ -38,7 +38,7 @@ def find_components():
             comps[c] = (i, set())
             i += 1
         comps[c][1].add(s)
-        for t in data.find_neighbors(s):
+        for t in nw.find_neighbors(s):
             comps[c][1].add(t)
     assert sum([len(c[1]) for c in comps.values()]) == len(switches | sections - roots)
 
@@ -46,12 +46,12 @@ def find_components():
 
     s = "switch"
     for c in comps:
-        switches = [t for t in c if t in data.switches]
+        switches = [t for t in c if t in nw.switches]
         assert s < min(switches), "switches must be ordered by independent components"
         s = max(switches)
 
-    assert len([t for s in data.sections if s < 0
-                for t in data.find_neighbors(s) if t in data.switches]) == 0, \
+    assert len([t for s in nw.sections if s < 0
+                for t in nw.find_neighbors(s) if t in nw.switches]) == 0, \
                 "root sections must be connected to a junction, not a switch"
 
     return comps
@@ -72,17 +72,17 @@ def find_configs(n, comp, closed_switches):
 def calc_component_loss(comp_roots, closed_switches):
     loss = 0
     for root, barrier in comp_roots:
-        loss += data.calc_loss(root, closed_switches, barrier)
+        loss += nw.calc_loss(root, closed_switches, barrier)
     return loss
 
 def rebuild(entries, comp):
     comp_roots = []
     for s in comp:
-        if s in data.sections:
-            for t in data.find_neighbors(s):
-                if t in data.sections and data.sections[t]["substation"]:
-                    assert not data.sections[s]["substation"]
-                    barrier = set([u for u in data.find_neighbors(s) if u in data.sections])
+        if s in nw.sections:
+            for t in nw.find_neighbors(s):
+                if t in nw.sections and nw.sections[t]["substation"]:
+                    assert not nw.sections[s]["substation"]
+                    barrier = set([u for u in nw.find_neighbors(s) if u in nw.sections])
                     comp_roots.append((s, barrier))
                     break
 
@@ -102,7 +102,7 @@ def rebuild(entries, comp):
     return next_entries
 
 if __name__ == '__main__':
-    data = grid.core.Data(sys.stdin)
+    nw = grid.core.Network(sys.stdin)
 
     comps = find_components()
 
@@ -128,19 +128,19 @@ if __name__ == '__main__':
         comp_loss += graph[x][y]["weight"]
         closed_switches.extend(list(graph[x][y]["config"]))
     closed_switches = set(closed_switches)
-    open_switches = sorted(set(data.switches.keys()) - closed_switches)
+    open_switches = sorted(set(nw.switches.keys()) - closed_switches)
 
     loss = 0
-    for root in data.get_root_sections():
-        loss += data.calc_loss(root, closed_switches, set())
+    for root in nw.get_root_sections():
+        loss += nw.calc_loss(root, closed_switches, set())
 
     lower_bound = 0
     for i in range(3):
-        total_loads = sum([data.sections[s]["load"][i] for s in data.sections])
+        total_loads = sum([nw.sections[s]["load"][i] for s in nw.sections])
         resistance_sum = \
-            sum([1 / data.sections[s]["impedance"][i].real for s in data.get_root_sections()])
-        for root in data.get_root_sections():
-            resistance = data.sections[root]["impedance"][i].real
+            sum([1 / nw.sections[s]["impedance"][i].real for s in nw.get_root_sections()])
+        for root in nw.get_root_sections():
+            resistance = nw.sections[root]["impedance"][i].real
             current = total_loads / (resistance * resistance_sum)
             lower_bound += abs(current ** 2 * resistance)
 
@@ -148,6 +148,6 @@ if __name__ == '__main__':
     print "loss_without_root_sections:", "%g" % comp_loss
     print "lower_bound_of_minimum_loss:", "%g" % (lower_bound + comp_loss)
     print "open_switches:", open_switches
-    if "original_number" in data.switches.values()[0]:
+    if "original_number" in nw.switches.values()[0]:
         print "open_switches_in_original_numbers:", \
-            [data.switches[s]["original_number"] for s in open_switches]
+            [nw.switches[s]["original_number"] for s in open_switches]

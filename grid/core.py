@@ -36,7 +36,7 @@ def is_tree(branches):
         root = None
     return True
 
-class Data:
+class Network:
     def __init__(self, f):
         obj = yaml.load(f)
         self.nodes = obj["nodes"]
@@ -110,10 +110,10 @@ class Data:
                     for s in sections for i in range(3)])
 
 if __name__ == '__main__':
-    data = Data(sys.stdin)
+    nw = Network(sys.stdin)
     open_switches = [s if s.startswith("switch") else "switch_%04d" % int(s) for s in sys.argv[1:]]
-    closed_switches = set(data.switches.keys()) - set(open_switches)
+    closed_switches = set(nw.switches.keys()) - set(open_switches)
     loss = 0
-    for root in data.get_root_sections():
-        loss += data.calc_loss(root, closed_switches, set())
+    for root in nw.get_root_sections():
+        loss += nw.calc_loss(root, closed_switches, set())
     print "%g" % loss
