@@ -125,7 +125,7 @@ for i in range(len(path) - 1):
     closed_switches.extend(list(g[x][y]["config"]))
 open_switches = sorted(set(data.switches.keys()) - set(closed_switches))
 obj = {
-    "loss"         : loss,
+    "loss"         : float("%g" % loss),
     "open_switches": open_switches,
 }
 if "original_number" in data.switches.values()[0]:
