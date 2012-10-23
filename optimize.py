@@ -31,7 +31,7 @@ for s in sorted(switches):
         comps[c] = (i, set())
         i += 1
     comps[c][1].add(s)
-    for t in util.find_neighbors(s, data.nodes):
+    for t in data.find_neighbors(s):
         comps[c][1].add(t)
 assert sum([len(c[1]) for c in comps.values()]) == len(switches | sections - roots)
 
@@ -44,7 +44,7 @@ for c in comps:
     s = max(switches)
 
 assert len([t for s in data.sections if s < 0
-            for t in util.find_neighbors(s, data.nodes) if t in data.switches]) == 0, \
+            for t in data.find_neighbors(s) if t in data.switches]) == 0, \
     "root sections must be connected to a junction, not a switch"
 
 class Node:
@@ -70,10 +70,10 @@ g = nx.DiGraph()
 def calc_loss(closed_switches, comp, roots):
     current = {}
     for root in roots:
-        passed = set([s for s in util.find_neighbors(root, data.nodes) if s in data.sections])
-        branches = build_tree(tree, closed_switches, passed)
-        assert is_tree(branches)
-        current.update(calc_current(branches))
+        passed = set([s for s in data.find_neighbors(root) if s in data.sections])
+        branches = data.build_tree(root, closed_switches, passed)
+        assert util.is_tree(branches)
+        current.update(data.calc_current(root, branches))
     sections = [s for s in comp if s in data.sections]
     return sum([abs(current[s][i]**2 * data.sections[s]["impedance"][i].real)
                     for s in sections for i in range(3)])
@@ -95,7 +95,7 @@ def rebuild(entries, comp):
     roots = set()
     for s in comp:
         if s in data.sections:
-            for t in util.find_neighbors(s, data.nodes):
+            for t in data.find_neighbors(s):
                 if t in data.sections and data.sections[t]["substation"]:
                     roots.add(s)
                     break

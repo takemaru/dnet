@@ -4,8 +4,6 @@ import sys
 import unionfind
 import yaml
 
-import util
-
 dir = sys.argv[1] + "/" if len(sys.argv) > 1 else "t/"
 
 files = {
@@ -62,7 +60,15 @@ for line in open(files["root"]):
     loads[-n] = [float(lu), 0, float(lv), 0, float(lw), 0]
     impedances[-n] = [float(ir), float(ii)] * 3
 
-assert len([t for s in sections if s < 0 for t in util.find_neighbors(s, nodes.values()) if t in switches]) == 0, "root sections must be connected to a junction, not a switch"
+def find_neighbors(s):
+    neighbors = []
+    for ns in nodes.values():
+        if s in ns:
+            neighbors.extend(ns)
+    return set(neighbors) - set([s])
+
+assert len([t for s in sections if s < 0 for t in find_neighbors(s) if t in switches]) == 0, \
+    "root sections must be connected to a junction, not a switch"
 
 uf = unionfind.UnionFind()
 uf.insert_objects(switches | sections - roots)
@@ -82,7 +88,7 @@ while True:
     if s in visited: continue
     visited.append(s)
     neighbors = set()
-    for t in util.find_neighbors(s, nodes.values()):
+    for t in find_neighbors(s):
         neighbors.add(t)
     queue.extend(neighbors - set(visited) - set(queue) - roots)
     if queue == []: break
@@ -111,7 +117,7 @@ for i in range(1, len(comps) + 1):
             sorted_switches.append(s)
         visited.append(s)
         neighbors = set()
-        for t in util.find_neighbors(s, nodes.values()):
+        for t in find_neighbors(s):
             if t in comp[1]:
                 neighbors.add(t)
         queue.extend(neighbors - set(visited) - set(queue) - roots)

@@ -18,13 +18,13 @@ def define_subgraphs():
     sorted_sections = []
     for s in sorted(data.switches):
         ns = set()
-        for t in util.find_neighbors(s, data.nodes):
+        for t in data.find_neighbors(s):
             if t in data.sections:
                 ns.add(t)
         neighbors = set()
         is_root = False
         for t in sorted(ns):
-            for u in util.find_neighbors(t, data.nodes):
+            for u in data.find_neighbors(t):
                 if u in data.sections and u < t:
                     t = u
             neighbors.add(t)
@@ -38,7 +38,7 @@ def define_subgraphs():
     roots = set()
     for s in data.sections:
         if data.sections[s]["substation"]:
-            for t in util.find_neighbors(s, data.nodes):
+            for t in data.find_neighbors(s):
                 if t < s:
                     s = t
             roots.add(sorted_sections.index(s) + 1)
@@ -54,14 +54,14 @@ def define_subgraphs():
 def find_neighbor_switches(s, passed_sections):
     switches = set()
     if s in data.switches:
-        for t in util.find_neighbors(s, data.nodes) - passed_sections:
+        for t in data.find_neighbors(s) - passed_sections:
             assert t in data.sections
             passed_sections.add(t)
             for u in find_neighbor_switches(t, passed_sections.copy()):
                 switches.add(u)
     else:
         passed_sections.add(s)
-        for t in util.find_neighbors(s, data.nodes) - passed_sections:
+        for t in data.find_neighbors(s) - passed_sections:
             if t in data.switches:
                 switches.add(t)
             else:
@@ -84,24 +84,6 @@ def find_border_switches(root):
         for s in find_neighbor_switches(r, set()):
             border.add(s)
     return border
-
-def build_tree(root, closed_switches, passed):
-    branches = []
-    neighbors = util.find_neighbors(root, data.nodes) - passed
-    if len(neighbors) == 1:
-        s = neighbors.pop()
-        assert s in data.switches
-        if s in closed_switches:
-            t = (util.find_neighbors(s, data.nodes) - set([root])).pop()
-            branches.append((root, t))
-            branches.extend(build_tree(t, closed_switches - set([s]), passed | set([root, s, t])))
-    elif len(neighbors) > 1: # junction
-        for s in neighbors:
-            assert s in data.sections, (root, neighbors, s)
-            branches.append((root, s))
-        for s in neighbors:
-            branches.extend(build_tree(s, closed_switches.copy(), passed | set([root]) | neighbors))
-    return branches
 
 def is_tree(branches):
     '''inspired by networkx.algorithms.cycles'''
@@ -127,40 +109,12 @@ def is_tree(branches):
         root = None
     return True
 
-def calc_current(branches):
-    current = {}
-    for branch in branches:
-        s, t = branch
-        load = data.sections[t]["load"]
-        if t not in current:
-            current[t] = [0, 0, 0]
-        current[t][0] += load[0]
-        current[t][1] += load[1]
-        current[t][2] += load[2]
-        while True:
-            if s not in current:
-                current[s] = [0, 0, 0]
-            current[s][0] += load[0]
-            current[s][1] += load[1]
-            current[s][2] += load[2]
-            upper_branch = [b for b in branches if b[1] == s]
-            assert len(upper_branch) <= 1
-            if len(upper_branch) == 1:
-                s, t = upper_branch[0]
-            else:
-                break
-    load = data.sections[root]["load"]
-    current[root][0] += load[0]
-    current[root][1] += load[1]
-    current[root][2] += load[2]
-    return current
-
 def satisfies_electric_constraints(root, closed_switches):
-    branches = build_tree(root, closed_switches, set())
-    if not is_tree(branches):
+    branches = data.build_tree(root, closed_switches, set())
+    if not util.is_tree(branches):
         return False
 
-    current = calc_current(branches)
+    current = data.calc_current(root, branches)
     if abs(current[root][0]) > max_current or \
             abs(current[root][1]) > max_current or \
             abs(current[root][2]) > max_current:
