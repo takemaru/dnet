@@ -34,18 +34,18 @@ def define_subgraphs():
 
     roots = set()
     for s in nw.sections:
-        if nw.sections[s]["substation"]:
+        if nw.sections[s]['substation']:
             for t in nw.find_neighbors(s):
                 if t < s:
                     s = t
             roots.add(sorted_sections.index(s) + 1)
     assert len(roots) == len(nw.get_root_sections())
 
-    f = open(dir + "subgraphs", "w")
-    f.write("rforest " + " ".join([str(r) for r in sorted(roots)]) + "\n")
-    f.write("%d\n" % len(sorted_sections))
+    f = open(dir + 'subgraphs', 'w')
+    f.write('rforest ' + ' '.join([str(r) for r in sorted(roots)]) + '\n')
+    f.write('%d\n' % len(sorted_sections))
     for edge in edges:
-        f.write("%d %d\n" % (edge[0], edge[1]))
+        f.write('%d %d\n' % (edge[0], edge[1]))
     f.close()
 
 def find_neighbor_switches(s, processed_sections):
@@ -74,7 +74,7 @@ def find_surrounding_switches(root, closed_switches):
         return find_neighbor_switches(root, set())
 
 def find_border_switches(root):
-    assert nw.sections[root]["substation"]
+    assert nw.sections[root]['substation']
     border = set()
     for r in nw.get_root_sections() - set([root]):
         for s in find_neighbor_switches(r, set()):
@@ -119,13 +119,13 @@ def satisfies_electric_constraints(root, closed_switches):
 
     leaves = set(dnet.core.flatten(branches)) - set([b[0] for b in branches])
     for s in leaves:
-        voltage_drop = [current[s][i] * nw.sections[s]["impedance"][i] / 2 for i in range(3)]
+        voltage_drop = [current[s][i] * nw.sections[s]['impedance'][i] / 2 for i in range(3)]
         bs = [b for b in branches if b[1] == s]
         assert len(bs) == 1
         s, t = bs[0]
         while True:
             voltage_drop = \
-                [voltage_drop[i] + current[s][i] * nw.sections[s]["impedance"][i] for i in range(3)]
+                [voltage_drop[i] + current[s][i] * nw.sections[s]['impedance'][i] for i in range(3)]
             upper_branch = [b for b in branches if b[1] == s]
             assert len(upper_branch) <= 1
             if len(upper_branch) == 1:
@@ -143,12 +143,12 @@ def write_bitmap(f, closed_switches, open_switches):
     bits = []
     for s in sorted(nw.switches.keys()):
         if s in closed_switches:
-            bits.append("1")
+            bits.append('1')
         elif s in open_switches:
-            bits.append("0")
+            bits.append('0')
         else:
-            bits.append("*")
-    f.write(" ".join(bits) + "\n")
+            bits.append('*')
+    f.write(' '.join(bits) + '\n')
 
 def do_enumerate_bitmaps(root, f, closed_switches, fixed_switches):
     unfixed_switches = find_surrounding_switches(root, closed_switches) - fixed_switches
@@ -163,23 +163,24 @@ def do_enumerate_bitmaps(root, f, closed_switches, fixed_switches):
         do_enumerate_bitmaps(root, f, closed_switches.copy(), fixed_switches.copy())
 
 def enumerate_bitmaps(root):
-    f = open(dir + "%s.bitmaps" % root, "w")
+    f = open(dir + '%s.bitmaps' % root, 'w')
     if satisfies_electric_constraints(root, set()):
         write_bitmap(f, set(), find_surrounding_switches(root, set()))
     do_enumerate_bitmaps(root, f, set(), find_border_switches(root))
     f.close()
 
 def execute_fukashigi():
-    cmd = "  fukashigi -n %d -t diagram %ssubgraphs '&' " % (len(nw.switches), dir) + \
-        " '&' ".join(sorted([dir + "%s.bitmaps" % s for s in nw.sections if nw.sections[s]["substation"]])) + \
-        " > %sdiagram\n" % dir
+    cmd = 'fukashigi -n %d -t diagram %ssubgraphs "&" ' % (len(nw.switches), dir) + \
+        ' "&" '.join(sorted([dir + '%s.bitmaps' % s for s in nw.sections if nw.sections[s]['substation']])) + \
+        ' > %sdiagram' % dir
     ret = os.system(cmd)
     if ret <> 0:
+        sys.stderr('Error in fukashigi\n')
         sys.exit(ret)
 
 if __name__ == '__main__':
     nw = dnet.core.Network(open(sys.argv[1]))
-    dir = sys.argv[2] + "/" if len(sys.argv) > 2 else "./"
+    dir = sys.argv[2] + '/' if len(sys.argv) > 2 else './'
 
     define_subgraphs()
 

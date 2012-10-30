@@ -39,18 +39,18 @@ def is_tree(branches):
 class Network:
     def __init__(self, f):
         obj = yaml.load(f)
-        self.nodes = obj["nodes"]
-        self.switches = obj["switches"]
-        self.sections = obj["sections"]
+        self.nodes = obj['nodes']
+        self.switches = obj['switches']
+        self.sections = obj['sections']
         for s in self.sections.values():
-            l = s["load"]
-            i = s["impedance"]
-            s["load"]      = [l[0] + l[1] * 1j, l[2] + l[3] * 1j, l[4] + l[5] * 1j]
-            s["impedance"] = [i[0] + i[1] * 1j, i[2] + i[3] * 1j, i[4] + i[5] * 1j]
+            l = s['load']
+            i = s['impedance']
+            s['load']      = [l[0] + l[1] * 1j, l[2] + l[3] * 1j, l[4] + l[5] * 1j]
+            s['impedance'] = [i[0] + i[1] * 1j, i[2] + i[3] * 1j, i[4] + i[5] * 1j]
         self.neighbor_cache = {}
 
     def get_root_sections(self):
-        return set([s for s in self.sections if self.sections[s]["substation"]])
+        return set([s for s in self.sections if self.sections[s]['substation']])
 
     def find_neighbors(self, s):
         if s not in self.neighbor_cache:
@@ -83,7 +83,7 @@ class Network:
         current = { root: [0, 0, 0] }
         for branch in branches:
             s, t = branch
-            load = self.sections[t]["load"]
+            load = self.sections[t]['load']
             if t not in current:
                 current[t] = [0, 0, 0]
             current[t] = [current[t][i] + load[i] for i in range(3)]
@@ -97,7 +97,7 @@ class Network:
                     s, t = upper_branch[0]
                 else:
                     break
-        load = self.sections[root]["load"]
+        load = self.sections[root]['load']
         current[root] = [current[root][i] + load[i] for i in range(3)]
         return current
 
@@ -106,14 +106,14 @@ class Network:
         assert is_tree(branches)
         sections = set([root] + flatten(branches))
         current = self.calc_current(root, branches)
-        return sum([abs(current[s][i]**2 * self.sections[s]["impedance"][i].real)
+        return sum([abs(current[s][i]**2 * self.sections[s]['impedance'][i].real)
                     for s in sections for i in range(3)])
 
 if __name__ == '__main__':
     nw = Network(sys.stdin)
-    open_switches = [s if s.startswith("switch") else "switch_%04d" % int(s) for s in sys.argv[1:]]
+    open_switches = [s if s.startswith('switch') else 'switch_%04d' % int(s) for s in sys.argv[1:]]
     closed_switches = set(nw.switches.keys()) - set(open_switches)
     loss = 0
     for root in nw.get_root_sections():
         loss += nw.calc_loss(root, closed_switches, set())
-    print "%g" % loss
+    print '%g' % loss
