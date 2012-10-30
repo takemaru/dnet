@@ -12,7 +12,6 @@ setup(name='dnet',
       requires=['networkx', 'yaml'],
 
 #      py_modules=['foo'],
-#      scripts=['scripts/xmlproc_parse', 'scripts/xmlproc_val'],
 #      package_dir={'mypkg': 'src/mypkg'},
 #      package_data={'mypkg': ['data/*.dat']},
 #      data_files=[('bitmaps', ['bm/b1.gif', 'bm/b2.gif']),

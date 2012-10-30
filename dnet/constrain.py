@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import math
+import os
 import sys
 
 import dnet.core
@@ -168,17 +169,21 @@ def enumerate_bitmaps(root):
     do_enumerate_bitmaps(root, f, set(), find_border_switches(root))
     f.close()
 
+def execute_fukashigi():
+    cmd = "  fukashigi -n %d -t diagram %ssubgraphs '&' " % (len(nw.switches), dir) + \
+        " '&' ".join(sorted([dir + "%s.bitmaps" % s for s in nw.sections if nw.sections[s]["substation"]])) + \
+        " > %sdiagram\n" % dir
+    ret = os.system(cmd)
+    if ret <> 0:
+        sys.exit(ret)
+
 if __name__ == '__main__':
-    dir = sys.argv[1] + "/" if len(sys.argv) > 1 else "./"
-    nw = dnet.core.Network(sys.stdin)
+    nw = dnet.core.Network(open(sys.argv[1]))
+    dir = sys.argv[2] + "/" if len(sys.argv) > 2 else "./"
 
     define_subgraphs()
 
     for root in nw.get_root_sections():
         enumerate_bitmaps(root)
 
-    msg = "Build a diagram by the following command:\n"
-    cmd = "  fukashigi -n %d -t diagram %ssubgraphs '&' " % (len(nw.switches), dir) + \
-        " '&' ".join(sorted([dir + "%s.bitmaps" % s for s in nw.sections if nw.sections[s]["substation"]])) + \
-        " > %sgrid.diagram\n" % dir
-    sys.stderr.write(msg + cmd)
+    execute_fukashigi()

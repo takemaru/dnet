@@ -102,12 +102,12 @@ def rebuild(entries, comp):
     return next_entries
 
 if __name__ == '__main__':
-    nw = dnet.core.Network(sys.stdin)
+    nw = dnet.core.Network(open(sys.argv[1]))
 
     comps = find_components()
 
     nodes = { "1": Node("1: (~0?1:1)") }
-    for line in open(sys.argv[1]):
+    for line in sys.stdin:
         n = Node(line)
         nodes[n.n] = n
         if n.v == 1:
