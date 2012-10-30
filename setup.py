@@ -8,7 +8,7 @@ setup(name='dnet',
       url='http://www-erato.ist.hokudai.ac.jp/?language=en',
       license='MIT License',
       packages=['dnet'],
-      scripts=['scripts/dnet-converter'],
+      scripts=['scripts/dnet-converter', 'scripts/dnet-enumerator', 'scripts/dnet-optimizer'],
       requires=['networkx', 'yaml'],
 
 #      py_modules=['foo'],
