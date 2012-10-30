@@ -3,7 +3,7 @@
 import math
 import sys
 
-import grid.core
+import dnet.core
 
 max_current     = 300
 sending_voltage = 6600 / math.sqrt(3)
@@ -40,7 +40,7 @@ def define_subgraphs():
             roots.add(sorted_sections.index(s) + 1)
     assert len(roots) == len(nw.get_root_sections())
 
-    f = open(dir + "grid.subgraphs", "w")
+    f = open(dir + "subgraphs", "w")
     f.write("rforest " + " ".join([str(r) for r in sorted(roots)]) + "\n")
     f.write("%d\n" % len(sorted_sections))
     for edge in edges:
@@ -82,7 +82,7 @@ def find_border_switches(root):
 
 def is_tree(branches):
     '''inspired by networkx.algorithms.cycles'''
-    gnodes = set(grid.core.flatten(branches))
+    gnodes = set(dnet.core.flatten(branches))
     while gnodes:
         root = gnodes.pop()
         stack = [root]
@@ -106,7 +106,7 @@ def is_tree(branches):
 
 def satisfies_electric_constraints(root, closed_switches):
     branches = nw.build_tree(root, closed_switches, set())
-    if not grid.core.is_tree(branches):
+    if not dnet.core.is_tree(branches):
         return False
 
     current = nw.calc_current(root, branches)
@@ -114,9 +114,9 @@ def satisfies_electric_constraints(root, closed_switches):
             abs(current[root][1]) > max_current or \
             abs(current[root][2]) > max_current:
         return False
-    assert len(current) == len(set(grid.core.flatten(branches)))
+    assert len(current) == len(set(dnet.core.flatten(branches)))
 
-    leaves = set(grid.core.flatten(branches)) - set([b[0] for b in branches])
+    leaves = set(dnet.core.flatten(branches)) - set([b[0] for b in branches])
     for s in leaves:
         voltage_drop = [current[s][i] * nw.sections[s]["impedance"][i] / 2 for i in range(3)]
         bs = [b for b in branches if b[1] == s]
@@ -162,7 +162,7 @@ def do_enumerate_bitmaps(root, f, closed_switches, fixed_switches):
         do_enumerate_bitmaps(root, f, closed_switches.copy(), fixed_switches.copy())
 
 def enumerate_bitmaps(root):
-    f = open(dir + "grid-%s.bitmaps" % root, "w")
+    f = open(dir + "%s.bitmaps" % root, "w")
     if satisfies_electric_constraints(root, set()):
         write_bitmap(f, set(), find_surrounding_switches(root, set()))
     do_enumerate_bitmaps(root, f, set(), find_border_switches(root))
@@ -170,7 +170,7 @@ def enumerate_bitmaps(root):
 
 if __name__ == '__main__':
     dir = sys.argv[1] + "/" if len(sys.argv) > 1 else "./"
-    nw = grid.core.Network(sys.stdin)
+    nw = dnet.core.Network(sys.stdin)
 
     define_subgraphs()
 
@@ -178,7 +178,7 @@ if __name__ == '__main__':
         enumerate_bitmaps(root)
 
     msg = "Build a diagram by the following command:\n"
-    cmd = "  /path/to/solver -n %d -t diagram %sgrid.subgraphs '&' " % (len(nw.switches), dir) + \
-        " '&' ".join(sorted([dir + "grid-%s.bitmaps" % s for s in nw.sections if nw.sections[s]["substation"]])) + \
+    cmd = "  fukashigi -n %d -t diagram %ssubgraphs '&' " % (len(nw.switches), dir) + \
+        " '&' ".join(sorted([dir + "%s.bitmaps" % s for s in nw.sections if nw.sections[s]["substation"]])) + \
         " > %sgrid.diagram\n" % dir
     sys.stderr.write(msg + cmd)

@@ -3,9 +3,9 @@
 import networkx as nx
 import re
 import sys
-import unionfind
 
-import grid.core
+import dnet.core
+import dnet.unionfind
 
 class Node:
     def __init__(self, str):
@@ -19,7 +19,7 @@ def find_components():
     switches = set(nw.switches.keys())
     sections = set(nw.sections.keys())
     roots = nw.get_root_sections()
-    uf = unionfind.UnionFind()
+    uf = dnet.unionfind.UnionFind()
     uf.insert_objects(switches | sections - roots)
     for s in sorted(switches | sections - roots):
         neighbors = set()
@@ -102,7 +102,7 @@ def rebuild(entries, comp):
     return next_entries
 
 if __name__ == '__main__':
-    nw = grid.core.Network(sys.stdin)
+    nw = dnet.core.Network(sys.stdin)
 
     comps = find_components()
 

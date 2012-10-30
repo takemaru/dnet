@@ -1,0 +1,5 @@
+include AUTHORS.txt Makefile MIT-LICENSE.txt README.md setup.py \
+  test/data.yaml test/result.yaml test/section_-001.bitmaps \
+  test/section_-002.bitmaps test/section_-003.bitmaps test/diagram \
+  test/subgraphs test/data/LNewSL.dat test/data/LNewZ.dat \
+  test/data/root.dat test/data/sw_list.dat test/data/SWed.dat
