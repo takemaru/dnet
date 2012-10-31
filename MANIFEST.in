@@ -1,5 +1,5 @@
 include AUTHORS.txt Makefile MIT-LICENSE.txt README.md setup.py \
-  doc/dnet-theory.pdf doc/fig/sample_nw.png \
+  doc/dnet-theory.pdf doc/example_nw.png \
   pkg/frontier-0.1.tar.gz pkg/fukashigi-0.1.tar.gz \
   pkg/sapporobdd-0.1.tar.gz \
   test/data.yaml test/result.yaml test/section_-001.bitmaps \
