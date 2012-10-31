@@ -1,5 +1,4 @@
-Copyright 2012 JST ERATO Minato project and other contributors
-http://www-erato.ist.hokudai.ac.jp/?language=en
+Copyright 2012 Takeru Inoue and other contributors
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

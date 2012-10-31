@@ -110,7 +110,7 @@ class Network:
                     for s in sections for i in range(3)])
 
 if __name__ == '__main__':
-    nw = Network(sys.stdin)
+    nw = Network(open(sys.argv[1]))
     open_switches = [s if s.startswith('switch') else 'switch_%04d' % int(s) for s in sys.argv[1:]]
     closed_switches = set(nw.switches.keys()) - set(open_switches)
     loss = 0
