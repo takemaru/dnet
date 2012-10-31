@@ -19,7 +19,7 @@ check_enumerator:
 	diff -bru test/diagram /tmp/dnet/diagram
 
 check_loss:
-	python script/dnet-loss -c test/data.yaml 1 2 3 5 6 8 9 10 11 13 14 16 > /tmp/dnet/loss
+	python script/dnet-loss test/data.yaml -c 1 2 3 5 6 8 9 10 11 13 14 16 > /tmp/dnet/loss
 	diff -bru test/loss /tmp/dnet/loss
 
 check_optimizer:
