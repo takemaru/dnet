@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 import networkx as nx
 import re
 import sys
@@ -102,12 +103,20 @@ def rebuild(entries, comp):
     return next_entries
 
 if __name__ == '__main__':
-    nw = dnet.core.Network(open(sys.argv[1]))
+    parser = argparse.ArgumentParser(
+        description='enumerate feasible configurations.')
+    parser.add_argument('data_file', type=file,
+                        help='network data in YAML file')
+    parser.add_argument('diagram_file', type=file, nargs='?', default=sys.stdin,
+                        help='diagraul resulted by dnet-enumerator (default: stdin)')
+    args = parser.parse_args()
+
+    nw = dnet.core.Network(args.data_file)
 
     comps = find_components()
 
     nodes = { '1': Node('1: (~0?1:1)') }
-    for line in sys.stdin:
+    for line in args.diagram_file:
         n = Node(line)
         nodes[n.n] = n
         if n.v == 1:

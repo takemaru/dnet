@@ -103,17 +103,8 @@ class Network:
 
     def calc_loss(self, root, closed_switches, barrier):
         branches = self.build_tree(root, closed_switches, barrier)
-        assert is_tree(branches)
+        assert is_tree(branches), "loop found"
         sections = set([root] + flatten(branches))
         current = self.calc_current(root, branches)
         return sum([abs(current[s][i]**2 * self.sections[s]['impedance'][i].real)
                     for s in sections for i in range(3)])
-
-if __name__ == '__main__':
-    nw = Network(open(sys.argv[1]))
-    open_switches = [s if s.startswith('switch') else 'switch_%04d' % int(s) for s in sys.argv[1:]]
-    closed_switches = set(nw.switches.keys()) - set(open_switches)
-    loss = 0
-    for root in nw.get_root_sections():
-        loss += nw.calc_loss(root, closed_switches, set())
-    print '%g' % loss

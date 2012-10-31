@@ -121,8 +121,8 @@ $ fukashigi -n 16 -t cardinality /tmp/dnet/diagram
 
 This network has 111 feasible configurations.
 
-Next, we select a single feasible configuration uniformly randomly
-from them.
+Next, we do random sampling; select a single feasible configuration
+uniformly randomly from feasible ones.
 
 ```bash
 $ fukashigi -n 16 -t 1 /tmp/dnet/diagram 
@@ -130,13 +130,35 @@ $ fukashigi -n 16 -t 1 /tmp/dnet/diagram
 ```
 
 The result shows a list of switch numbers that are closed in the
-configuration.
+configuration (your result may be different depending on random number
+generators).
 
-スイッチ 2 を閉じて 3 を開いた config
+We retrieve configurations by issuing a query; e.g., switch-1 to
+switch-5 are closed, while switch-8 *or* switch-9 is open.
 
+```bash
+$ echo "1 2 3 4 5" > closed
+$ echo "8 9" > open
+$ fukashigi -n 16 -t e /tmp/dnet/diagram "/" closed "%" open
+7 8 10 12 13 14 15
+7 8 10 12 13 14 16
+7 8 10 12 13 15 16
+7 9 10 12 13 14 15
+7 9 10 12 13 14 16
+7 9 10 12 13 15 16
+```
 
-最後に，core.py で損失を計算
+The result shows six configurations that meet the query; note that
+closed switches in the query (switch-1 to switch-5) are omitted.
 
+Finally, we can calculate power loss of a given confiugration.
+
+```bash
+$ python dnet/core.py test/data.yaml -c 1 3 4 5 6 8 9 10 11 12 14 16
+
+```
+
+script/dnet-loss を作って，開閉どちらのスイッチリストも受け付ける
 
 ### Power loss minimization
 

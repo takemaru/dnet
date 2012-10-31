@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+
+import argparse
+import sys
+
+import dnet.core
+
+parser = argparse.ArgumentParser(
+    description='calculate power loss for the given switch configuration.')
+parser.add_argument('-c', dest='is_closed', action='store_true',
+                    help='indicate if the given switches are closed')
+parser.add_argument('data_file', type=file,
+                    help='network data in YAML file')
+parser.add_argument('switch', type=str, nargs='+',
+                    help='list of open (or closed if -c option) switches')
+args = parser.parse_args()
+
+nw = dnet.core.Network(args.data_file)
+switches = set([s if s.startswith('switch') else 'switch_%04d' % int(s) for s in args.switch])
+closed_switches = switches if args.is_closed else set(nw.switches.keys()) - switches
+
+loss = 0
+for root in nw.get_root_sections():
+    loss += nw.calc_loss(root, closed_switches, set())
+print '%g' % loss
