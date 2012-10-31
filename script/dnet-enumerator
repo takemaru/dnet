@@ -9,7 +9,7 @@ import dnet.core
 
 max_current     = 300
 sending_voltage = 6600 / math.sqrt(3)
-min_voltage     = 6300 / math.sqrt(3)
+voltage_range   = (6300 / math.sqrt(3), 6900 / math.sqrt(3))
 
 def define_subgraphs():
     edges = []
@@ -133,9 +133,12 @@ def satisfies_electric_constraints(root, closed_switches):
                 s, t = upper_branch[0]
             else:
                 break
-        if abs(sending_voltage - voltage_drop[0]) < min_voltage or \
-                abs(sending_voltage - voltage_drop[1]) < min_voltage or \
-                abs(sending_voltage - voltage_drop[2]) < min_voltage:
+        if abs(sending_voltage - voltage_drop[0]) < voltage_range[0] or \
+                abs(sending_voltage - voltage_drop[1]) < voltage_range[0] or \
+                abs(sending_voltage - voltage_drop[2]) < voltage_range[0] or \
+                voltage_range[1] < abs(sending_voltage - voltage_drop[0]) or \
+                voltage_range[1] < abs(sending_voltage - voltage_drop[1]) or \
+                voltage_range[1] < abs(sending_voltage - voltage_drop[2]):
             return False
 
     return True

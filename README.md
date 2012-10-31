@@ -16,7 +16,8 @@ zero-suppressed binary decision diagram.
 DNET requires distribution network data including topology (line
 connectivity and switch positions), and loads and impedances for all
 line sections.  DNET supports the constraints of radiality, line
-capacity, and voltage drop.  Capacitor control is not cared in DNET.
+capacity, and voltage profiles.  Capacitor control is not cared in
+DNET.
 
 DNET can be used freely under the MIT license, which is found in
 `MIT-LICENSE.txt` in the DNET package.  We would really appreciate if
@@ -192,8 +193,8 @@ Usage
 We first enumerate all feasible configurations in the compressive
 graph represesntation (don't worry, you do not have to understand the
 complicated graph representation).  For the constraints of line
-capacity and voltage drop, maximum current and minimum voltage must be
-defined at the head of `script/dnet-enumerator`.
+capacity and voltage profiles, maximum current and voltage range must
+be defined at the head of `script/dnet-enumerator`.
 
 In this tutorial, we choose `/tmp/dnet` as the output directory, in
 which result files will be placed.
