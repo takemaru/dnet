@@ -24,14 +24,14 @@ three-phase loads.  We believe that DNET brings you to the next stage
 of power distribution network analysis.
 
 DNET can be used freely under the MIT license, which is found in
-`MIT-LICENSE.txt` in the DNET package.  We would really appreciate if
+[MIT-LICENSE.txt] in the DNET package.  We would really appreciate if
 you would address our contribution in your paper on the use of DNET
 (e.g., in Acknowledgement section in the paper).
 
 DNET is mainly developed in [JST ERATO Minato
 project](http://www-erato.ist.hokudai.ac.jp/?language=en).  It is
-implemented by the authors listed in `AUTHORS.txt`, and its theory is
-studied by several people as described in `doc/dnet-thoery.pdf`.
+implemented by the authors listed in [AUTHORS.txt], and its theory is
+studied by several people as described in [theory.pdf].
 
 DNET is still under the development.  The current version just
 supports configuration search and loss minimization, but we believe
@@ -82,7 +82,7 @@ $ sudo make install
 $ cd ../
 ```
 
-If you use a 64-bit machine, you can pass `--enable-64bit` option to
+If you use a 64-bit machine, you can pass --enable-64bit option to
 configure scripts for all the packages.
 
 DNET also depends some Python modules.  Install them as follows or by
@@ -120,15 +120,15 @@ Network data
 DNET requires network data, which includes network topology (line
 connectivity and switch positions), loads, and impedance.  The data
 must be formatted by [YAML](http://en.wikipedia.org/wiki/YAML) syntax.
-We explain the formatting rules using an example, `test/data.yaml` in
+We explain the formatting rules using an example, [test/data.yaml] in
 the DNET package.  This example network consists of three feeders and
 16 switches, as shown in the figure.
 
-![Example network](doc/example_nw.png)
+![Example network](http://github.com/takemaru/dnet/blob/master/doc/example_nw.png?raw=true)
 
-The data file, `test/data.yaml`, is divided into three parts; nodes,
-sections, and switches.  Since YAML rules are quite simple, we believe
-it is not so difficult to understand it.
+The data file is divided into three parts; nodes, sections, and
+switches.  Since YAML rules are quite simple, we believe it is not so
+difficult to understand it.
 
 ### Nodes
 
@@ -154,7 +154,7 @@ The "sections" part describes section information including load and
 impedance.  In DNET, loads are assumed to be unbalanced three-phase
 and be connected in delta.  Loads are also assumed to be uniformly
 distributed along a line section, and are modeled as constant current,
-not as power (see Section 2 in `doc/dnet-theory.pdf` for more detail).
+not as power (see Section 2 in [theory.pdf] for more detail).
 
 In the data file, load and impedance are specified by six values,
 which are real and imaginary parts of the three phases; for
@@ -193,8 +193,7 @@ proximity in the network as shown in the figure, because DNET's
 efficiency highly depends on the order.  Third, in the loss
 minimization, the order must not step over junctions connected to a
 substation (such junctions are indicated by red circles in the
-figure); see Sections 4.1 and 5.1 in `doc/dnet-theory.pdf` for more
-detail.
+figure); see Sections 4.1 and 5.1 in [theory.pdf] for more detail.
 
 Optionally, switches may have original_number attribute, which is the
 original switch number in your data and will be shown in the DNET's
@@ -307,7 +306,7 @@ open_switches: ['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015']
 
 The minimum loss is 72055.7 and the lower bound is 69238.4; the lower
 bound means a theoretical bound under which the minimum loss never be
-(see Section 3.3 in `doc/dnet-theory.pdf` in detail).  In the optimal
+(see Section 3.3 in [theory.pdf] in detail).  In the optimal
 configuration, switch-4, switch-7, switch-12, and switch-15 are open,
 and other switches are closed.
 
@@ -324,7 +323,7 @@ the load profiles.  Enumerate configurations for each load profile,
 and combine them as follows by using fukashigi.
 
 ```bash
-$ fukashigi -n <# of switches> -t diagram result-1/diagram "&" and result-2/diagram "&" ...
+$ fukashigi -n <number of switches> -t diagram result-1/diagram "&" and result-2/diagram "&" ...
 ```
 
 Next, we search for the minimum energy-loss configuration.
@@ -340,35 +339,37 @@ sections:
     substation: true
 ```
 
-Fix `dnet.core.Network.__init__` to handle multiple load profiles.
-Fix `dnet.core.Network.calc_current` to choose a load profile by
-adding an argument, and modify `dnet.core.Network.calc_loss` to call
+Fix dnet.core.Network.__init__() to handle multiple load profiles.
+Fix dnet.core.Network.calc_current() to choose a load profile by
+adding an argument, and modify dnet.core.Network.calc_loss() to call
 calc_current multiple times by changing the argument.
 
 Limitations
 ---------------------------------------------------------------------
 
-DNET assumes that controllable components are just switches in a
-distribution network while other components like capacitors are
-ignored.
-
-Section loads are given as constant current and must be non-negative.
-This can be an issue if introducing distributed generators; see
-Sections 4.1 and 8 in `doc/dnet-theory.pdf` for more detail.
-
-In the loss minimization, switches between a substation and a junction
-are assumed to be closed; see Section 4.1 in `doc/dnet-theory.pdf` for
-more detail.
+- DNET assumes that controllable components are just switches in a
+  distribution network while other components like capacitors are
+  ignored.
+- Section loads are given as constant current and must be
+  non-negative.  This can be an issue if introducing distributed
+  generators; see Sections 4.1 and 8 in [theory.pdf] for more detail.
+- In the loss minimization, switches between a substation and a
+  junction are assumed to be closed; see Section 4.1 in [theory.pdf]
+  for more detail.
 
 References
 ---------------------------------------------------------------------
 
-Takeru Inoue, "Theory of Distribution Network Evaluation Tool,"
-`doc/dnet-theory.pdf`.
+- Takeru Inoue, "Theory of Distribution Network Evaluation Tool."
+  [theory.pdf]
+- Takeru Inoue, Keiji Takano, Takayuki Watanabe, Jun Kawahara, Ryo
+  Yoshinaka, Akihiro Kishimoto, Koji Tsuda, Shin-ichi Minato, and
+  Yasuhiro Hayashi, "Loss Minimization of Power Distribution Networks
+  with Guaranteed Error Bound," Hokkaido University, Division of
+  Computer Science, TCS Technical Reports, TCS-TR-A-12-59, August 2012.
+  ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf))
 
-Takeru Inoue, Keiji Takano, Takayuki Watanabe, Jun Kawahara, Ryo
-Yoshinaka, Akihiro Kishimoto, Koji Tsuda, Shin-ichi Minato, and
-Yasuhiro Hayashi, "Loss Minimization of Power Distribution Networks
-with Guaranteed Error Bound," Hokkaido University, Division of
-Computer Science, TCS Technical Reports, TCS-TR-A-12-59, August 2012.
-([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf))
+[AUTHORS.txt]: http://github.com/takemaru/dnet/blob/master/AUTHORS.txt
+[MIT-LICENSE.txt]: http://github.com/takemaru/dnet/blob/master/MIT-LICENSE.txt
+[test/data.yaml]: http://github.com/takemaru/dnet/blob/master/test/data.yaml
+[theory.pdf]: http://github.com/takemaru/dnet/blob/master/doc/dnet-theory.pdf?raw=true
