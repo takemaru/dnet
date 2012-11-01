@@ -46,8 +46,8 @@ Installation
 First, we extract a DNET package and move into it.
 
 ```bash
-$ tar fxz dnet-0.1.0.tar.gz
-$ cd dnet-0.1.0/
+$ git clone https://github.com/takemaru/dnet.git
+$ cd dnet/
 ```
 
 Next, we resolve dependencies.  DNET requires *fukashigi*
@@ -76,7 +76,6 @@ $ cd ../
 $ tar fxz fukashigi-0.1.tar.gz
 $ cd fukashigi-0.1/
 $ ./configure
-$ make
 $ make check
 $ sudo make install
 $ cd ../
