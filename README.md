@@ -4,20 +4,24 @@ DNET - Distribution Network Evaluation Tool
 What's DNET
 ---------------------------------------------------------------------
 
-DNET (Distribution Network Evaluation Tool) is an efficient analysis
-tool that evaluates power distribution networks for power loss
-minimization, service restoration, and so forth.  DNET examines all
-network configurations (i.e., all combinations of switch's on-off
-status in a network), and efficiently finds the best one you want.  It
-is highly scalable and so it handles a network with hundreds of
-switches, thanks to the use of compressive graph representation named
-zero-suppressed binary decision diagram.
+DNET (Distribution Network Evaluation Tool) is an analysis tool that
+evaluates power distribution networks for efficient and stable
+operation such as loss minimization and service restoration.
 
-DNET requires distribution network data including topology (line
-connectivity and switch positions), and loads and impedances for all
-line sections.  DNET supports the constraints of radiality, line
-capacity, and voltage profiles.  Capacitor control is not cared in
-DNET.
+Power distribution networks consist of several switches, and
+reconfigure thier structures, or *configurations*, by changing the
+open/closed status of the switches depending on the operational
+requirements.  However, networks of practical size have hundreds of
+switches, which makes network analysis a quite tough problem due to
+the huge size of search space.  Moreover, power distribution networks
+are generally operated in a radial structure under the complicated
+operational constraints such as line capacity and voltage profiles.
+
+DNET finds the best configuration you want with a great efficiency,
+while it examines all feasible configurations without stucking local
+minima.  It supports all the constraints with realistic unbalanced
+three-phase loads.  We believe that DNET brings you to the next stage
+of power distribution network analysis.
 
 DNET can be used freely under the MIT license, which is found in
 `MIT-LICENSE.txt` in the DNET package.  We would really appreciate if
@@ -32,13 +36,14 @@ studied by several people as described in `doc/dnet-thoery.pdf`.
 DNET is still under the development.  The current version just
 supports configuration search and loss minimization, but we believe
 service restoration is also possible if you can use DNET appropriately
-with deep understanding of the DNET theory.  We really appreciate any
-pull request and patch.
+with deep understanding of the theory.  We really appreciate any pull
+request and patch if you add some changes that benefit a wide variety
+of people.
 
 Installation
 ---------------------------------------------------------------------
 
-First, we extract DNET and move into it.
+First, we extract a DNET package and move into it.
 
 ```bash
 $ tar fxz dnet-0.1.0.tar.gz
@@ -49,7 +54,7 @@ Next, we resolve dependencies.  DNET requires *fukashigi*
 combinatorial problem solver, and fukashigi depends on two libraries
 (frontier method and binary decision diagrams).  These packages are
 not yet available online (will be soon we believe), and so we include
-them in `pkg/` directory in the DNET.  Install them as follows:
+them in `pkg/` in the DNET.  Install them as follows.
 
 ```bash
 $ cd pkg/
@@ -80,9 +85,27 @@ $ cd ../
 If you use a 64-bit machine, you can pass `--enable-64bit` option to
 configure scripts for all the packages.
 
-Finally, we can do tests for DNET by:
+DNET also depends some Python modules.  Install them as follows or by
+using pip.
 
 ```bash
+$ tar fxz networkx-1.7.tar.gz
+$ cd networkx-1.7/
+$ python setup.py build
+$ sudo python setup.py install
+$ cd ../
+
+$ tar fxz PyYAML-3.10.tar.gz
+$ cd PyYAML-3.10/
+$ python setup.py build
+$ sudo python setup.py install
+$ cd ../
+```
+
+Finally, we can do self-tests for DNET by,
+
+```bash
+$ cd ../
 $ make check
 :
 ok
@@ -94,15 +117,17 @@ have been done successfully.
 Data format
 ---------------------------------------------------------------------
 
-In DNET, distribution network data must be formatted following
-[YAML](http://en.wikipedia.org/wiki/YAML).  Since YAML has quite
-simple rules to format complicated numerical data like distribution
-network, it is very easy to convert your data to DNET format; see the
-example, `test/data.yaml` in the DNET package, and you understand the
-rules readily.
+DNET requires network data, which includes network topology (line
+connectivity and switch positions), loads, and impedance.  The data
+must be formatted by [YAML](http://en.wikipedia.org/wiki/YAML) syntax.
+Since YAML has quite simple rules to format complicated numerical data
+like distribution network, it is very easy to convert your data to
+DNET format; see the example, `test/data.yaml` in the DNET package,
+and you understand the rules readily.
 
-The example data consists of three feeders and 16 switches, as shown
-in the figure.
+We explain the formatting rules by using the following example.  This
+example network consists of three feeders and 16 switches, as shown in
+the figure.
 
 ![Example network](doc/example_nw.png)
 
@@ -184,7 +209,7 @@ file `sw_list.dat` that includes switch numbers; see examples in
 `test/data/`.  The data is converted as follows.
 
 ```bash
-$ ./script/dnet-converter test/data > data.yaml
+$ python script/dnet-converter test/data > data.yaml
 ```
 
 Usage
@@ -200,7 +225,7 @@ In this tutorial, we choose `/tmp/dnet` as the output directory, in
 which result files will be placed.
 
 ```bash
-$ ./script/dnet-enumerator test/data.yaml /tmp/dnet
+$ python script/dnet-enumerator test/data.yaml /tmp/dnet
 ```
 
 You find some files in `/tmp/dnet`, and `/tmp/dnet/diagram` includes
@@ -248,7 +273,7 @@ result.
 Finally, we can calculate power loss of a given confiugration.
 
 ```bash
-$ ./script/dnet-loss test/data.yaml -c 1 3 4 5 6 8 9 10 11 12 14 16
+$ python script/dnet-loss test/data.yaml -c 1 3 4 5 6 8 9 10 11 12 14 16
 74285.5
 ```
 
@@ -258,7 +283,7 @@ We search for the minimum loss configuration from all feasible
 configurations enumerated abolve.
 
 ```bash
-$ ./script/dnet-optimizer test/data.yaml test/diagram
+$ python script/dnet-optimizer test/data.yaml test/diagram
 minimum_loss: 72055.7
 loss_without_root_sections: 47781.7
 lower_bound_of_minimum_loss: 69238.4
