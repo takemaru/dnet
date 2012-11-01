@@ -4,6 +4,7 @@ check: check_mkdir check_converter check_enumerator check_loss check_optimizer
 	@echo ok
 
 check_mkdir:
+	-rm -rf /tmp/dnet
 	mkdir -p /tmp/dnet
 
 check_converter:

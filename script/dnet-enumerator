@@ -42,7 +42,7 @@ def define_subgraphs():
             roots.add(sorted_sections.index(s) + 1)
     assert len(roots) == len(nw.get_root_sections())
 
-    f = open(result_dir + 'subgraphs', 'w')
+    f = open(result_dir + '/subgraphs', 'w')
     f.write('rforest ' + ' '.join([str(r) for r in sorted(roots)]) + '\n')
     f.write('%d\n' % len(sorted_sections))
     for edge in edges:
@@ -167,16 +167,16 @@ def do_enumerate_bitmaps(root, f, closed_switches, fixed_switches):
         do_enumerate_bitmaps(root, f, closed_switches.copy(), fixed_switches.copy())
 
 def enumerate_bitmaps(root):
-    f = open(result_dir + '%s.bitmaps' % root, 'w')
+    f = open(result_dir + '/%s.bitmaps' % root, 'w')
     if satisfies_electric_constraints(root, set()):
         write_bitmap(f, set(), find_surrounding_switches(root, set()))
     do_enumerate_bitmaps(root, f, set(), find_border_switches(root))
     f.close()
 
 def execute_fukashigi():
-    cmd = 'fukashigi -n %d -t diagram %ssubgraphs "&" ' % (len(nw.switches), result_dir) + \
-        ' "&" '.join(sorted([result_dir + '%s.bitmaps' % s for s in nw.sections if nw.sections[s]['substation']])) + \
-        ' > %sdiagram' % result_dir
+    cmd = 'fukashigi -n %d -t diagram %s/subgraphs "&" ' % (len(nw.switches), result_dir) + \
+        ' "&" '.join(sorted([result_dir + '/%s.bitmaps' % s for s in nw.sections if nw.sections[s]['substation']])) + \
+        ' > %s/diagram' % result_dir
     ret = os.system(cmd)
     if ret <> 0:
         sys.stderr('Error in fukashigi\n')

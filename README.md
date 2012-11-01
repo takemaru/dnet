@@ -9,7 +9,7 @@ evaluates power distribution networks for efficient and stable
 operation such as loss minimization and service restoration.
 
 Power distribution networks consist of several switches, and
-reconfigure thier structures, or *configurations*, by changing the
+reconfigure their structures, or *configurations*, by changing the
 open/closed status of the switches depending on the operational
 requirements.  However, networks of practical size have hundreds of
 switches, which makes network analysis a quite tough problem due to
@@ -18,7 +18,7 @@ are generally operated in a radial structure under the complicated
 operational constraints such as line capacity and voltage profiles.
 
 DNET finds the best configuration you want with a great efficiency,
-while it examines all feasible configurations without stucking local
+while it examines all feasible configurations without stuck in local
 minima.  It supports all the constraints with realistic unbalanced
 three-phase loads.  We believe that DNET brings you to the next stage
 of power distribution network analysis.
@@ -114,33 +114,31 @@ ok
 If you found "ok" at the end of test results, the installation would
 have been done successfully.
 
-Data format
+Network data
 ---------------------------------------------------------------------
 
 DNET requires network data, which includes network topology (line
 connectivity and switch positions), loads, and impedance.  The data
 must be formatted by [YAML](http://en.wikipedia.org/wiki/YAML) syntax.
-Since YAML has quite simple rules to format complicated numerical data
-like distribution network, it is very easy to convert your data to
-DNET format; see the example, `test/data.yaml` in the DNET package,
-and you understand the rules readily.
-
-We explain the formatting rules by using the following example.  This
-example network consists of three feeders and 16 switches, as shown in
-the figure.
+We explain the formatting rules using an example, `test/data.yaml` in
+the DNET package.  This example network consists of three feeders and
+16 switches, as shown in the figure.
 
 ![Example network](doc/example_nw.png)
 
 The data file, `test/data.yaml`, is divided into three parts; nodes,
-sections, and switches.  
+sections, and switches.  Since YAML rules are quite simple, we believe
+it is not so difficult to understand it.
 
-The node part describes nodes, at which a switch and/or section(s) are
-connected.  In the above example network, nodes are indicated by black
-or red circles.  The following data represents some nodes in the above
-network; three sections are connected at the first line of the node
-part (i.e., section_-001, section_0302, and section_0303), while a
-section and a switch is connected at the fourth line (i.e.,
-section_0302 and switch_0010).
+### Nodes
+
+The "nodes" part describes nodes, at which a switch and/or section(s)
+are connected.  In the above example network, nodes are indicated by
+black or red circles.  The following YAML data shows some nodes in the
+example network; three sections are connected at the first line (i.e.,
+section_-001, section_0302, and section_0303), while a section and a
+switch is connected at the fourth line (i.e., section_0302 and
+switch_0010).
 
 ```yaml
 nodes:
@@ -150,17 +148,21 @@ nodes:
 - [section_0302, switch_0010]
 ```
 
-The section part describes section information including load and
+### Sections
+
+The "sections" part describes section information including load and
 impedance.  In DNET, loads are assumed to be unbalanced three-phase
 and be connected in delta.  Loads are also assumed to be uniformly
 distributed along a line section, and are modeled as constant current,
 not as power (see Section 2 in `doc/dnet-theory.pdf` for more detail).
+
 In the data file, load and impedance are specified by six values,
 which are real and imaginary parts of the three phases; for
-section_-001 in the following example, load current is 16.3225894 +
-0j in the 0-th phase, and impedance is 0.0684 + 0.3678805j in the all
-phases.  Substation attribute indicates whether the line is directly
-connected to a substation.  There is no restriction on section names.
+section_-001 in the following YAML, load current is 16.3225894 + 0j in
+the 0-th phase, and impedance is 0.0684 + 0.3678805j in the all
+phases.  Substation attribute indicates whether the line section is
+directly connected to a substation.  There is no restriction on
+section names, unlike switches as described below.
 
 ```yaml
 sections:
@@ -170,18 +172,11 @@ sections:
     substation: true
 ```
 
-The switch part describes switch information.  Since no information is
-required in the current version, just an empty curly brace is given
-for each switch.  We have to be careful to assign switch numbers.
-First, the numbers must be successive natural numbers (positive
-integers), and they must be represented by four-figure numbers with
-leading zeros (i.e., printf of "switch_%04d").  Second, switches
-should be numbered based on the proximity in the network as shown in
-the figure, because DNET's efficiency highly depends on the order.
-Finally, in the loss minimization, the order must not step over
-junctions connected to a substation (such junctions are indicated by
-red circiled in the figure); see Sections 4.1 and 5.1 in
-`doc/dnet-theory.pdf` for more detail.
+### Switches
+
+The "switches" part describes switch information.  However, no
+information is required in the current version, and so just an empty
+curly brace is given for each switch, as shown in the following YAML.
 
 ```yaml
 switches:
@@ -189,6 +184,17 @@ switches:
   switch_0002: {}
   switch_0003: {}
 ```
+
+We have to be careful to assign switch names.  First, the switch
+numbers must be successive positive integers, and they must be
+represented by four-figure numbers with leading zeros (i.e., printf of
+"switch_%04d").  Second, switches should be numbered based on the
+proximity in the network as shown in the figure, because DNET's
+efficiency highly depends on the order.  Third, in the loss
+minimization, the order must not step over junctions connected to a
+substation (such junctions are indicated by red circles in the
+figure); see Sections 4.1 and 5.1 in `doc/dnet-theory.pdf` for more
+detail.
 
 Optionally, switches may have original_number attribute, which is the
 original switch number in your data and will be shown in the DNET's
@@ -201,12 +207,14 @@ switches:
   switch_0003: {original_number: 1065}
 ```
 
-Data in the [Fukui-TEPCO
+### Converter
+
+Network data in the [Fukui-TEPCO
 format](http://www.hayashilab.sci.waseda.ac.jp/RIANT/riant_test_feeder.html)
 can be converted to the DNET format by `script/dnet-converter`.
 Since Fukui-TEPCO format lacks switch indicators, you have to add
 file `sw_list.dat` that includes switch numbers; see examples in
-`test/data/`.  The data is converted as follows.
+`test/data/` in detail.  The data is converted as follows.
 
 ```bash
 $ python script/dnet-converter test/data > data.yaml
@@ -215,21 +223,27 @@ $ python script/dnet-converter test/data > data.yaml
 Usage
 ---------------------------------------------------------------------
 
-We first enumerate all feasible configurations in the compressive
-graph represesntation (don't worry, you do not have to understand the
-complicated graph representation).  For the constraints of line
-capacity and voltage profiles, maximum current and voltage range must
-be defined at the head of `script/dnet-enumerator`.
+First of all, we enumerate all feasible configurations in the
+compressive graph representation (don't worry, you do not have to
+understand the complicated data structure).  For the constraints of
+line capacity and voltage profiles, maximum current and voltage range
+must be defined at the head of `script/dnet-enumerator`.
 
-In this tutorial, we choose `/tmp/dnet` as the output directory, in
-which result files will be placed.
+```python
+max_current     = 300
+sending_voltage = 6600 / math.sqrt(3)
+voltage_range   = (6300 / math.sqrt(3), 6900 / math.sqrt(3))
+```
+
+Then, enumerate all configurations as follows.
 
 ```bash
 $ python script/dnet-enumerator test/data.yaml /tmp/dnet
 ```
 
-You find some files in `/tmp/dnet`, and `/tmp/dnet/diagram` includes
-all feasible configurations.
+In this tutorial, we choose `/tmp/dnet` as the output directory, in
+which result files will be placed.  Configurations are stored in
+`/tmp/dnet/diagram`.
 
 ### Configuration search
 
@@ -240,22 +254,11 @@ $ fukashigi -n 16 -t cardinality /tmp/dnet/diagram
 111
 ```
 
-The result shows that this network has 111 feasible configurations.
+This shows that the network has 111 feasible configurations.
 
-Next, we do random sampling; select a single feasible configuration
-uniformly randomly from feasible ones.
-
-```bash
-$ fukashigi -n 16 -t 1 /tmp/dnet/diagram 
-1 3 4 5 6 8 9 10 11 12 14 16 
-```
-
-The result shows a list of switch numbers that are closed in the
-configuration (your result may be different depending on random number
-generators).
-
-We retrieve configurations by issuing a query; e.g., switch-1 to
-switch-5 are closed, while switch-9 *or* switch-10 is open.
+Next, we retrieve configurations by issuing a query; e.g., switch-1 to
+switch-5 are closed, switch-9 *or* switch-10 is open, and the status
+of other switches are not cared.
 
 ```bash
 $ echo "1 2 3 4 5" > closed
@@ -270,7 +273,19 @@ The result shows three configurations that meet the query; note that
 closed switches in the query (switch-1 to switch-5) are omitted in the
 result.
 
-Finally, we can calculate power loss of a given confiugration.
+We try random sampling from the configurations; select a single
+feasible configuration uniformly randomly as follows.
+
+```bash
+$ fukashigi -n 16 -t 1 /tmp/dnet/diagram 
+1 3 4 5 6 8 9 10 11 12 14 16 
+```
+
+The result shows a list of switch numbers that are closed in the
+configuration (your result may be different depending on random number
+generators).
+
+Finally, we can calculate power loss of a given configuration.
 
 ```bash
 $ python script/dnet-loss test/data.yaml -c 1 3 4 5 6 8 9 10 11 12 14 16
@@ -280,7 +295,7 @@ $ python script/dnet-loss test/data.yaml -c 1 3 4 5 6 8 9 10 11 12 14 16
 ### Power loss minimization
 
 We search for the minimum loss configuration from all feasible
-configurations enumerated abolve.
+configurations enumerated above.
 
 ```bash
 $ python script/dnet-optimizer test/data.yaml test/diagram
@@ -291,17 +306,53 @@ open_switches: ['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015']
 ```
 
 The minimum loss is 72055.7 and the lower bound is 69238.4; the lower
-bound is theoretical bound under which the minimum loss never be (see
-Section 3.3 in `doc/dnet-theory.pdf` in detail).  In the optimal
-configuration, switch-4, switch-7, switch-12, and switch-15 are open.
+bound means a theoretical bound under which the minimum loss never be
+(see Section 3.3 in `doc/dnet-theory.pdf` in detail).  In the optimal
+configuration, switch-4, switch-7, switch-12, and switch-15 are open,
+and other switches are closed.
+
+FAQ
+---------------------------------------------------------------------
+
+Q. How to rectify DNET for *energy* loss minimization?
+
+A. We give a hint to consider multiple load profiles for emulating energy
+loss minimization.
+
+First, we select configurations that satisfy the constraints for all
+the load profiles.  Enumerate configurations for each load profile,
+and combine them as follows by using fukashigi.
+
+```bash
+$ fukashigi -n <# of switches> -t diagram result-1/diagram "&" and result-2/diagram "&" ...
+```
+
+Next, we search for the minimum energy-loss configuration.
+Modify YAML data to contain multiple load profiles as follows.
+
+```yaml
+sections:
+  section_-001:
+    impedance: [0.0864, 0.3678805, 0.0864, 0.3678805, 0.0864, 0.3678805]
+    load: [[16.3225894, 0, 16.3225894, 0, 1.29105e-11, 0],
+           [41.21753365, 0, 16.02966235, 0, 31.33198201, 0],
+           ...]
+    substation: true
+```
+
+Fix `dnet.core.Network.__init__` to handle multiple load profiles.
+Fix `dnet.core.Network.calc_current` to choose a load profile by
+adding an argument, and modify `dnet.core.Network.calc_loss` to call
+calc_current multiple times by changing the argument.
 
 Limitations
 ---------------------------------------------------------------------
 
-DNET assumes that just switches are controllable, and other components
-like capacitors are ignored.
+DNET assumes that controllable components are just switches in a
+distribution network while other components like capacitors are
+ignored.
 
-Section loads are given as constant current, and must not be negative.
+Section loads are given as constant current and must be non-negative.
 This can be an issue if introducing distributed generators; see
 Sections 4.1 and 8 in `doc/dnet-theory.pdf` for more detail.
 
