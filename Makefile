@@ -1,9 +1,9 @@
 all:
 
-check: check_mkdir check_converter check_enumerator check_loss check_optimizer
+check: check_prep check_converter check_enumerator check_loss check_optimizer
 	@echo ok
 
-check_mkdir:
+check_prep:
 	-rm -rf /tmp/dnet
 	mkdir -p /tmp/dnet
 

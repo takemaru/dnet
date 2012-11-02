@@ -105,7 +105,6 @@ Finally, we can do self-tests for DNET by,
 
 ```bash
 $ cd ../
-$ export PYTHONPATH=.:$PYTHONPATH
 $ make check
 :
 ok
