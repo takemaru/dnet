@@ -341,20 +341,35 @@ sections:
 Fix dnet.core.Network.__init__() to handle multiple load profiles.
 Fix dnet.core.Network.calc_current() to choose a load profile by
 adding an argument, and modify dnet.core.Network.calc_loss() to call
-calc_current multiple times by changing the argument.
+calc_current() multiple times by changing the argument.
 
 Limitations
 ---------------------------------------------------------------------
 
 - DNET assumes that controllable components are just switches in a
   distribution network while other components like capacitors are
-  ignored.
-- Section loads are given as constant current and must be
-  non-negative.  This can be an issue if introducing distributed
-  generators; see Sections 4.1 and 8 in [theory.pdf] for more detail.
+  ignored; we consider distribution network analysis as a
+  combinatorial problem, in which the variable is open/closed status
+  of the switches.
+
+- In DNET, section loads are given as constant current.  Line current
+  is calculated by sweeping backward to sum up downstream section
+  loads.  This is because our loss minimization method depends on this
+  backward sweeping; see Section 3.1 in [theory.pdf] in detail.
+  However, if you are interested in only the configuration search,
+  line current can be calculated in the ordinary way with section
+  loads of constant *power*; fix dnet.core.Network.calc_current() and
+  satisfies_electric_constraints() in `script/dnet-enumerator`.
+
+- DNET assumes that all section loads are non-negative.  This can be
+  an issue if introducing distributed generators; see Sections 4.1 and
+  8 in [theory.pdf] for more detail.
+
 - In the loss minimization, switches between a substation and a
-  junction are assumed to be closed; see Section 4.1 in [theory.pdf]
-  for more detail.
+  junction are assumed to be closed.  This is because such junctions
+  (i.e., red circles in the figure) must be energized in any
+  configurations in our loss minimization method; see Section 4.1 in
+  [theory.pdf] for more detail.
 
 References
 ---------------------------------------------------------------------
