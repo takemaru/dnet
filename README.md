@@ -346,11 +346,11 @@ calc_current() multiple times by changing the argument.
 Limitations
 ---------------------------------------------------------------------
 
-- DNET assumes that controllable components are just switches in a
-  distribution network while other components like capacitors are
-  ignored; we consider distribution network analysis as a
-  combinatorial problem, in which the variable is open/closed status
-  of the switches.
+- DNET assumes that just switches are controllable in a distribution
+  network while other components like capacitors are ignored; we
+  consider the distribution network analysis as a combinatorial
+  problem, in which the variable is open/closed status of the
+  switches.
 
 - In DNET, section loads are given as constant current.  Line current
   is calculated by sweeping backward to sum up downstream section
