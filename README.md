@@ -95,8 +95,9 @@ $ cd ../
 If you use a 64-bit machine, you can pass --enable-64bit option to
 configure scripts for all the packages.
 
-DNET also depends some Python modules.  Install them as follows or by
-using pip.
+DNET also depends Python modules,
+[networkx](http://networkx.lanl.gov/) and [yaml](http://pyyaml.org/).
+Install them as follows or by using pip.
 
 ```bash
 $ tar fxz networkx-1.7.tar.gz
