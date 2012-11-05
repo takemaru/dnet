@@ -47,6 +47,8 @@ class Network:
             i = s['impedance']
             s['load']      = [l[0] + l[1] * 1j, l[2] + l[3] * 1j, l[4] + l[5] * 1j]
             s['impedance'] = [i[0] + i[1] * 1j, i[2] + i[3] * 1j, i[4] + i[5] * 1j]
+        if [l for s in self.sections.values() for l in s['load'] if l.real < 0] <> []:
+            sys.stderr.write('Warning: it is assumed that section loads are non-negative\n')
         self.neighbor_cache = {}
 
     def get_root_sections(self):
