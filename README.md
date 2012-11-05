@@ -43,12 +43,27 @@ of people.
 Installation
 ---------------------------------------------------------------------
 
+### Requirements
+
+DNET is Python scripts, which depend on some C/C++ programs.  We
+require Python and C/C++ compilers for installation and execution.
+
+We confirmed that DNET works the following environment.
+
+- Python 2.7
+- gcc/g++ 4.1.2
+- GNU Make 3.81
+
+### Installation
+
 First, we extract a DNET package and move into it.
 
 ```bash
 $ git clone https://github.com/takemaru/dnet.git
 $ cd dnet/
 ```
+
+#### Dependencies
 
 Next, we resolve dependencies.  DNET requires *fukashigi*
 combinatorial problem solver, and fukashigi depends on two libraries
@@ -100,6 +115,8 @@ $ python setup.py build
 $ sudo python setup.py install
 $ cd ../
 ```
+
+#### DNET
 
 Finally, we can do self-tests for DNET by,
 
