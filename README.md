@@ -97,7 +97,7 @@ configure scripts for all the packages.
 
 DNET also depends Python modules,
 [networkx](http://networkx.lanl.gov/) and [yaml](http://pyyaml.org/).
-Install them as follows or by using pip.
+Install them by pip or as follows.
 
 ```bash
 $ tar fxz networkx-1.7.tar.gz
