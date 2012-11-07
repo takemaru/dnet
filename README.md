@@ -319,7 +319,7 @@ The minimum loss is 72055.7 and the lower bound is 69238.4; the lower
 bound means a theoretical bound under which the minimum loss never be
 (see Section 3.3 in [theory.pdf] in detail).  In the optimal
 configuration, switch-4, switch-7, switch-12, and switch-15 are open,
-and other switches are closed.
+and the other switches are closed.
 
 Limitations
 ---------------------------------------------------------------------
