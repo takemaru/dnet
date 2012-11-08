@@ -1,3 +1,6 @@
 Authors ordered by first contribution.
 
 Takeru Inoue <takeru.inoue@gmail.com>
+
+DNET highly depends on frontier and sapporobdd, which are developed by
+Jun Kawahara and Shin'ichi Minato, respectively.
