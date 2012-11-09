@@ -54,7 +54,9 @@ confirmed that DNET works the following environment.
 Installation
 ---------------------------------------------------------------------
 
-First, we extract a DNET package and move into it.
+First, we retrieve a DNET package by git (if your system does not have
+git, click the "ZIP" button in the top of DNET page and extract it).
+We then change the directory.
 
 ```bash
 $ git clone https://github.com/takemaru/dnet.git
