@@ -72,8 +72,8 @@ them in `pkg/` in the DNET.  Install them as follows.
 ```bash
 $ cd pkg/
 
-$ tar fxz sapporobdd-0.1.tar.gz
-$ cd sapporobdd-0.1/
+$ tar fxz sapporobdd-0.1.1.tar.gz
+$ cd sapporobdd-0.1.1/
 $ ./configure
 $ make
 $ sudo make install
@@ -86,8 +86,8 @@ $ make
 $ sudo make install
 $ cd ../
 
-$ tar fxz fukashigi-0.1.tar.gz
-$ cd fukashigi-0.1/
+$ tar fxz fukashigi-0.1.1.tar.gz
+$ cd fukashigi-0.1.1/
 $ ./configure
 $ make check
 $ sudo make install
