@@ -400,4 +400,4 @@ References
 [AUTHORS.txt]: http://github.com/takemaru/dnet/blob/master/AUTHORS.txt
 [MIT-LICENSE.txt]: http://github.com/takemaru/dnet/blob/master/MIT-LICENSE.txt
 [test/data.yaml]: http://github.com/takemaru/dnet/blob/master/test/data.yaml
-[theory.pdf]: http://github.com/takemaru/dnet/blob/master/doc/dnet-theory.pdf?raw=true
+[theory.pdf]: http://github.com/takemaru/dnet/blob/master/doc/theory.pdf?raw=true
