@@ -152,7 +152,7 @@ def write_bitmap(f, closed_switches, open_switches):
             bits.append('0')
         else:
             bits.append('*')
-    f.write(' '.join(bits) + '\n')
+    f.write(''.join(bits) + '\n')
 
 def do_enumerate_bitmaps(root, f, closed_switches, fixed_switches):
     unfixed_switches = find_surrounding_switches(root, closed_switches) - fixed_switches
