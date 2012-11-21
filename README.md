@@ -72,29 +72,29 @@ them in `pkg/` in the DNET.  Install them as follows.
 ```bash
 $ cd pkg/
 
-$ tar fxz sapporobdd-0.1.1.tar.gz
-$ cd sapporobdd-0.1.1/
+$ tar fxz sapporobdd-0.1.2.tar.gz
+$ cd sapporobdd-0.1.2/
 $ ./configure
 $ make
 $ sudo make install
 $ cd ../
 
-$ tar fxz frontier-0.1.tar.gz
-$ cd frontier-0.1/
+$ tar fxz frontier-0.1.1.tar.gz
+$ cd frontier-0.1.1/
 $ ./configure
 $ make
 $ sudo make install
 $ cd ../
 
-$ tar fxz fukashigi-0.1.1.tar.gz
-$ cd fukashigi-0.1.1/
+$ tar fxz fukashigi-0.1.3.tar.gz
+$ cd fukashigi-0.1.3/
 $ ./configure
 $ make check
 $ sudo make install
 $ cd ../
 ```
 
-If you use a 64-bit machine, you can pass --enable-64bit option to
+If you use a 32-bit machine, you can pass --enable-32bit option to
 configure scripts for all the packages.
 
 DNET also depends Python modules,
