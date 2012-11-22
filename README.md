@@ -48,8 +48,14 @@ require Python and C/C++ compilers for installation and execution.  We
 confirmed that DNET works the following environment.
 
 - Python 2.7
-- gcc/g++ 4.1.2
+- gcc/g++ 4.7.2
 - GNU Make 3.81
+
+If you use a C++ compiler other than c++/g++, specify it as follows.
+
+```bash
+$ export CXX=g++-mp-4.7 # an example of MacOSX with MacPorts
+```
 
 Installation
 ---------------------------------------------------------------------
@@ -88,14 +94,14 @@ $ cd ../
 
 $ tar fxz fukashigi-0.1.3.tar.gz
 $ cd fukashigi-0.1.3/
-$ ./configure
+$ CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib ./configure
 $ make check
 $ sudo make install
 $ cd ../
 ```
 
 If you use a 32-bit machine, you can pass --enable-32bit option to
-configure scripts for all the packages.
+the configure scripts for all the packages.
 
 DNET also depends Python modules,
 [networkx](http://networkx.lanl.gov/) and [yaml](http://pyyaml.org/).
