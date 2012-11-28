@@ -282,7 +282,7 @@ of other switches are not cared.
 ```bash
 $ echo "1 2 3 4 5" > closed
 $ echo "9 10" > open
-$ fukashigi -n 16 -t e /tmp/dnet/diagram "/" closed "%" open
+$ fukashigi -n 16 -t enum /tmp/dnet/diagram "/" closed "%" open
 7 8 10 12 13 14 15
 7 8 10 12 13 14 16
 7 8 10 12 13 15 16
@@ -296,7 +296,7 @@ We try random sampling from the configurations; select a single
 feasible configuration uniformly randomly as follows.
 
 ```bash
-$ fukashigi -n 16 -t 1 /tmp/dnet/diagram 
+$ fukashigi -n 16 -t enum -s 1 /tmp/dnet/diagram 
 1 3 4 5 6 8 9 10 11 12 14 16 
 ```
 
