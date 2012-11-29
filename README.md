@@ -310,8 +310,8 @@ generators).
 Finally, we can calculate power loss of a given configuration.
 
 ```bash
-$ python script/dnet-loss test/results/data.yaml -c 1 3 4 5 6 8 9 10 11 12 14 16
-74285.5
+$ python script/dnet-loss test/results/data.yaml -c 1 2 4 5 7 8 9 10 12 13 14 16
+82921.6
 ```
 
 ### Power loss minimization
