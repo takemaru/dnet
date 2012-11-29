@@ -115,12 +115,15 @@ if __name__ == '__main__':
 
     comps = find_components()
 
-    nodes = { '1': Node('1: (~0?1:1)') }
+    nodes = {}
     for line in args.diagram_file:
-        n = Node(line)
-        nodes[n.n] = n
-        if n.v == 1:
-            root = n.n
+        if line.startswith('#nodes:'):
+            pass
+        elif line.startswith('root:'):
+            root = line.split()[1]
+        else:
+            n = Node(line)
+            nodes[n.n] = n
 
     graph = nx.DiGraph()
 

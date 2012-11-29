@@ -50,6 +50,8 @@ confirmed that DNET works the following environment.
 - Python 2.7
 - gcc/g++ 4.7.2
 - GNU Make 3.81
+- GNU Multiple Precision library 5.0.5 (optional for couting a huge
+  number of configurations)
 
 If you use a C++ compiler other than c++/g++, specify it as follows.
 
@@ -78,22 +80,22 @@ them in `pkg/` in the DNET.  Install them as follows.
 ```bash
 $ cd pkg/
 
-$ tar fxz sapporobdd-0.1.2.tar.gz
-$ cd sapporobdd-0.1.2/
+$ tar fx sapporobdd-0.1.3.tar.gz
+$ cd sapporobdd-0.1.3/
 $ ./configure
 $ make
 $ sudo make install
 $ cd ../
 
-$ tar fxz frontier-0.1.1.tar.gz
+$ tar fx frontier-0.1.1.tar.gz
 $ cd frontier-0.1.1/
 $ ./configure
 $ make
 $ sudo make install
 $ cd ../
 
-$ tar fxz fukashigi-0.1.3.tar.gz
-$ cd fukashigi-0.1.3/
+$ tar fx fukashigi-0.1.4.tar.gz
+$ cd fukashigi-0.1.4/
 $ CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib ./configure
 $ make check
 $ sudo make install
@@ -108,13 +110,13 @@ DNET also depends Python modules,
 Install them by pip or as follows.
 
 ```bash
-$ tar fxz networkx-1.7.tar.gz
+$ tar fx networkx-1.7.tar.gz
 $ cd networkx-1.7/
 $ python setup.py build
 $ sudo python setup.py install
 $ cd ../
 
-$ tar fxz PyYAML-3.10.tar.gz
+$ tar fx PyYAML-3.10.tar.gz
 $ cd PyYAML-3.10/
 $ python setup.py build
 $ sudo python setup.py install
@@ -140,9 +142,9 @@ Network data
 DNET requires network data, which includes network topology (line
 connectivity and switch positions), loads, and impedance.  The data
 must be formatted by [YAML](http://en.wikipedia.org/wiki/YAML) syntax.
-We explain the formatting rules using an example, [test/data.yaml] in
-the DNET package.  This example network consists of three feeders and
-16 switches, as shown in the figure.
+We explain the formatting rules using an example,
+[test/results/data.yaml] in the DNET package.  This example network
+consists of three feeders and 16 switches, as shown in the figure.
 
 ![Example network](http://github.com/takemaru/dnet/blob/master/doc/example_nw.png?raw=true)
 
@@ -257,7 +259,8 @@ voltage_range   = (6300 / math.sqrt(3), 6900 / math.sqrt(3))
 Then, enumerate all configurations as follows.
 
 ```bash
-$ python script/dnet-enumerator test/data.yaml /tmp/dnet
+$ mkdir -p /tmp/dnet
+$ python script/dnet-enumerator test/results/data.yaml /tmp/dnet
 ```
 
 In this tutorial, we choose `/tmp/dnet` as the output directory, in
@@ -296,8 +299,8 @@ We try random sampling from the configurations; select a single
 feasible configuration uniformly randomly as follows.
 
 ```bash
-$ fukashigi -n 16 -t enum -s 1 /tmp/dnet/diagram 
-1 3 4 5 6 8 9 10 11 12 14 16 
+$ fukashigi -n 16 -t enum -s 1 /tmp/dnet/diagram
+1 2 4 5 7 8 9 10 12 13 14 16
 ```
 
 The result shows a list of switch numbers that are closed in the
@@ -307,7 +310,7 @@ generators).
 Finally, we can calculate power loss of a given configuration.
 
 ```bash
-$ python script/dnet-loss test/data.yaml -c 1 3 4 5 6 8 9 10 11 12 14 16
+$ python script/dnet-loss test/results/data.yaml -c 1 3 4 5 6 8 9 10 11 12 14 16
 74285.5
 ```
 
@@ -317,7 +320,7 @@ We search for the minimum loss configuration from all feasible
 configurations enumerated above.
 
 ```bash
-$ python script/dnet-optimizer test/data.yaml test/diagram
+$ python script/dnet-optimizer test/results/data.yaml /tmp/dnet/diagram
 minimum_loss: 72055.7
 loss_without_root_sections: 47781.7
 lower_bound_of_minimum_loss: 69238.4
@@ -406,5 +409,5 @@ References
 
 [AUTHORS.txt]: http://github.com/takemaru/dnet/blob/master/AUTHORS.txt
 [MIT-LICENSE.txt]: http://github.com/takemaru/dnet/blob/master/MIT-LICENSE.txt
-[test/data.yaml]: http://github.com/takemaru/dnet/blob/master/test/data.yaml
+[test/results/data.yaml]: http://github.com/takemaru/dnet/blob/master/test/results/data.yaml
 [theory.pdf]: http://github.com/takemaru/dnet/blob/master/doc/theory.pdf?raw=true
