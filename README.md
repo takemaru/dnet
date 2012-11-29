@@ -50,8 +50,8 @@ confirmed that DNET works the following environment.
 - Python 2.7
 - gcc/g++ 4.7.2
 - GNU Make 3.81
-- GNU Multiple Precision library 5.0.5 (optional for couting a huge
-  number of configurations)
+- GNU Multiple Precision library 5.0.5 (option to count a huge number
+  of configurations precisely)
 
 If you use a C++ compiler other than c++/g++, specify it as follows.
 
