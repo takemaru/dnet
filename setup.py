@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='dnet',
-      version='0.1.2',
+      version='0.1.4',
       description='Distribution Network Evaluation Tool',
       author='Takeru Inoue',
       author_email='takeru.inoue@gmail.com',
