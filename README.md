@@ -20,7 +20,7 @@ operational constraints such as line capacity and voltage profiles.
 DNET finds the best configuration you want with a great efficiency,
 while it examines all feasible configurations without stuck in local
 minima.  It supports all the constraints with realistic unbalanced
-three-phase loads.  We believe that DNET brings you to the next stage
+three-phase loads.  We believe that DNET takes you to the next stage
 of power distribution network analysis.
 
 DNET can be used freely under the MIT license, which is found in
