@@ -106,9 +106,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='enumerate feasible configurations.')
     parser.add_argument('data_file', type=file,
-                        help='network data in YAML file')
+                        help='network data in YAML')
     parser.add_argument('diagram_file', type=file, nargs='?', default=sys.stdin,
-                        help='diagraul resulted by dnet-enumerator (default: stdin)')
+                        help='diagram resulted by dnet-enumerator (default: stdin)')
     args = parser.parse_args()
 
     nw = dnet.core.Network(args.data_file)

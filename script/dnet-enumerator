@@ -186,7 +186,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='enumerate feasible configurations.')
     parser.add_argument('data_file', type=file,
-                        help='network data in YAML file')
+                        help='network data in YAML')
     parser.add_argument('result_dir', type=str, nargs='?', default='.',
                         help='directory of result files')
     args = parser.parse_args()

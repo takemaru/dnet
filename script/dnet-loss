@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('-c', dest='is_closed', action='store_true',
                     help='indicate if the given switches are closed')
 parser.add_argument('data_file', type=file,
-                    help='network data in YAML file')
+                    help='network data in YAML')
 parser.add_argument('switch', type=str, nargs='+',
                     help='list of open (or closed if -c option) switches')
 args = parser.parse_args()
