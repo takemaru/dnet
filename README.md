@@ -25,8 +25,15 @@ of power distribution network analysis.
 
 DNET can be used freely under the MIT license, which is found in
 [MIT-LICENSE.txt] in the DNET package.  We would really appreciate if
-you would address our contribution in your paper on the use of DNET
-(e.g., in Acknowledgement section in the paper).
+you would refer to our paper and address our contribution on the use
+of DNET in your paper (e.g., in Acknowledgement section in the paper).
+
+> Takeru Inoue, Keiji Takano, Takayuki Watanabe, Jun Kawahara, Ryo
+  Yoshinaka, Akihiro Kishimoto, Koji Tsuda, Shin-ichi Minato, and
+  Yasuhiro Hayashi, "Loss Minimization of Power Distribution Networks
+  with Guaranteed Error Bound," Hokkaido University, Division of
+  Computer Science, TCS Technical Reports, TCS-TR-A-12-59, August 2012.
+  ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf))
 
 DNET is mainly developed in [JST ERATO Minato
 project](http://www-erato.ist.hokudai.ac.jp/?language=en).  It is
