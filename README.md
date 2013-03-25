@@ -38,7 +38,7 @@ of DNET in your paper (e.g., in Acknowledgement section in the paper).
 DNET is mainly developed in [JST ERATO Minato
 project](http://www-erato.ist.hokudai.ac.jp/?language=en).  It is
 implemented by the authors listed in [AUTHORS.txt], and its theory is
-studied by several people as described in the following paper and
+studied by several people as described in the above paper and
 [theory.pdf].
 
 DNET is still under the development.  The current version just
