@@ -319,7 +319,7 @@ Finally, we can calculate power loss of a given configuration.
 
 ```bash
 $ python script/dnet-loss test/results/data.yaml -c 1 2 4 5 7 8 9 10 12 13 14 16
-82921.6
+80199.3
 ```
 
 ### Power loss minimization
@@ -329,9 +329,9 @@ configurations enumerated above.
 
 ```bash
 $ python script/dnet-optimizer test/results/data.yaml /tmp/dnet/diagram
-minimum_loss: 72055.7
-loss_without_root_sections: 47781.7
-lower_bound_of_minimum_loss: 69238.4
+minimum_loss: 69734.3
+loss_without_root_sections: 46128.5
+lower_bound_of_minimum_loss: 67585.2
 open_switches: ['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015']
 ```
 
