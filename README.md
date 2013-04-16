@@ -1,7 +1,14 @@
 DNET - Distribution Network Evaluation Tool
 =====================================================================
 
-What's DNET
+* [Overview](#overview "Overview")
+* [Installing](#installing "Installing")
+* [Network data](#network-data "Network data")
+* [Tutorial](#tutorial "Tutorial")
+* [Limitations](#limitations "Limitations")
+* [References](#references "References")
+
+Overview
 ---------------------------------------------------------------------
 
 DNET (Distribution Network Evaluation Tool) is an analysis tool that
@@ -23,10 +30,11 @@ minima.  It supports all the constraints with realistic unbalanced
 three-phase loads.  We believe that DNET takes you to the next stage
 of power distribution network analysis.
 
-DNET can be used freely under the MIT license, which is found in
-[MIT-LICENSE.txt] in the DNET package.  We would really appreciate if
-you would refer to our paper and address our contribution on the use
-of DNET in your paper (e.g., in Acknowledgement section in the paper).
+DNET can be used freely under the MIT license.  It is mainly developed
+in [JST ERATO Minato
+project](http://www-erato.ist.hokudai.ac.jp/?language=en).  We would
+really appreciate if you would refer to our paper and address our
+contribution on the use of DNET in your paper.
 
 > Takeru Inoue, Keiji Takano, Takayuki Watanabe, Jun Kawahara, Ryo
   Yoshinaka, Akihiro Kishimoto, Koji Tsuda, Shin-ichi Minato, and
@@ -35,12 +43,6 @@ of DNET in your paper (e.g., in Acknowledgement section in the paper).
   Computer Science, TCS Technical Reports, TCS-TR-A-12-59, August 2012.
   ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf))
 
-DNET is mainly developed in [JST ERATO Minato
-project](http://www-erato.ist.hokudai.ac.jp/?language=en).  It is
-implemented by the authors listed in [AUTHORS.txt], and its theory is
-studied by several people as described in the above paper and
-[theory.pdf].
-
 DNET is still under the development.  The current version just
 supports configuration search and loss minimization, but we believe
 service restoration is also possible if you can use DNET appropriately
@@ -48,101 +50,79 @@ with deep understanding of the theory.  We really appreciate any pull
 request and patch if you add some changes that benefit a wide variety
 of people.
 
-Requirements
+
+Installing
 ---------------------------------------------------------------------
 
-DNET is Python scripts, which depend on some C/C++ programs.  We
-require Python and C/C++ compilers for installation and execution.  We
-confirmed that DNET works the following environment.
+### Requirements
 
-- Python 2.7
-- gcc/g++ 4.7.2
-- GNU Make 3.81
-- GNU Multiple Precision library 5.0.5 (optional to count a huge number
-  of configurations precisely)
+#### Python
 
-If you use a C++ compiler other than c++/g++, specify it as follows.
+To use Graphillion, you need Python version 2.6 or later.
+http://www.python.org/
 
-```bash
-$ export CXX=g++-mp-4.7 # an example of MacOSX with MacPorts
-```
+#### Graphillion and NetworkX
 
-Installation
----------------------------------------------------------------------
-
-First, we retrieve a DNET package by git (if your system does not have
-git, click the "ZIP" button in the top of DNET page and extract it).
-We then change the directory.
+Graphillion and NetworkX are Python modules for manipulating graphs.
+They can be installed by:
 
 ```bash
-$ git clone https://github.com/takemaru/dnet.git
-$ cd dnet/
+$ sudo easy_install graphillion
+$ sudo easy_install networkx
 ```
 
-Next, we resolve dependencies.  DNET requires *fukashigi*
-combinatorial problem solver, and fukashigi depends on two libraries
-(frontier method and binary decision diagrams).  These packages are
-not yet available online (will be soon we believe), and so we include
-them in `pkg/` in the DNET.  Install them as follows.
+### Quick install
+
+Just type:
 
 ```bash
-$ cd pkg/
-
-$ tar fx sapporobdd-0.1.3.tar.gz
-$ cd sapporobdd-0.1.3/
-$ ./configure
-$ make
-$ sudo make install
-$ cd ../
-
-$ tar fx frontier-0.1.1.tar.gz
-$ cd frontier-0.1.1/
-$ ./configure
-$ make
-$ sudo make install
-$ cd ../
-
-$ tar fx fukashigi-0.1.4.tar.gz
-$ cd fukashigi-0.1.4/
-$ CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib ./configure
-$ make check
-$ sudo make install
-$ cd ../
+$ sudo easy_install dnet
 ```
 
-If you use a 32-bit machine, you can pass --enable-32bit option to
-the configure scripts for all the packages.
+and an attempt will be made to find and install an appropriate version
+that matches your operating system and Python version.
 
-DNET also depends Python modules,
-[networkx](http://networkx.lanl.gov/) and [yaml](http://pyyaml.org/).
-Install them by pip or as follows.
+### Installing from source
+
+You can install from source by downloading a source archive file
+(tar.gz or zip) or by checking out the source files from the GitHub
+source code repository.
+
+#### Source archive file
+
+1. Download the source (tar.gz or zip file) from
+   https://github.com/takemaru/dnet
+2. Unpack and change directory to the source directory (it should have
+   the file setup.py)
+3. Run `python setup.py build` to build
+4. (optional) Run `python setup.py test -q` to execute the tests
+5. Run `sudo python setup.py install` to install
+
+#### GitHub repository
+
+1. Clone the Dnet repository `git clone https://github.com/takemaru/dnet.git`
+2. Change directory to "dnet"
+3. Run `python setup.py build` to build
+4. (optional) Run `python setup.py test -q` to execute the tests
+5. Run `sudo python setup.py install` to install
+
+If you don't have permission to install software on your system, you
+can install into another directory using the `-user`, `-prefix`, or
+`-home` flags to setup.py.  For example:
 
 ```bash
-$ tar fx networkx-1.7.tar.gz
-$ cd networkx-1.7/
-$ python setup.py build
-$ sudo python setup.py install
-$ cd ../
-
-$ tar fx PyYAML-3.10.tar.gz
-$ cd PyYAML-3.10/
-$ python setup.py build
-$ sudo python setup.py install
-$ cd ../
+$ python setup.py install --prefix=/home/username/python
+  or
+$ python setup.py install --home=~
+  or
+$ python setup.py install --user
 ```
 
-Finally, we can do self-tests for DNET by,
+If you didn't install in the standard Python site-packages directory
+you will need to set your `PYTHONPATH` variable to the alternate
+location.  See http://docs.python.org/inst/search-path.html for further
+details.
 
-```bash
-$ cd ../
-$ export PYTHONPATH=`pwd`:$PYTHONPATH
-$ make check
-:
-ok
-```
-
-If you found "ok" at the end of test results, the installation would
-have been done successfully.
 
 Network data
 ---------------------------------------------------------------------
@@ -249,7 +229,8 @@ file `sw_list.dat` that includes switch numbers; see examples in
 $ python script/dnet-converter test/data > data.yaml
 ```
 
-Usage
+
+Tutorial
 ---------------------------------------------------------------------
 
 First of all, we enumerate all feasible configurations in the
@@ -341,6 +322,7 @@ bound means a theoretical bound under which the minimum loss never be
 configuration, switch-4, switch-7, switch-12, and switch-15 are open,
 and the other switches are closed.
 
+
 Limitations
 ---------------------------------------------------------------------
 
@@ -369,53 +351,18 @@ Limitations
   configurations in our loss minimization method; see Section 4.1 in
   [theory.pdf] for more detail.
 
-FAQ
----------------------------------------------------------------------
-
-Q. How to rectify DNET for *energy* loss minimization?
-
-A. We give a hint to consider multiple load profiles for emulating energy
-loss minimization.
-
-First, we select configurations that satisfy the constraints for all
-the load profiles.  Enumerate configurations for each load profile,
-and combine them as follows by using fukashigi.
-
-```bash
-$ fukashigi -n <number of switches> -t diagram result-1/diagram "&" and result-2/diagram "&" ...
-```
-
-Next, we search for the minimum energy-loss configuration.
-Modify YAML data to contain multiple load profiles as follows.
-
-```yaml
-sections:
-  section_-001:
-    impedance: [0.0864, 0.3678805, 0.0864, 0.3678805, 0.0864, 0.3678805]
-    load: [[16.3225894, 0, 16.3225894, 0, 1.29105e-11, 0],
-           [41.21753365, 0, 16.02966235, 0, 31.33198201, 0],
-           ...]
-    substation: true
-```
-
-Fix dnet.core.Network.__init__() to handle multiple load profiles.
-Fix dnet.core.Network.calc_current() to choose a load profile by
-adding an argument, and modify dnet.core.Network.calc_loss() to call
-calc_current() multiple times by changing the argument.
 
 References
 ---------------------------------------------------------------------
 
-- Takeru Inoue, "Theory of Distribution Network Evaluation Tool."
-  [theory.pdf]
 - Takeru Inoue, Keiji Takano, Takayuki Watanabe, Jun Kawahara, Ryo
   Yoshinaka, Akihiro Kishimoto, Koji Tsuda, Shin-ichi Minato, and
   Yasuhiro Hayashi, "Loss Minimization of Power Distribution Networks
   with Guaranteed Error Bound," Hokkaido University, Division of
   Computer Science, TCS Technical Reports, TCS-TR-A-12-59, August 2012.
   ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf))
+- Takeru Inoue, "Theory of Distribution Network Evaluation Tool."
+  [theory.pdf]
 
-[AUTHORS.txt]: http://github.com/takemaru/dnet/blob/master/AUTHORS.txt
-[MIT-LICENSE.txt]: http://github.com/takemaru/dnet/blob/master/MIT-LICENSE.txt
 [test/results/data.yaml]: http://github.com/takemaru/dnet/blob/master/test/results/data.yaml
 [theory.pdf]: http://github.com/takemaru/dnet/blob/master/doc/theory.pdf?raw=true
