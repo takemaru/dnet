@@ -217,107 +217,114 @@ switches:
   switch_0003: {original_number: 1065}
 ```
 
-### Converter
+### Fukui-TEPCO format
 
 Network data in the [Fukui-TEPCO
 format](http://www.hayashilab.sci.waseda.ac.jp/RIANT/riant_test_feeder.html)
-can be converted to the DNET format by `script/dnet-converter`.
-Since Fukui-TEPCO format lacks switch indicators, you have to add
-file `sw_list.dat` that includes switch numbers; see examples in
-`test/data/` in detail.  The data is converted as follows.
-
-```bash
-$ python script/dnet-converter test/data > data.yaml
-```
+can be also accepted in DNET.  Since Fukui-TEPCO format lacks switch
+indicators, you have to add file `sw_list.dat` that includes switch
+numbers; see examples in `test/data/` in detail.
 
 
 Tutorial
 ---------------------------------------------------------------------
 
-First of all, we enumerate all feasible configurations in the
-compressive graph representation (don't worry, you do not have to
-understand the complicated data structure).  For the constraints of
-line capacity and voltage profiles, maximum current and voltage range
-must be defined at the head of `script/dnet-enumerator`.
+Before anything else, we import DNET module.
 
 ```python
-max_current     = 300
-sending_voltage = 6600 / math.sqrt(3)
-voltage_range   = (6300 / math.sqrt(3), 6900 / math.sqrt(3))
+>>> from dnet import Network
 ```
 
-Then, enumerate all configurations as follows.
+You might need to change the maximum current and voltage range for
+the constraints of line capacity and voltage profiles (the followings
+are default values).
 
-```bash
-$ mkdir -p /tmp/dnet
-$ python script/dnet-enumerator test/results/data.yaml /tmp/dnet
+```python
+>>> from math import sqrt
+>>> Network.MAX_CURRENT     = 300
+>>> Network.SENDING_VOLTAGE = 6600 / sqrt(3)
+>>> Network.VOLTAGE_RANGE   = (6300 / sqrt(3), 6900 / sqrt(3))
 ```
 
-In this tutorial, we choose `/tmp/dnet` as the output directory, in
-which result files will be placed.  Configurations are stored in
-`/tmp/dnet/diagram`.
+We load the network data as follows.
 
-### Configuration search
+```python
+>>> nw = Network('test/results/data.yaml')
+```
+
+If your data is in Fukui-TEPCO format, specify data directory with
+the format type.
+
+```python
+>>> nw = Network('test/data/', format='fukui-tepco')
+```
+
+Then, enumerate all feasible configurations as follows.
+
+```python
+>>> configs = nw.enumerate()
+```
 
 We count the number of all the feasible configurations.
 
-```bash
-$ fukashigi -n 16 -t cardinality /tmp/dnet/diagram
-111
+```python
+>>> configs.len()
+111L
 ```
 
-This shows that the network has 111 feasible configurations.
+This shows that the network has 111 feasible configurations.  These
+configurations are retrieved by an iterator; a configuration is
+represented by a set of *closed* switches.  We show an example as
+follows (if you load Fukui-TEPCO format data, the switch numbers seem
+different in the output).
 
-Next, we retrieve configurations by issuing a query; e.g., switch-1 to
-switch-5 are closed, switch-9 *or* switch-10 is open, and the status
-of other switches are not cared.
-
-```bash
-$ echo "1 2 3 4 5" > closed
-$ echo "9 10" > open
-$ fukashigi -n 16 -t enum /tmp/dnet/diagram "/" closed "%" open
-7 8 10 12 13 14 15
-7 8 10 12 13 14 16
-7 8 10 12 13 15 16
+```python
+>>> for config in configs:
+...     config
+...
+['switch_0001', 'switch_0003', 'switch_0002', 'switch_0005', 'switch_0004', 'switch_0007', 'switch_0008', 'switch_0010', 'switch_0014', 'switch_0012', 'switch_0013', 'switch_0015']
+['switch_0001', 'switch_0003', 'switch_0002', 'switch_0005', 'switch_0004', 'switch_0007', 'switch_0008', 'switch_0010', 'switch_0014', 'switch_0012', 'switch_0013', 'switch_0016']
+['switch_0001', 'switch_0003', 'switch_0002', 'switch_0005', 'switch_0004', 'switch_0007', 'switch_0008', 'switch_0010', 'switch_0012', 'switch_0013', 'switch_0016', 'switch_0015']
+:
 ```
 
-The result shows three configurations that meet the query; note that
-closed switches in the query (switch-1 to switch-5) are omitted in the
-result.
+We select 10 configurations uniformly randomly, and calculate the
+average loss over them.
 
-We try random sampling from the configurations; select a single
-feasible configuration uniformly randomly as follows.
-
-```bash
-$ fukashigi -n 16 -t enum -s 1 /tmp/dnet/diagram
-1 2 4 5 7 8 9 10 12 13 14 16
+```python
+>>> i = 1
+>>> sum = 0.0
+>>> for config in configs.rand_iter():
+...     sum += nw.loss(config)
+...     if i == 10:
+...         break
+...     i += 1
+...
+>>> sum / 10
+78790.853510635628
 ```
 
-The result shows a list of switch numbers that are closed in the
-configuration (your result may be different depending on random number
-generators).
+We retrieve configurations by issuing a query; e.g., switch-2 is
+closed while switch-3 is open.  The status of the other switches are
+not cared.
 
-Finally, we can calculate power loss of a given configuration.
-
-```bash
-$ python script/dnet-loss test/results/data.yaml -c 1 2 4 5 7 8 9 10 12 13 14 16
-80199.3
+```python
+>>> filtered_configs = configs.including('switch_0002').excluding('switch_0003')
+>>> filtered_configs.len()
+15L
 ```
-
-### Power loss minimization
 
 We search for the minimum loss configuration from all feasible
 configurations enumerated above.
 
-```bash
-$ python script/dnet-optimizer test/results/data.yaml /tmp/dnet/diagram
-minimum_loss: 69734.3
-loss_without_root_sections: 46128.5
-lower_bound_of_minimum_loss: 67585.2
-open_switches: ['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015']
+```python
+>>> nw.optimize(configs)
+{'minimum_loss': 69734.285418826621,
+ 'lower_bound_of_minimum_loss': 67028.86898923367,
+ 'loss_without_root_sections': 46128.464350540948,
+ 'open_switches': ['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015']}
 ```
-
-The minimum loss is 72055.7 and the lower bound is 69238.4; the lower
+The minimum loss is 69734 and the lower bound is 67029; the lower
 bound means a theoretical bound under which the minimum loss never be
 (see Section 3.3 in [theory.pdf] in detail).  In the optimal
 configuration, switch-4, switch-7, switch-12, and switch-15 are open,

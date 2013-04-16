@@ -1,0 +1,225 @@
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+from graphillion import GraphSet
+
+class Configs(object):
+
+    def __init__(self, nw, gs):
+        self._nw = nw
+        self._gs = gs
+
+    def copy(self):
+        return Configs(self._nw, self._gs.copy())
+
+    def __nonzero__(self):
+        return bool(self._gs)
+
+    def union(self, *others):
+        return Configs(self._nw, self._gs.union(*[other._gs for other in others]))
+
+    def intersection(self, *others):
+        return Configs(self._nw, self._gs.intersection(*[other._gs for other in others]))
+
+    def difference(self, *others):
+        return Configs(self._nw, self._gs.difference(*[other._gs for other in others]))
+
+    def symmetric_difference(self, *others):
+        return Configs(self._nw, self._gs.symmetric_difference(*[other._gs for other in others]))
+
+    def update(self, *others):
+        self._gs.update(*[other._gs for other in others])
+        return self
+
+    def intersection_update(self, *others):
+        self._gs.intersection_update(*[other._gs for other in others])
+        return self
+
+    def difference_update(self, *others):
+        self._gs.difference_update(*[other._gs for other in others])
+        return self
+
+    def symmetric_difference_update(self, *others):
+        self._gs.symmetric_difference_update(*[other._gs for other in others])
+        return self
+
+    def __invert__(self):
+        return Configs(self._nw, ~self._gs)
+
+    __or__ = union
+    __and__ = intersection
+    __sub__ = difference
+    __xor__ = symmetric_difference
+
+    __ior__ = update
+    __iand__ = intersection_update
+    __isub__ = difference_update
+    __ixor__ = symmetric_difference_update
+
+    def isdisjoint(self, other):
+        return self._gs.isdisjoint(other._gs)
+
+    def issubset(self, other):
+        return self._gs.issubset(other._gs)
+
+    def issuperset(self, other):
+        return self._gs.issuperset(other._gs)
+
+    __le__ = issubset
+    __ge__ = issuperset
+
+    def __lt__(self, other):
+        return self._gs < other._gs
+
+    def __gt__(self, other):
+        return self._gs > other._gs
+
+    def __eq__(self, other):
+        return self._nw == other._nw and self._gs == other._gs
+
+    def __ne__(self, other):
+        return self._nw != other._nw or self._gs != other._gs
+
+    def __len__(self):
+        return len(self._gs)
+
+    def len(self, size=None):
+        if size is None:
+            return self._gs.len()
+        else:
+            return Configs(self._nw, self._gs.len(size))
+
+    def __iter__(self):
+        for g in iter(self._gs):
+            yield self._nw.forest2config(g)
+
+    def rand_iter(self):
+        for g in self._gs.rand_iter():
+            yield self._nw.forest2config(g)
+
+    def min_iter(self, weights=None):
+        if weights is not None:
+            weights = self._conv_weights(weights)
+        for g in self._gs.min_iter(weights):
+            yield self._nw.forest2config(g)
+
+    def max_iter(self, weights=None):
+        if weights is not None:
+            weights = self._conv_weights(weights)
+        for g in self._gs.max_iter(weights):
+            yield self._nw.forest2config(g)
+
+    def _conv_weights(weights):
+        weights2 = {}
+        for s, w in weights.iteritems():
+            weights2[self._nw.switch2edge] = w
+        return weights2
+
+    def __contains__(self, config_or_switch):
+        if isinstance(config_or_switch, list):
+            return self._nw.config2forest(config_or_switch) in self._gs
+        else:
+            return self._nw.switch2edge(config_or_switch) in self._gs
+
+    def add(self, config_or_switch):
+        if isinstance(config_or_switch, list):
+            self._gs.add(self._nw.config2forest(config_or_switch))
+        else:
+            self._gs.add(self._nw.switch2edge(config_or_switch))
+
+    def remove(self, config):
+        if isinstance(config_or_switch, list):
+            self._gs.remove(self._nw.config2forest(config_or_switch))
+        else:
+            self._gs.remove(self._nw.switch2edge(config_or_switch))
+
+    def discard(self, config):
+        if isinstance(config_or_switch, list):
+            self._gs.discard(self._nw.config2forest(config_or_switch))
+        else:
+            self._gs.discard(self._nw.switch2edge(config_or_switch))
+
+    def pop(self):
+        return self._nw.forest2config(self._gs.pop())
+
+    def cler(self):
+        self._gs.clear()
+
+    def flip(self, switch):
+        self._gs.flip(self._nw.switch2edge(switch))
+
+    def minimal(self):
+        return Configs(self._nw, self._gs.minimal())
+
+    def maximal(self):
+        return Configs(self._nw, self._gs.maximal())
+
+    def blocking(self):
+        return Configs(self._nw, self._gs.blocking())
+
+    def smaller(self, size):
+        return Configs(self._nw, self._gs.smaller(size))
+
+    def larger(self, size):
+        return Configs(self._nw, self._gs.larger(size))
+
+    def complement(self):
+        return Configs(self._nw, self._gs.complement())
+
+    def including(self, obj):
+        if isinstance(obj, Configs):
+            obj = obj._gs
+        elif isinstance(obj, list):
+            obj = self._nw.config2forest(obj)
+        else:
+            obj = self._nw.switch2edge(obj)
+        return Configs(self._nw, self._gs.including(obj))
+
+    def excluding(self, obj):
+        if isinstance(obj, Configs):
+            obj = obj._gs
+        elif isinstance(obj, list):
+            obj = self._nw.config2forest(obj)
+        else:
+            obj = self._nw.switch2edge(obj)
+        return Configs(self._nw, self._gs.excluding(obj))
+
+    def included(self, obj):
+        if isinstance(obj, Configs):
+            obj = obj._gs
+        elif isinstance(obj, list):
+            obj = self._nw.config2forest(obj)
+        else:
+            raise TypeError, obj
+        return Configs(self._nw, self._gs.included(obj))
+
+    def choice(self):
+        return self._nw.forest2config(self._gs.choice())
+
+    def dump(self, fp):
+        self._gs.dump(fp)
+
+    def dumps(self):
+        return self._gs.dumps()
+
+    def load(self, fp):
+        self._gs.load(fp)
+
+    def loads(self, s):
+        self._gs.loads(s)

@@ -1,8 +1,6 @@
-include AUTHORS.txt Makefile MIT-LICENSE.txt README.md setup.py \
-  doc/dnet-theory.pdf doc/example_nw.png \
-  pkg/frontier-0.1.tar.gz pkg/fukashigi-0.1.2.tar.gz \
-  pkg/sapporobdd-0.1.1.tar.gz \
-  test/data.yaml test/result.yaml test/section_-001.bitmaps \
-  test/section_-002.bitmaps test/section_-003.bitmaps test/diagram \
-  test/loss test/subgraphs test/data/LNewSL.dat test/data/LNewZ.dat \
-  test/data/root.dat test/data/sw_list.dat test/data/SWed.dat
+include README.md doc/example_nw.png doc/theory.pdf \
+  test/data/LNewSL.dat test/data/LNewZ.dat test/data/root.dat \
+  test/data/sw_list.dat test/data/SWed.dat \
+  test/results/data-fukui-tepco.yaml test/results/data.yaml \
+  test/results/graphset test/results/loss test/results/result.yaml \
+  test/results/subgraphs

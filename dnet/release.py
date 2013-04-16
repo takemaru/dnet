@@ -17,20 +17,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""DNET - Distribution Network Evaluation Tool.
-
-DNET (Distribution Network Evaluation Tool) is an analysis tool that
-evaluates power distribution networks for efficient and stable operation
-such as loss minimization and service restoration.
-See README for details.
-"""
-
-from dnet.network import Network
-from dnet.configs import Configs
-from dnet.converter import FukuiTepcoConverter
-import dnet.release
-
-__version__ = release.version
-#__date__ = release.date
-__license__ = release.license
-__author__ = '\n'.join(['%s <%s>' % _ for _ in release.authors])
+version = '0.9'
+date = ''
+license = 'MIT'
+authors = [('Takeru Inoue', 'takeru.inoue@gmail.com')]
