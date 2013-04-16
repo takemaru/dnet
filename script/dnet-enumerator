@@ -7,9 +7,9 @@ import sys
 
 import dnet.core
 
-max_current     = 300
-sending_voltage = 6600 / math.sqrt(3)
-voltage_range   = (6300 / math.sqrt(3), 6900 / math.sqrt(3))
+max_current     = 1e9
+sending_voltage = 12660 / math.sqrt(3)
+voltage_range   = (12660 * 0.9 / math.sqrt(3), 12660 * 1.1 / math.sqrt(3))
 
 def define_subgraphs():
     edges = []
