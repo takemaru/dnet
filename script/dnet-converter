@@ -58,12 +58,12 @@ for line in open(files['impedance']):
 
 roots = set()
 for line in open(files['root']):
-    _, n, lu, lv, lw, ir, ii = line.split()
+    _, n, lr, li, ir, ii = line.split()
     n = int(n)
     nodes[n].add(-n)
     sections.add(-n)
     roots.add(-n)
-    loads[-n] = [float(lu), 0, float(lv), 0, float(lw), 0]
+    loads[-n] = [float(lr), float(li)] * 3
     impedances[-n] = [float(ir), float(ii)] * 3
 
 def find_neighbors(s):
