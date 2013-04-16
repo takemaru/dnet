@@ -154,7 +154,7 @@ if __name__ == '__main__':
         for root in nw.get_root_sections():
             resistance = nw.sections[root]['impedance'][i].real
             current = total_loads / (resistance * resistance_sum)
-            lower_bound += abs(current.real ** 2 * resistance)
+            lower_bound += nw.do_calc_loss(current, resistance)
 
     print 'minimum_loss:', '%g' % loss
     print 'loss_without_root_sections:', '%g' % comp_loss

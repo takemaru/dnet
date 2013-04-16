@@ -108,5 +108,9 @@ class Network:
         assert is_tree(branches), 'loop found'
         sections = set([root] + flatten(branches))
         current = self.calc_current(root, branches)
-        return sum([abs(current[s][i].real**2 * self.sections[s]['impedance'][i].real)
+        return sum([self.do_calc_loss(current[s][i], self.sections[s]['impedance'][i].real)
                     for s in sections for i in range(3)])
+
+    def do_calc_loss(self, current, resistance):
+        assert not isinstance(resistance, complex)
+        return current.real**2 * resistance
