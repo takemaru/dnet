@@ -61,14 +61,15 @@ Installing
 To use Graphillion, you need Python version 2.6 or later.
 http://www.python.org/
 
-#### Graphillion and NetworkX
+#### Graphillion, NetworkX, and PyYAML
 
-Graphillion and NetworkX are Python modules for manipulating graphs.
-They can be installed by:
+Graphillion and NetworkX are Python modules for graphs, while PyYAML
+is another Python module for YAML.  They can be installed by:
 
 ```bash
 $ sudo easy_install graphillion
 $ sudo easy_install networkx
+$ sudo easy_install pyyaml
 ```
 
 ### Quick install
