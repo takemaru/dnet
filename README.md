@@ -314,7 +314,7 @@ not cared.
 15L
 ```
 
-We search for the minimum loss configuration from all feasible
+We finally search for the minimum loss configuration from all feasible
 configurations enumerated above.
 
 ```python
