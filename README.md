@@ -232,6 +232,7 @@ Tutorial
 Before anything else, we import DNET module.
 
 ```python
+$ python
 >>> from dnet import Network
 ```
 
