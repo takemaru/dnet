@@ -14,7 +14,7 @@ voltage_range   = (6300 / math.sqrt(3), 6900 / math.sqrt(3))
 
 switch2edge = {}  # XXX move to dnet.Network
 
-def define_subgraphs():
+def define_forests():
     edges = []
     sorted_sections = []
     for s in sorted(nw.switches):
@@ -143,30 +143,30 @@ def satisfies_electric_constraints(root, closed_switches):
 
     return True
 
-def write_bitmap(closed_switches, open_switches):
+def build_tree(closed_switches, open_switches):
     closed_switches = [switch2edge[s] for s in closed_switches]
     open_switches = [switch2edge[s] for s in open_switches]
     return GraphSet({'include': closed_switches, 'exclude': open_switches})
 
-def do_enumerate_bitmaps(root, closed_switches, fixed_switches):
+def do_enumerate_trees(root, closed_switches, fixed_switches):
     gs = GraphSet()
     unfixed_switches = find_surrounding_switches(root, closed_switches) - fixed_switches
     if len(unfixed_switches) == 0:
         return gs
     s = sorted(unfixed_switches)[0]
     fixed_switches.add(s)
-    gs |= do_enumerate_bitmaps(root, closed_switches.copy(), fixed_switches.copy())
+    gs |= do_enumerate_trees(root, closed_switches.copy(), fixed_switches.copy())
     closed_switches.add(s)
     if satisfies_electric_constraints(root, closed_switches):
-        gs |= write_bitmap(closed_switches, find_surrounding_switches(root, closed_switches))
-        gs |= do_enumerate_bitmaps(root, closed_switches.copy(), fixed_switches.copy())
+        gs |= build_tree(closed_switches, find_surrounding_switches(root, closed_switches))
+        gs |= do_enumerate_trees(root, closed_switches.copy(), fixed_switches.copy())
     return gs
 
-def enumerate_bitmaps(root):
+def enumerate_trees(root):
     gs = GraphSet()
     if satisfies_electric_constraints(root, set()):
-        gs = write_bitmap(set(), find_surrounding_switches(root, set()))
-    return gs | do_enumerate_bitmaps(root, set(), find_border_switches(root))
+        gs = build_tree(set(), find_surrounding_switches(root, set()))
+    return gs | do_enumerate_trees(root, set(), find_border_switches(root))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -179,9 +179,9 @@ if __name__ == '__main__':
     result_dir = args.result_dir
 
     nw = dnet.core.Network(args.data_file)
-    gs = define_subgraphs()
+    gs = define_forests()
 
     for root in nw.get_root_sections():
-        gs &= enumerate_bitmaps(root)
+        gs &= enumerate_trees(root)
 
     gs.dump(open('%s/diagram2' % result_dir, 'w'))
