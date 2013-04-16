@@ -10,7 +10,7 @@ import dnet.unionfind
 
 class Node:
     def __init__(self, str):
-        n, v, l, h, _ = re.split(r'[\W]+', str)
+        n, v, l, h = str.split()
         self.n = n
         self.v = int(v)
         self.l = l
@@ -63,9 +63,9 @@ def find_configs(n, comp, closed_switches):
     if 'switch_%04d' % n.v not in comp:
         configs.append((closed_switches, n.n))
     else:
-        if n.l <> '0':
+        if n.l <> 'B':
             configs.extend(find_configs(n.l, comp, closed_switches.copy()))
-        assert n.h <> '0'
+        assert n.h <> 'B'
         closed_switches.add('switch_%04d' % n.v)
         configs.extend(find_configs(n.h, comp, closed_switches.copy()))
     return configs
@@ -115,15 +115,15 @@ if __name__ == '__main__':
 
     comps = find_components()
 
-    nodes = {}
+    nodes = {'B': Node('B %d B B ' % (len(nw.switches) + 1)),
+             'T': Node('T %d T T ' % (len(nw.switches) + 1))}
+    root = None
     for line in args.diagram_file:
-        if line.startswith('#nodes:'):
-            pass
-        elif line.startswith('root:'):
-            root = line.split()[1]
-        else:
-            n = Node(line)
-            nodes[n.n] = n
+        if line.startswith('.'):
+            break
+        n = Node(line)
+        nodes[n.n] = n
+        root = n.n
 
     graph = nx.DiGraph()
 
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     for comp in comps:
         entries = rebuild(entries, comp)
 
-    path = nx.dijkstra_path(graph, root, '1')
+    path = nx.dijkstra_path(graph, root, 'T')
 
     comp_loss = 0
     closed_switches = []

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+from graphillion import GraphSet
 import math
 import os
 import sys
@@ -10,6 +11,8 @@ import dnet.core
 max_current     = 300
 sending_voltage = 6600 / math.sqrt(3)
 voltage_range   = (6300 / math.sqrt(3), 6900 / math.sqrt(3))
+
+switch2edge = {}  # XXX move to dnet.Network
 
 def define_subgraphs():
     edges = []
@@ -28,9 +31,10 @@ def define_subgraphs():
             neighbors.add(t)
             if t not in sorted_sections:
                 sorted_sections.append(t)
-        edge = [sorted_sections.index(t) + 1 for t in sorted(neighbors)]
+        edge = tuple([sorted_sections.index(t) + 1 for t in sorted(neighbors)])
         assert len(edge) == 2
         edges.append(edge)
+        switch2edge[s] = edge
     assert len(edges) == len(nw.switches)
 
     roots = set()
@@ -42,12 +46,8 @@ def define_subgraphs():
             roots.add(sorted_sections.index(s) + 1)
     assert len(roots) == len(nw.get_root_sections())
 
-    f = open(result_dir + '/subgraphs', 'w')
-    f.write('rforest ' + ' '.join([str(r) for r in sorted(roots)]) + '\n')
-    f.write('%d\n' % len(sorted_sections))
-    for edge in edges:
-        f.write('%d %d\n' % (edge[0], edge[1]))
-    f.close()
+    GraphSet.set_universe(edges, traversal='as-is')
+    return GraphSet.forests(roots=roots, is_spanning=True)
 
 def find_neighbor_switches(s, processed_sections):
     switches = set()
@@ -143,44 +143,30 @@ def satisfies_electric_constraints(root, closed_switches):
 
     return True
 
-def write_bitmap(f, closed_switches, open_switches):
-    bits = []
-    for s in sorted(nw.switches.keys()):
-        if s in closed_switches:
-            bits.append('1')
-        elif s in open_switches:
-            bits.append('0')
-        else:
-            bits.append('*')
-    f.write(''.join(bits) + '\n')
+def write_bitmap(closed_switches, open_switches):
+    closed_switches = [switch2edge[s] for s in closed_switches]
+    open_switches = [switch2edge[s] for s in open_switches]
+    return GraphSet({'include': closed_switches, 'exclude': open_switches})
 
-def do_enumerate_bitmaps(root, f, closed_switches, fixed_switches):
+def do_enumerate_bitmaps(root, closed_switches, fixed_switches):
+    gs = GraphSet()
     unfixed_switches = find_surrounding_switches(root, closed_switches) - fixed_switches
     if len(unfixed_switches) == 0:
-        return
+        return gs
     s = sorted(unfixed_switches)[0]
     fixed_switches.add(s)
-    do_enumerate_bitmaps(root, f, closed_switches.copy(), fixed_switches.copy())
+    gs |= do_enumerate_bitmaps(root, closed_switches.copy(), fixed_switches.copy())
     closed_switches.add(s)
     if satisfies_electric_constraints(root, closed_switches):
-        write_bitmap(f, closed_switches, find_surrounding_switches(root, closed_switches))
-        do_enumerate_bitmaps(root, f, closed_switches.copy(), fixed_switches.copy())
+        gs |= write_bitmap(closed_switches, find_surrounding_switches(root, closed_switches))
+        gs |= do_enumerate_bitmaps(root, closed_switches.copy(), fixed_switches.copy())
+    return gs
 
 def enumerate_bitmaps(root):
-    f = open(result_dir + '/%s.bitmaps' % root, 'w')
+    gs = GraphSet()
     if satisfies_electric_constraints(root, set()):
-        write_bitmap(f, set(), find_surrounding_switches(root, set()))
-    do_enumerate_bitmaps(root, f, set(), find_border_switches(root))
-    f.close()
-
-def execute_fukashigi():
-    cmd = 'fukashigi -n %d -t diagram %s/subgraphs "&" ' % (len(nw.switches), result_dir) + \
-        ' "&" '.join(sorted([result_dir + '/%s.bitmaps' % s for s in nw.sections if nw.sections[s]['substation']])) + \
-        ' > %s/diagram' % result_dir
-    ret = os.system(cmd)
-    if ret <> 0:
-        sys.stderr('Error in fukashigi\n')
-        sys.exit(ret)
+        gs = write_bitmap(set(), find_surrounding_switches(root, set()))
+    return gs | do_enumerate_bitmaps(root, set(), find_border_switches(root))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -193,9 +179,9 @@ if __name__ == '__main__':
     result_dir = args.result_dir
 
     nw = dnet.core.Network(args.data_file)
-    define_subgraphs()
+    gs = define_subgraphs()
 
     for root in nw.get_root_sections():
-        enumerate_bitmaps(root)
+        gs &= enumerate_bitmaps(root)
 
-    execute_fukashigi()
+    gs.dump(open('%s/diagram2' % result_dir, 'w'))
