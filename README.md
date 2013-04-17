@@ -226,17 +226,19 @@ Network data in the [Fukui-TEPCO
 format](http://www.hayashilab.sci.waseda.ac.jp/RIANT/riant_test_feeder.html)
 can be also accepted in DNET.  Since Fukui-TEPCO format lacks switch
 indicators, you have to add file `sw_list.dat` that includes switch
-names; see examples in `test/fukui-tepco` in detail.
+names; see examples in
+[test/fukui-tepco](https://github.com/takemaru/dnet/tree/master/test/fukui-tepco)
+in detail.
 
 
 Tutorial
 ---------------------------------------------------------------------
 
-We assume test data is stored in directory `test/`.  Download
+We assume test data is stored in directory `test/`.  Download a file
 [test/data.yaml](https://github.com/takemaru/dnet/blob/master/test/data.yaml?raw=true)
-or
-[test/data-fukui-tepco.yaml](https://github.com/takemaru/dnet/blob/master/test/data-fukui-tepco.yaml?raw=true),
-and put it into the directory before the tutorial.
+or all files in
+[test/fukui-tepco](https://github.com/takemaru/dnet/tree/master/test/fukui-tepco),
+and put it/them into the directory before the tutorial.
 
 Start the Python interpreter and import DNET.
 
