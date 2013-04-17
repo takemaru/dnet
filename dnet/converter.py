@@ -149,25 +149,20 @@ class FukuiTepcoConverter(object):
             ss = []
             for s in nodes[n]:
                 if s in switches:
-                    ss.append('switch_%04d' % (sorted_switches.index(s) + 1))
+                    ss.append('switch_%04d' % s)
                 else:
                     ss.append('section_%04d' % s)
             obj['nodes'].append(sorted(ss))
 
-        for s in sorted(switches):
-            c = uf.find(s)
-            assert c > 0
-            i = comps[c][0]
-            obj['switches']['switch_%04d' % (sorted_switches.index(s) + 1)] = {
-        #        'component'      : i,
-                'original_number': s,
-            }
+        obj['switches'] = ['switch_%04d' % s for s in sorted_switches]
+#        for s in sorted(switches):
+#            c = uf.find(s)
+#            i = comps[c][0]
 
         for s in sorted(sections):
-            c = uf.find(s)
-            i = comps[c][0] if c > 0 else 0
+#            c = uf.find(s)
+#            i = comps[c][0] if c > 0 else 0
             obj['sections']['section_%04d' % s] = {
-        #        'component' : i,
                 'load'      : loads[s],
                 'impedance' : impedances[s],
                 'substation': s < 0,

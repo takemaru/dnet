@@ -187,37 +187,24 @@ sections:
 
 ### Switches
 
-The "switches" part describes switch information.  However, no
+The "switches" part describes the switch order.
+information.  However, no
 information is required in the current version, and so just an empty
 curly brace is given for each switch, as shown in the following YAML.
 
 ```yaml
 switches:
-  switch_0001: {}
-  switch_0002: {}
-  switch_0003: {}
+- switch_0001
+- switch_0002
+- switch_0003
 ```
 
-We have to be careful to assign switch names.  First, the switch
-numbers must be successive positive integers, and they must be
-represented by four-figure numbers with leading zeros (i.e., printf of
-"switch_%04d").  Second, switches should be numbered based on the
-proximity in the network as shown in the figure, because DNET's
-efficiency highly depends on the order.  Third, in the loss
+We have to be careful to assign the switch order.  Switches should be
+ordered based on the proximity in the network as shown in the figure,
+because DNET's efficiency highly depends on the order.  In the loss
 minimization, the order must not step over junctions connected to a
 substation (such junctions are indicated by red circles in the
 figure); see Sections 4.1 and 5.1 in [theory.pdf] for more detail.
-
-Optionally, switches may have original_number attribute, which is the
-original switch number in your data and will be shown in the DNET's
-results.
-
-```yaml
-switches:
-  switch_0001: {original_number: 1064}
-  switch_0002: {original_number: 1060}
-  switch_0003: {original_number: 1065}
-```
 
 ### Fukui-TEPCO format
 

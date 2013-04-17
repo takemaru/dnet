@@ -138,19 +138,19 @@ sections:
     load: [23.87780659, 4.33926456, 23.1904931, 4.214360495, 2.2606e-12, 4.10814e-13]
     substation: false
 switches:
-  switch_0001: {}
-  switch_0002: {}
-  switch_0003: {}
-  switch_0004: {}
-  switch_0005: {}
-  switch_0006: {}
-  switch_0007: {}
-  switch_0008: {}
-  switch_0009: {}
-  switch_0010: {}
-  switch_0011: {}
-  switch_0012: {}
-  switch_0013: {}
-  switch_0014: {}
-  switch_0015: {}
-  switch_0016: {}
+- switch_0001
+- switch_0002
+- switch_0003
+- switch_0004
+- switch_0005
+- switch_0006
+- switch_0007
+- switch_0008
+- switch_0009
+- switch_0010
+- switch_0011
+- switch_0012
+- switch_0013
+- switch_0014
+- switch_0015
+- switch_0016

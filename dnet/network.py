@@ -66,19 +66,10 @@ class Network(object):
         self._search_space = None
 
     def switch2edge(self, switch):
-        if switch in self._switch2edge:
-            return self._switch2edge[switch]
-        else:
-            for s, v in self._switches.iteritems():
-                if 'original_number' in v and v['original_number'] == int(switch):
-                    return self._switch2edge[s]
-        raise KeyError, switch
+        return self._switch2edge[switch]
 
     def edge2switch(self, edge):
-        switch = self._edge2switch[edge]
-        if 'original_number' in self._switches[switch]:
-            switch = self._switches[switch]['original_number']
-        return switch
+        return self._edge2switch[edge]
 
     def forest2config(self, forest):
         return [self.edge2switch(e) for e in forest]
@@ -103,21 +94,21 @@ class Network(object):
 
         self._zdd = { 'B': Node('B %d B B ' % (len(self._switches) + 1)),
                       'T': Node('T %d T T ' % (len(self._switches) + 1)) }
-        root = None
+        start = None
         for line in gs.dumps().split('\n'):
             if line.startswith('.'):
                 break
             n = Node(line)
             self._zdd[n.n] = n
-            root = n.n
+            start = n.n
 
         self._search_space = nx.DiGraph()
 
-        entries = set([root])
+        entries = set([start])
         for comp in comps:
             entries = self._rebuild(entries, comp)
 
-        path = nx.dijkstra_path(self._search_space, root, 'T')
+        path = nx.dijkstra_path(self._search_space, start, 'T')
 
         comp_loss = 0
         closed_switches = []
@@ -126,7 +117,7 @@ class Network(object):
             comp_loss += self._search_space[x][y]['weight']
             closed_switches.extend(list(self._search_space[x][y]['config']))
         closed_switches = set(closed_switches)
-        open_switches = sorted(set(self._switches.keys()) - closed_switches)
+        open_switches = sorted(set(self._switches) - closed_switches)
 
         loss = 0
         for root in self._get_root_sections():
@@ -149,13 +140,7 @@ class Network(object):
                    'loss_without_root_sections': comp_loss,
                    'lower_bound_of_minimum_loss': lower_bound + comp_loss}
 
-        if 'original_number' in self._switches.values()[0]:
-            results['open_switches'] = []
-            for s in open_switches:
-                t = self._switches[s]['original_number']
-                results['open_switches'].append(t)
-        else:
-            results['open_switches'] = open_switches
+        results['open_switches'] = open_switches
 
         return results
 
@@ -236,7 +221,7 @@ class Network(object):
     def _build_graph(self):
         edges = []
         sorted_sections = []
-        for s in sorted(self._switches):
+        for s in self._switches:
             ns = set()
             for t in self._find_neighbors(s):
                 if t in self._sections:
@@ -250,12 +235,11 @@ class Network(object):
                 neighbors.add(t)
                 if t not in sorted_sections:
                     sorted_sections.append(t)
-            edge = [sorted_sections.index(t) + 1 for t in sorted(neighbors)]
-            edge = tuple(edge)
-            assert len(edge) == 2
-            edges.append(edge)
-            self._switch2edge[s] = edge
-            self._edge2switch[edge] = s
+            e = tuple([sorted_sections.index(t) + 1 for t in sorted(neighbors)])
+            assert len(e) == 2
+            edges.append(e)
+            self._switch2edge[s] = e
+            self._edge2switch[e] = s
         assert len(edges) == len(self._switches)
 
         roots = set()
@@ -382,7 +366,7 @@ class Network(object):
         return gs | self._do_enumerate_trees(root, set(), border_switches)
 
     def _find_components(self):
-        switches = set(self._switches.keys())
+        switches = set(self._switches)
         sections = set(self._sections.keys())
         roots = self._get_root_sections()
         uf = UnionFind()
@@ -398,7 +382,7 @@ class Network(object):
 
         i = 1
         comps = {}
-        for s in sorted(switches):
+        for s in self._switches:
             c = uf.find(s)
             if c not in comps:
                 comps[c] = (i, set())
@@ -410,11 +394,15 @@ class Network(object):
 
         comps = [comps[c][1] for c in sorted(comps, key=lambda c: comps[c][0])]
 
-        s = 'switch'
+        s = None
         for c in comps:
             switches = [t for t in c if t in self._switches]
-            assert s < min(switches), 'switches must be ordered by independent components'
-            s = max(switches)
+            assert s is None or self._switches.index(s) < min([self._switches.index(t) for t in switches]), \
+                'switches must be ordered by independent components'
+            s = switches[0]
+            for t in switches:
+                if self._switches.index(t) > self._switches.index(s):
+                    s = t
 
         assert len([t for s in self._sections if s < 0
                     for t in self._find_neighbors(s) if t in self._switches]) == 0, \
@@ -425,14 +413,14 @@ class Network(object):
     def _find_configs(self, n, comp, closed_switches):
         n = self._zdd[n]
         configs = []
-        if 'switch_%04d' % n.v not in comp:
+        if n.v > len(self._switches) or self._switches[n.v - 1] not in comp:
             configs.append((closed_switches, n.n))
         else:
             if n.l <> 'B':
                 configs2 = self._find_configs(n.l, comp, closed_switches.copy())
                 configs.extend(configs2)
             assert n.h <> 'B'
-            closed_switches.add('switch_%04d' % n.v)
+            closed_switches.add(self._switches[n.v - 1])
             configs.extend(self._find_configs(n.h, comp, closed_switches.copy()))
         return configs
 

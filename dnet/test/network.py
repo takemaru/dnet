@@ -68,7 +68,7 @@ class TestNetwork(unittest.TestCase):
 
         results = nw.optimize(configs)
         self.assertAlmostEqual(results['minimum_loss'], 69734.3, 0)
-        self.assertEqual(results['open_switches'], [1058, 1069, 5, 306])
+        self.assertEqual(results['open_switches'], ['switch_0005', 'switch_0306', 'switch_1058', 'switch_1069'])
 
 
 if __name__ == '__main__':
