@@ -13,8 +13,9 @@ Features
 --------------------------------------------------------------------------------
 
 * Highly efficient analysis tool for power distribution networks
-* Loss minimization, configuration search, and so on
-* Utilizing [Graphillion](http://graphillion.org/), a graphset
+* Power loss minimization (nonconvex optimization over 468 variables)
+  and so on
+* Featuring [Graphillion](http://graphillion.org/), a graphset
   operation library
 * Open source MIT license
 * Additional benefits from Python: fast prototyping, easy to teach,
