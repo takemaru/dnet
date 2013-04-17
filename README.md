@@ -297,8 +297,8 @@ average loss over them.
 78790.853510635628
 ```
 
-We retrieve configurations by issuing a query; e.g., switch-2 is
-closed while switch-3 is open.  The status of the other switches are
+We retrieve configurations by issuing a query; e.g., switch 2 is
+closed while switch 3 is open.  The status of the other switches are
 not cared.
 
 ```python
@@ -317,12 +317,27 @@ configurations enumerated above.
  'loss_without_root_sections': 46128.464350540948,
  'open_switches': ['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015']}
 ```
+
 The minimum loss is 69734 and the lower bound is 67029; the lower
 bound means a theoretical bound under which the minimum loss never be
 (see Section 3.3 in [theory.pdf] in detail).  In the optimal
-configuration, switch-4, switch-7, switch-12, and switch-15 are open,
+configuration, switch 4, switch 7, switch 12, and switch 15 are open,
 and the other switches are closed.
 
+The search space of optimization is a directed acyclic graph.  The
+shortest path to terminal vertex `'T'` indicates the optimal solution,
+and the path weight corresponds to the minimum loss.  We can retrieve
+all edges with their weights as follows.
+
+```python
+>>> for u, v in nw._search_space.edges():
+...     u, v, nw._search_space[u][v]['weight']
+...
+('4082', 'T', 227.25507204036546)
+('38', 'T', 227.25507204036546)
+('46', '38', 190.18278149818809)
+:
+```
 
 Limitations
 ---------------------------------------------------------------------
