@@ -42,8 +42,10 @@ optimization problem.
 DNET finds the best configuration you want with a great efficiency.
 All feasible configurations are examined without stuck in local
 minima.  DNET handles complicated electrical constraints with
-realistic unbalanced three-phase loads.  We believe that DNET takes
-you to the next stage of power distribution network analysis.
+realistic unbalanced three-phase loads.  We've optimized a large
+distribution network with 468 switches using DNET; please see papers
+listed in [References](#references) in detail.  We believe that DNET
+takes you to the next stage of power distribution network analysis.
 
 DNET can be used freely under the MIT license.  It is mainly developed
 by [JST ERATO Minato
