@@ -236,7 +236,7 @@ We assume test data is stored in directory `test/`.  Download
 [test/data.yaml](https://github.com/takemaru/dnet/blob/master/test/data.yaml?raw=true)
 or
 [test/data-fukui-tepco.yaml](https://github.com/takemaru/dnet/blob/master/test/data-fukui-tepco.yaml?raw=true),
-and put it into the directory for the tutorial.
+and put it into the directory before the tutorial.
 
 Start the Python interpreter and import DNET.
 
