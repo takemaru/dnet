@@ -1,12 +1,24 @@
 DNET - Distribution Network Evaluation Tool
 =====================================================================
 
+* [Features](#features "Features")
 * [Overview](#overview "Overview")
 * [Installing](#installing "Installing")
 * [Network data](#network-data "Network data")
 * [Tutorial](#tutorial "Tutorial")
 * [Limitations](#limitations "Limitations")
 * [References](#references "References")
+
+Features
+--------------------------------------------------------------------------------
+
+* Highly efficient analysis tool for power distribution networks
+* Loss minimization, configuration search, and so on
+* Utilizing [Graphillion](http://graphillion.org/), a graphset
+  operation library
+* Open source MIT license
+* Additional benefits from Python: fast prototyping, easy to teach,
+  and multi-platform
 
 Overview
 ---------------------------------------------------------------------
