@@ -29,7 +29,7 @@ class TestNetwork(unittest.TestCase):
         pass
 
     def test_tutorial(self):
-        nw = Network('test/data.yaml')
+        nw = Network('data/test.yaml')
         self.assertTrue(isinstance(nw, Network))
 
         self.assertEqual(len(nw.nodes), 37)
@@ -75,7 +75,7 @@ class TestNetwork(unittest.TestCase):
         self.assertEqual(results['open_switches'], ['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015'])
 
     def test_fukui_tepco(self):
-        nw = Network('test/fukui-tepco', format='fukui-tepco')
+        nw = Network('data/test-fukui-tepco', format='fukui-tepco')
 
         configs = nw.enumerate()
         self.assertEqual(len(configs), 111)        

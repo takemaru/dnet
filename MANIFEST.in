@@ -1,5 +1,5 @@
 include README.md doc/example_nw.png doc/theory.pdf \
   dnet/test/__init__.py dnet/test/network.py \
-  test/fukui-tepco/LNewSL.dat test/fukui-tepco/LNewZ.dat \
-  test/fukui-tepco/root.dat test/fukui-tepco/sw_list.dat \
-  test/fukui-tepco/SWed.dat test/data-fukui-tepco.yaml test/data.yaml
+  data/test-fukui-tepco/LNewSL.dat data/test-fukui-tepco/LNewZ.dat \
+  data/test-fukui-tepco/root.dat data/test-fukui-tepco/sw_list.dat \
+  data/test-fukui-tepco/SWed.dat data/test-fukui-tepco.yaml data/test.yaml

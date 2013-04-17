@@ -149,7 +149,7 @@ Network data
 DNET requires network data, which includes network topology (line
 connectivity and switch positions), loads, and impedance.  The data
 must be formatted by YAML syntax.  We explain the formatting rules
-using an example, [test/data.yaml] in the DNET package.  This example
+using an example, [data/test.yaml] in the DNET package.  This example
 network consists of three feeders and 16 switches, as shown in the
 figure.
 
@@ -227,18 +227,19 @@ format](http://www.hayashilab.sci.waseda.ac.jp/RIANT/riant_test_feeder.html)
 can be also accepted in DNET.  Since Fukui-TEPCO format lacks switch
 indicators, you have to add file `sw_list.dat` that includes switch
 names; see examples in
-[test/fukui-tepco/](https://github.com/takemaru/dnet/tree/master/test/fukui-tepco)
+[data/test-fukui-tepco/](https://github.com/takemaru/dnet/tree/master/data/test-fukui-tepco)
 in detail.
 
 
 Tutorial
 ---------------------------------------------------------------------
 
-We assume test data is stored in directory `test/`.  Download a file
-[test/data.yaml](https://github.com/takemaru/dnet/blob/master/test/data.yaml?raw=true)
+We assume network data used in this tutorial is stored in a directory
+`data/`.  Download a file
+[data/test.yaml](https://github.com/takemaru/dnet/blob/master/data/test.yaml?raw=true)
 or all files in
-[test/fukui-tepco/](https://github.com/takemaru/dnet/tree/master/test/fukui-tepco),
-and put it/them into the directory before the tutorial.
+[data/test-fukui-tepco/](https://github.com/takemaru/dnet/tree/master/data/test-fukui-tepco),
+and put it into the directory before beginning the tutorial.
 
 Start the Python interpreter and import DNET.
 
@@ -248,8 +249,7 @@ $ python
 ```
 
 You might need to change the maximum current and voltage range for
-the constraints of line capacity and voltage profiles.  We show the
-default values below.
+your own data.  The default values are given as follows.
 
 ```python
 >>> from math import sqrt
@@ -261,18 +261,18 @@ default values below.
 Load the network data as follows.
 
 ```python
->>> nw = Network('test/data.yaml')
+>>> nw = Network('data/test.yaml')
 ```
 
 If your data is in the Fukui-TEPCO format, specify data directory with
 the format type.
 
 ```python
->>> nw = Network('test/fukui-tepco', format='fukui-tepco')
+>>> nw = Network('data/test-fukui-tepco', format='fukui-tepco')
 ```
 
-We can access to the loaded data (if you've loaded the Fukui-TEPCO
-format data, the switch numbers are different).
+We can access to the loaded network data (if you've loaded the
+Fukui-TEPCO format data, the switch numbers are different).
 
 ```python
 >>> nw.nodes
@@ -420,5 +420,5 @@ References
   [theory.pdf]
 - [PyDNET : Python Package Index](https://pypi.python.org/pypi/PyDNET)
 
-[test/data.yaml]: http://github.com/takemaru/dnet/blob/master/test/data.yaml
+[data/test.yaml]: http://github.com/takemaru/dnet/blob/master/data/test.yaml
 [theory.pdf]: http://github.com/takemaru/dnet/blob/master/doc/theory.pdf?raw=true
