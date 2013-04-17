@@ -26,9 +26,9 @@ from graphillion import GraphSet
 class ConfigSet(object):
     """Represents a set of configurations.
 
-    This class supports almost same interface with
-    graphillion.GraphSet, which represents a set of graphs.  This is
-    because a configuration can be regarded as a graph (a forest).
+    This class supports similar interface with graphillion.GraphSet,
+    which represents a set of graphs (a configuration can be regarded
+    as a forest of graph).
     """
 
     def __init__(self, nw, gs):

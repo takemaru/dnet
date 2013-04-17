@@ -52,8 +52,8 @@ class Network(object):
         else:
             obj = yaml.load(open(file_or_dir))
         self.nodes = obj['nodes']
-        self.switches = obj['switches']
         self.sections = obj['sections']
+        self.switches = obj['switches']
         for s in self.sections.values():
             l = s['load']
             z = s['impedance']

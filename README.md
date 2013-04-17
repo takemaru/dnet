@@ -13,8 +13,8 @@ Features
 --------------------------------------------------------------------------------
 
 * Highly efficient analysis tool for power distribution networks
-* Power loss minimization (nonconvex optimization over 468 variables!)
-  and so on
+* Power loss minimization (nonconvex optimization over several
+  hundreds of variables!) and more
 * Featuring [Graphillion](http://graphillion.org/), an efficient
   graphset operation library
 * Open source MIT license
@@ -267,10 +267,10 @@ format data, the switch numbers are different).
 ```python
 >>> nw.nodes
 [['section_-001', 'section_0302', 'section_0303'], ['section_-002', 'section_0001', ...
->>> nw.switches
-['switch_0001', 'switch_0002', 'switch_0003', 'switch_0004', 'switch_0005', ...
 >>> nw.sections
 {'section_1068': {'load': [(23.87780659+4.33926456j), (23.1904931+4.214360495j), ...
+>>> nw.switches
+['switch_0001', 'switch_0002', 'switch_0003', 'switch_0004', 'switch_0005', ...
 ```
 
 Then, enumerate all feasible configurations as follows.
@@ -288,11 +288,11 @@ We count the number of all the feasible configurations.
 
 This shows that the network has 111 feasible configurations.
 
-Object `config` is an instance of ConfigSet.  ConfigSet supports
-almost same interface with graphillion.GraphSet, which represents a
-set of graphs.  This is because a configuration can be regarded as a
-graph (a forest).  We can utilize rich functions provided by
-Graphillion, such as search and iteration.
+Object `configs` is an instance of ConfigSet.  ConfigSet supports
+similar interface with graphillion.GraphSet, which represents a set of
+graphs (a configuration can be regarded as a forest of graph).  We can
+utilize the rich functions provided by Graphillion, such as search and
+iteration, for configuration analysis.
 
 We search for configurations by a query; e.g., switch 2 is closed
 while switch 3 is open.  Statuses of the other switches are not cared.
@@ -319,7 +319,7 @@ follows.
 Each line shows a configuration, which is represented by a set of
 *closed* switches in DNET.
 
-We select 10 configurations uniformly randomly, and calculate the
+We select 5 configurations uniformly randomly, and calculate the
 average loss over them.
 
 ```python
