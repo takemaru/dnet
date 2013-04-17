@@ -19,7 +19,14 @@
 
 from graphillion import GraphSet
 
+
 class Configs(object):
+    """Represents a set of configurations.
+
+    This class provides an almost same interface with
+    graphillion.Graphset, which represents a set of graphs.  This is
+    because a configuration can be regarded as a graph.
+    """
 
     def __init__(self, nw, gs):
         self._nw = nw
@@ -32,16 +39,20 @@ class Configs(object):
         return bool(self._gs)
 
     def union(self, *others):
-        return Configs(self._nw, self._gs.union(*[other._gs for other in others]))
+        others = [other._gs for other in others]
+        return Configs(self._nw, self._gs.union(*others))
 
     def intersection(self, *others):
-        return Configs(self._nw, self._gs.intersection(*[other._gs for other in others]))
+        others = [other._gs for other in others]
+        return Configs(self._nw, self._gs.intersection(*others))
 
     def difference(self, *others):
-        return Configs(self._nw, self._gs.difference(*[other._gs for other in others]))
+        others = [other._gs for other in others]
+        return Configs(self._nw, self._gs.difference(*others))
 
     def symmetric_difference(self, *others):
-        return Configs(self._nw, self._gs.symmetric_difference(*[other._gs for other in others]))
+        others = [other._gs for other in others]
+        return Configs(self._nw, self._gs.symmetric_difference(*others))
 
     def update(self, *others):
         self._gs.update(*[other._gs for other in others])

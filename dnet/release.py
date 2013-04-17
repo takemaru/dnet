@@ -20,4 +20,4 @@
 version = '0.9'
 date = ''
 license = 'MIT'
-authors = [('Takeru Inoue', 'takeru.inoue@gmail.com')]
+authors = (('Takeru Inoue', 'takeru.inoue@gmail.com'),)

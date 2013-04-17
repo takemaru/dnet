@@ -20,25 +20,26 @@
 from dnet.unionfind import UnionFind
 import yaml
 
+
 class FukuiTepcoConverter(object):
 
     def __init__(self, dir):
-        self.files = {'switch'   : dir + '/sw_list.dat',
-                      'topology' : dir + '/SWed.dat',
-                      'load'     : dir + '/LNewSL.dat',
-                      'impedance': dir + '/LNewZ.dat',
-                      'root'     : dir + '/root.dat'}
+        self._files = {'switch'   : dir + '/sw_list.dat',
+                       'topology' : dir + '/SWed.dat',
+                       'load'     : dir + '/LNewSL.dat',
+                       'impedance': dir + '/LNewZ.dat',
+                       'root'     : dir + '/root.dat'}
 
     def convert(self):
         switch_numbers = set()
-        for line in open(self.files['switch']):
+        for line in open(self._files['switch']):
             for s in line.split():
                 switch_numbers.add(int(s))
 
         switches = set()
         sections = set()
         nodes = {}
-        for line in open(self.files['topology']):
+        for line in open(self._files['topology']):
             s, m, n, _ = line.split()
             s, m, n = int(s), int(m), int(n)
             if m not in nodes: nodes[m] = set()
@@ -51,12 +52,13 @@ class FukuiTepcoConverter(object):
                 sections.add(s)
 
         loads = {}
-        for line in open(self.files['load']):
+        for line in open(self._files['load']):
             _, s, m, n, ur, ui, vr, vi, wr, wi = line.split()
-            loads[int(s)] = [float(ur), float(ui), float(vr), float(vi), float(wr), float(wi)]
+            loads[int(s)] = [float(ur), float(ui), float(vr), float(vi), \
+                                 float(wr), float(wi)]
 
         impedances = {}
-        for line in open(self.files['impedance']):
+        for line in open(self._files['impedance']):
             s, p, m, n, ur, ui, vr, vi, wr, wi = line.split()
             s = int(s)
             if p == '0':
@@ -67,7 +69,7 @@ class FukuiTepcoConverter(object):
                 impedances[s].extend([float(wr), float(wi)])
 
         roots = set()
-        for line in open(self.files['root']):
+        for line in open(self._files['root']):
             _, n, lu, lv, lw, ir, ii = line.split()
             n = int(n)
             nodes[n].add(-n)

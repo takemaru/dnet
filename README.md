@@ -23,6 +23,8 @@ switches, which makes network analysis a quite tough problem due to
 the huge size of search space.  Moreover, power distribution networks
 are generally operated in a radial structure under the complicated
 operational constraints such as line capacity and voltage profiles.
+The loss minimization in a distribution network is a nonconvex
+optimization problem.
 
 DNET finds the best configuration you want with a great efficiency,
 while it examines all feasible configurations without stuck in local
@@ -229,10 +231,13 @@ numbers; see examples in `test/data/` in detail.
 Tutorial
 ---------------------------------------------------------------------
 
-Before anything else, we import DNET module.
+Before anything else, we start the Python interpreter and import DNET.
+
+```bash
+$ python
+```
 
 ```python
-$ python
 >>> from dnet import Network
 ```
 

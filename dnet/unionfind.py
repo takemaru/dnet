@@ -67,11 +67,13 @@ def Ackerman(inp, memo={0:1}):
 		print out
 		raise Exception, "NumberCannotBeRepresentedByAllSubatomicParticlesInUniverse"
 
+
 def inverseAckerman(inp):
     t = 0
     while Ackerman(t) < inp:
         t += 1
     return t
+
 
 
 class UnionFind:
@@ -140,6 +142,7 @@ using find.'''
             if i:
                 out.append(repr(i))
         return ', '.join(out)
+
 
 if __name__ == '__main__':
     print "Testing..."
