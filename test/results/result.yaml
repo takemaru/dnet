@@ -1,5 +1,0 @@
-minimum_loss: 69734.3
-loss_without_root_sections: 46128.5
-lower_bound_of_minimum_loss: 67028.9
-open_switches: ['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015']
-open_switches_in_original_numbers: [1058, 1069, 5, 306]

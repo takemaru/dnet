@@ -20,13 +20,13 @@
 """DNET - Distribution Network Evaluation Tool.
 
 DNET (Distribution Network Evaluation Tool) is an analysis tool that
-evaluates power distribution networks for efficient and stable
+works with power distribution networks for efficient and stable
 operation such as loss minimization and service restoration.  See
 README for details.
 """
 
 from dnet.network import Network
-from dnet.configs import Configs
+from dnet.configset import ConfigSet
 from dnet.converter import FukuiTepcoConverter
 import dnet.release
 

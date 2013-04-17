@@ -17,15 +17,18 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+"""Module for a set of configurations.
+"""
+
 from graphillion import GraphSet
 
 
-class Configs(object):
+class ConfigSet(object):
     """Represents a set of configurations.
 
-    This class provides an almost same interface with
-    graphillion.Graphset, which represents a set of graphs.  This is
-    because a configuration can be regarded as a graph.
+    This class supports almost same interface with
+    graphillion.GraphSet, which represents a set of graphs.  This is
+    because a configuration can be regarded as a graph (a forest).
     """
 
     def __init__(self, nw, gs):
@@ -33,26 +36,26 @@ class Configs(object):
         self._gs = gs
 
     def copy(self):
-        return Configs(self._nw, self._gs.copy())
+        return ConfigSet(self._nw, self._gs.copy())
 
     def __nonzero__(self):
         return bool(self._gs)
 
     def union(self, *others):
         others = [other._gs for other in others]
-        return Configs(self._nw, self._gs.union(*others))
+        return ConfigSet(self._nw, self._gs.union(*others))
 
     def intersection(self, *others):
         others = [other._gs for other in others]
-        return Configs(self._nw, self._gs.intersection(*others))
+        return ConfigSet(self._nw, self._gs.intersection(*others))
 
     def difference(self, *others):
         others = [other._gs for other in others]
-        return Configs(self._nw, self._gs.difference(*others))
+        return ConfigSet(self._nw, self._gs.difference(*others))
 
     def symmetric_difference(self, *others):
         others = [other._gs for other in others]
-        return Configs(self._nw, self._gs.symmetric_difference(*others))
+        return ConfigSet(self._nw, self._gs.symmetric_difference(*others))
 
     def update(self, *others):
         self._gs.update(*[other._gs for other in others])
@@ -71,7 +74,7 @@ class Configs(object):
         return self
 
     def __invert__(self):
-        return Configs(self._nw, ~self._gs)
+        return ConfigSet(self._nw, ~self._gs)
 
     __or__ = union
     __and__ = intersection
@@ -114,114 +117,114 @@ class Configs(object):
         if size is None:
             return self._gs.len()
         else:
-            return Configs(self._nw, self._gs.len(size))
+            return ConfigSet(self._nw, self._gs.len(size))
 
     def __iter__(self):
         for g in iter(self._gs):
-            yield self._nw.forest2config(g)
+            yield self._nw._to_config(g)
 
     def rand_iter(self):
         for g in self._gs.rand_iter():
-            yield self._nw.forest2config(g)
+            yield self._nw._to_config(g)
 
     def min_iter(self, weights=None):
         if weights is not None:
             weights = self._conv_weights(weights)
         for g in self._gs.min_iter(weights):
-            yield self._nw.forest2config(g)
+            yield self._nw._to_config(g)
 
     def max_iter(self, weights=None):
         if weights is not None:
             weights = self._conv_weights(weights)
         for g in self._gs.max_iter(weights):
-            yield self._nw.forest2config(g)
+            yield self._nw._to_config(g)
 
     def _conv_weights(weights):
         weights2 = {}
         for s, w in weights.iteritems():
-            weights2[self._nw.switch2edge] = w
+            weights2[self._nw._to_edge] = w
         return weights2
 
     def __contains__(self, config_or_switch):
         if isinstance(config_or_switch, list):
-            return self._nw.config2forest(config_or_switch) in self._gs
+            return self._nw._to_forest(config_or_switch) in self._gs
         else:
-            return self._nw.switch2edge(config_or_switch) in self._gs
+            return self._nw._to_edge(config_or_switch) in self._gs
 
     def add(self, config_or_switch):
         if isinstance(config_or_switch, list):
-            self._gs.add(self._nw.config2forest(config_or_switch))
+            self._gs.add(self._nw._to_forest(config_or_switch))
         else:
-            self._gs.add(self._nw.switch2edge(config_or_switch))
+            self._gs.add(self._nw._to_edge(config_or_switch))
 
     def remove(self, config):
         if isinstance(config_or_switch, list):
-            self._gs.remove(self._nw.config2forest(config_or_switch))
+            self._gs.remove(self._nw._to_forest(config_or_switch))
         else:
-            self._gs.remove(self._nw.switch2edge(config_or_switch))
+            self._gs.remove(self._nw._to_edge(config_or_switch))
 
     def discard(self, config):
         if isinstance(config_or_switch, list):
-            self._gs.discard(self._nw.config2forest(config_or_switch))
+            self._gs.discard(self._nw._to_forest(config_or_switch))
         else:
-            self._gs.discard(self._nw.switch2edge(config_or_switch))
+            self._gs.discard(self._nw._to_edge(config_or_switch))
 
     def pop(self):
-        return self._nw.forest2config(self._gs.pop())
+        return self._nw._to_config(self._gs.pop())
 
     def cler(self):
         self._gs.clear()
 
     def flip(self, switch):
-        self._gs.flip(self._nw.switch2edge(switch))
+        self._gs.flip(self._nw._to_edge(switch))
 
     def minimal(self):
-        return Configs(self._nw, self._gs.minimal())
+        return ConfigSet(self._nw, self._gs.minimal())
 
     def maximal(self):
-        return Configs(self._nw, self._gs.maximal())
+        return ConfigSet(self._nw, self._gs.maximal())
 
     def blocking(self):
-        return Configs(self._nw, self._gs.blocking())
+        return ConfigSet(self._nw, self._gs.blocking())
 
     def smaller(self, size):
-        return Configs(self._nw, self._gs.smaller(size))
+        return ConfigSet(self._nw, self._gs.smaller(size))
 
     def larger(self, size):
-        return Configs(self._nw, self._gs.larger(size))
+        return ConfigSet(self._nw, self._gs.larger(size))
 
     def complement(self):
-        return Configs(self._nw, self._gs.complement())
+        return ConfigSet(self._nw, self._gs.complement())
 
     def including(self, obj):
-        if isinstance(obj, Configs):
+        if isinstance(obj, ConfigSet):
             obj = obj._gs
         elif isinstance(obj, list):
-            obj = self._nw.config2forest(obj)
+            obj = self._nw._to_forest(obj)
         else:
-            obj = self._nw.switch2edge(obj)
-        return Configs(self._nw, self._gs.including(obj))
+            obj = self._nw._to_edge(obj)
+        return ConfigSet(self._nw, self._gs.including(obj))
 
     def excluding(self, obj):
-        if isinstance(obj, Configs):
+        if isinstance(obj, ConfigSet):
             obj = obj._gs
         elif isinstance(obj, list):
-            obj = self._nw.config2forest(obj)
+            obj = self._nw._to_forest(obj)
         else:
-            obj = self._nw.switch2edge(obj)
-        return Configs(self._nw, self._gs.excluding(obj))
+            obj = self._nw._to_edge(obj)
+        return ConfigSet(self._nw, self._gs.excluding(obj))
 
     def included(self, obj):
-        if isinstance(obj, Configs):
+        if isinstance(obj, ConfigSet):
             obj = obj._gs
         elif isinstance(obj, list):
-            obj = self._nw.config2forest(obj)
+            obj = self._nw._to_forest(obj)
         else:
             raise TypeError, obj
-        return Configs(self._nw, self._gs.included(obj))
+        return ConfigSet(self._nw, self._gs.included(obj))
 
     def choice(self):
-        return self._nw.forest2config(self._gs.choice())
+        return self._nw._to_config(self._gs.choice())
 
     def dump(self, fp):
         self._gs.dump(fp)

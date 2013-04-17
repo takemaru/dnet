@@ -6,17 +6,17 @@ DNET - Distribution Network Evaluation Tool
 * [Installing](#installing "Installing")
 * [Network data](#network-data "Network data")
 * [Tutorial](#tutorial "Tutorial")
-* [Limitations](#limitations "Limitations")
+* [Additional notes](#additional-notes "Additional notes")
 * [References](#references "References")
 
 Features
 --------------------------------------------------------------------------------
 
 * Highly efficient analysis tool for power distribution networks
-* Power loss minimization (nonconvex optimization over 468 variables)
+* Power loss minimization (nonconvex optimization over 468 variables!)
   and so on
-* Featuring [Graphillion](http://graphillion.org/), a graphset
-  operation library
+* Featuring [Graphillion](http://graphillion.org/), an efficient
+  graphset operation library
 * Open source MIT license
 * Additional benefits from Python: fast prototyping, easy to teach,
   and multi-platform
@@ -25,28 +25,28 @@ Overview
 ---------------------------------------------------------------------
 
 DNET (Distribution Network Evaluation Tool) is an analysis tool that
-evaluates power distribution networks for efficient and stable
+works with power distribution networks for efficient and stable
 operation such as loss minimization and service restoration.
 
-Power distribution networks consist of several switches, and
-reconfigure their structures, or *configurations*, by changing the
+Power distribution networks consist of several switches.  The
+structure, or *configuration*, can be reconfigured by changing the
 open/closed status of the switches depending on the operational
 requirements.  However, networks of practical size have hundreds of
 switches, which makes network analysis a quite tough problem due to
 the huge size of search space.  Moreover, power distribution networks
 are generally operated in a radial structure under the complicated
 operational constraints such as line capacity and voltage profiles.
-The loss minimization in a distribution network is a nonconvex
+The loss minimization in a distribution network is a hard nonconvex
 optimization problem.
 
-DNET finds the best configuration you want with a great efficiency,
-while it examines all feasible configurations without stuck in local
-minima.  It supports all the constraints with realistic unbalanced
-three-phase loads.  We believe that DNET takes you to the next stage
-of power distribution network analysis.
+DNET finds the best configuration you want with a great efficiency.
+All feasible configurations are examined without stuck in local
+minima.  DNET handles complicated electrical constraints with
+realistic unbalanced three-phase loads.  We believe that DNET takes
+you to the next stage of power distribution network analysis.
 
 DNET can be used freely under the MIT license.  It is mainly developed
-in [JST ERATO Minato
+by [JST ERATO Minato
 project](http://www-erato.ist.hokudai.ac.jp/?language=en).  We would
 really appreciate if you would refer to our paper and address our
 contribution on the use of DNET in your paper.
@@ -59,11 +59,11 @@ contribution on the use of DNET in your paper.
   ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf))
 
 DNET is still under the development.  The current version just
-supports configuration search and loss minimization, but we believe
-service restoration is also possible if you can use DNET appropriately
-with deep understanding of the theory.  We really appreciate any pull
-request and patch if you add some changes that benefit a wide variety
-of people.
+supports power loss minimization and configuration search, but we
+believe service restoration is also possible if you can use DNET
+appropriately with deep understanding of the theory.  We really
+appreciate any pull request and patch if you add some changes that
+benefit a wide variety of people.
 
 
 Installing
@@ -79,7 +79,8 @@ http://www.python.org/
 #### Graphillion, NetworkX, and PyYAML
 
 Graphillion and NetworkX are Python modules for graphs, while PyYAML
-is another Python module for YAML.  They can be installed by:
+is another Python module for a compact syntax called
+[YAML](http://en.wikipedia.org/wiki/YAML).  They can be installed by:
 
 ```bash
 $ sudo easy_install graphillion
@@ -92,7 +93,7 @@ $ sudo easy_install pyyaml
 Just type:
 
 ```bash
-$ sudo easy_install dnet
+$ sudo easy_install pydnet  # caution: don't type just "dnet"
 ```
 
 and an attempt will be made to find and install an appropriate version
@@ -145,10 +146,10 @@ Network data
 
 DNET requires network data, which includes network topology (line
 connectivity and switch positions), loads, and impedance.  The data
-must be formatted by [YAML](http://en.wikipedia.org/wiki/YAML) syntax.
-We explain the formatting rules using an example,
-[test/results/data.yaml] in the DNET package.  This example network
-consists of three feeders and 16 switches, as shown in the figure.
+must be formatted by YAML syntax.  We explain the formatting rules
+using an example, [test/data.yaml] in the DNET package.  This example
+network consists of three feeders and 16 switches, as shown in the
+figure.
 
 ![Example network](http://github.com/takemaru/dnet/blob/master/doc/example_nw.png?raw=true)
 
@@ -161,9 +162,9 @@ difficult to understand it.
 The "nodes" part describes nodes, at which a switch and/or section(s)
 are connected.  In the above example network, nodes are indicated by
 black or red circles.  The following YAML data shows some nodes in the
-example network; three sections are connected at the first line (i.e.,
+example network; three sections are connected at the first node (i.e.,
 section_-001, section_0302, and section_0303), while a section and a
-switch is connected at the fourth line (i.e., section_0302 and
+switch is connected at the fourth node (i.e., section_0302 and
 switch_0010).
 
 ```yaml
@@ -172,6 +173,7 @@ nodes:
 - [section_-002, section_0001, section_0002]
 - [section_-003, section_0008, section_0309]
 - [section_0302, switch_0010]
+:
 ```
 
 ### Sections
@@ -179,7 +181,7 @@ nodes:
 The "sections" part describes section information including load and
 impedance.  In DNET, loads are assumed to be unbalanced three-phase
 and be connected in delta.  Loads are also assumed to be uniformly
-distributed along a line section, and are modeled as constant current,
+distributed along a line section, and are modeled as constant *current*,
 not as power (see Section 2 in [theory.pdf] for more detail).
 
 In the data file, load and impedance are specified by six values,
@@ -187,8 +189,7 @@ which are real and imaginary parts of the three phases; for
 section_-001 in the following YAML, load current is 16.3225894 + 0j in
 the 0-th phase, and impedance is 0.0684 + 0.3678805j in the all
 phases.  Substation attribute indicates whether the line section is
-directly connected to a substation.  There is no restriction on
-section names, unlike switches as described below.
+directly connected to a feeding point in a substation.
 
 ```yaml
 sections:
@@ -196,28 +197,26 @@ sections:
     impedance: [0.0864, 0.3678805, 0.0864, 0.3678805, 0.0864, 0.3678805]
     load: [16.3225894, 0, 16.3225894, 0, 1.29105e-11, 0]
     substation: true
+:
 ```
 
 ### Switches
 
-The "switches" part describes the switch order.
-information.  However, no
-information is required in the current version, and so just an empty
-curly brace is given for each switch, as shown in the following YAML.
+The "switches" part specifies the switch order in a list.
+We have to be careful to assign the order.  Switches should be
+ordered based on the proximity in the network as shown in the figure,
+because DNET's efficiency highly depends on the order.  For the loss
+minimization, the order must not step over junctions connected to a
+substation (such junctions are indicated by red circles in the
+figure); see Sections 4.1 and 5.1 in [theory.pdf] for more detail.
 
 ```yaml
 switches:
 - switch_0001
 - switch_0002
 - switch_0003
+:
 ```
-
-We have to be careful to assign the switch order.  Switches should be
-ordered based on the proximity in the network as shown in the figure,
-because DNET's efficiency highly depends on the order.  In the loss
-minimization, the order must not step over junctions connected to a
-substation (such junctions are indicated by red circles in the
-figure); see Sections 4.1 and 5.1 in [theory.pdf] for more detail.
 
 ### Fukui-TEPCO format
 
@@ -225,25 +224,22 @@ Network data in the [Fukui-TEPCO
 format](http://www.hayashilab.sci.waseda.ac.jp/RIANT/riant_test_feeder.html)
 can be also accepted in DNET.  Since Fukui-TEPCO format lacks switch
 indicators, you have to add file `sw_list.dat` that includes switch
-numbers; see examples in `test/data/` in detail.
+names; see examples in `test/fukui-tepco` in detail.
 
 
 Tutorial
 ---------------------------------------------------------------------
 
-Before anything else, we start the Python interpreter and import DNET.
-
-```bash
-$ python
-```
+Start the Python interpreter and import DNET.
 
 ```python
+$ python
 >>> from dnet import Network
 ```
 
 You might need to change the maximum current and voltage range for
-the constraints of line capacity and voltage profiles (the followings
-are default values).
+the constraints of line capacity and voltage profiles.  We show the
+default values below.
 
 ```python
 >>> from math import sqrt
@@ -252,17 +248,29 @@ are default values).
 >>> Network.VOLTAGE_RANGE   = (6300 / sqrt(3), 6900 / sqrt(3))
 ```
 
-We load the network data as follows.
+Load the network data as follows.
 
 ```python
->>> nw = Network('test/results/data.yaml')
+>>> nw = Network('test/data.yaml')
 ```
 
-If your data is in Fukui-TEPCO format, specify data directory with
+If your data is in the Fukui-TEPCO format, specify data directory with
 the format type.
 
 ```python
->>> nw = Network('test/data/', format='fukui-tepco')
+>>> nw = Network('test/fukui-tepco', format='fukui-tepco')
+```
+
+We can access to the loaded data (if you've loaded the Fukui-TEPCO
+format data, the switch numbers are different).
+
+```python
+>>> nw.nodes
+[['section_-001', 'section_0302', 'section_0303'], ['section_-002', 'section_0001', ...
+>>> nw.switches
+['switch_0001', 'switch_0002', 'switch_0003', 'switch_0004', 'switch_0005', ...
+>>> nw.sections
+{'section_1068': {'load': [(23.87780659+4.33926456j), (23.1904931+4.214360495j), ...
 ```
 
 Then, enumerate all feasible configurations as follows.
@@ -278,41 +286,16 @@ We count the number of all the feasible configurations.
 111L
 ```
 
-This shows that the network has 111 feasible configurations.  These
-configurations are retrieved by an iterator; a configuration is
-represented by a set of *closed* switches.  We show an example as
-follows (if you load Fukui-TEPCO format data, the switch numbers seem
-different in the output).
+This shows that the network has 111 feasible configurations.
 
-```python
->>> for config in configs:
-...     config
-...
-['switch_0001', 'switch_0003', 'switch_0002', 'switch_0005', 'switch_0004', 'switch_0007', 'switch_0008', 'switch_0010', 'switch_0014', 'switch_0012', 'switch_0013', 'switch_0015']
-['switch_0001', 'switch_0003', 'switch_0002', 'switch_0005', 'switch_0004', 'switch_0007', 'switch_0008', 'switch_0010', 'switch_0014', 'switch_0012', 'switch_0013', 'switch_0016']
-['switch_0001', 'switch_0003', 'switch_0002', 'switch_0005', 'switch_0004', 'switch_0007', 'switch_0008', 'switch_0010', 'switch_0012', 'switch_0013', 'switch_0016', 'switch_0015']
-:
-```
+Object `config` is an instance of ConfigSet.  ConfigSet supports
+almost same interface with graphillion.GraphSet, which represents a
+set of graphs.  This is because a configuration can be regarded as a
+graph (a forest).  We can utilize rich functions provided by
+Graphillion, such as search and iteration.
 
-We select 10 configurations uniformly randomly, and calculate the
-average loss over them.
-
-```python
->>> i = 1
->>> sum = 0.0
->>> for config in configs.rand_iter():
-...     sum += nw.loss(config)
-...     if i == 10:
-...         break
-...     i += 1
-...
->>> sum / 10
-78790.853510635628
-```
-
-We retrieve configurations by issuing a query; e.g., switch 2 is
-closed while switch 3 is open.  The status of the other switches are
-not cared.
+We search for configurations by a query; e.g., switch 2 is closed
+while switch 3 is open.  Statuses of the other switches are not cared.
 
 ```python
 >>> filtered_configs = configs.including('switch_0002').excluding('switch_0003')
@@ -320,15 +303,47 @@ not cared.
 15L
 ```
 
+These configurations can be visited one by one using an iterator as
+follows.
+
+```python
+>>> for config in filtered_configs:
+...     config
+...
+['switch_0001', 'switch_0011', 'switch_0002', 'switch_0005', 'switch_0004', 'switch_0007', 'switch_0008', 'switch_0009', 'switch_0010', 'switch_0014', 'switch_0012', 'switch_0015']
+['switch_0001', 'switch_0011', 'switch_0002', 'switch_0005', 'switch_0004', 'switch_0007', 'switch_0008', 'switch_0009', 'switch_0010', 'switch_0014', 'switch_0012', 'switch_0016']
+['switch_0001', 'switch_0011', 'switch_0002', 'switch_0005', 'switch_0004', 'switch_0007', 'switch_0008', 'switch_0009', 'switch_0010', 'switch_0012', 'switch_0016', 'switch_0015']
+:
+```
+
+Each line shows a configuration, which is represented by a set of
+*closed* switches in DNET.
+
+We select 10 configurations uniformly randomly, and calculate the
+average loss over them.
+
+```python
+>>> i = 1
+>>> sum = 0.0
+>>> for config in filtered_configs.rand_iter():
+...     sum += nw.loss(config)
+...     if i == 5:
+...         break
+...     i += 1
+...
+>>> sum / 5
+83014.06804812004
+```
+
 We finally search for the minimum loss configuration from all feasible
 configurations enumerated above.
 
 ```python
 >>> nw.optimize(configs)
-{'minimum_loss': 69734.285418826621,
- 'lower_bound_of_minimum_loss': 67028.86898923367,
- 'loss_without_root_sections': 46128.464350540948,
- 'open_switches': ['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015']}
+{ 'minimum_loss': 69734.285418826621,
+  'lower_bound_of_minimum_loss': 67028.86898923367,
+  'loss_without_root_sections': 46128.464350540948,
+  'open_switches': ['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015'] }
 ```
 
 The minimum loss is 69734 and the lower bound is 67029; the lower
@@ -337,22 +352,8 @@ bound means a theoretical bound under which the minimum loss never be
 configuration, switch 4, switch 7, switch 12, and switch 15 are open,
 and the other switches are closed.
 
-The search space of optimization is a directed acyclic graph.  The
-shortest path to terminal vertex `'T'` indicates the optimal solution,
-and the path weight corresponds to the minimum loss.  We can retrieve
-all edges with their weights as follows.
 
-```python
->>> for u, v in nw._search_space.edges():
-...     u, v, nw._search_space[u][v]['weight']
-...
-('4082', 'T', 227.25507204036546)
-('38', 'T', 227.25507204036546)
-('46', '38', 190.18278149818809)
-:
-```
-
-Limitations
+Additional notes
 ---------------------------------------------------------------------
 
 - DNET assumes that just switches are controllable in a distribution
@@ -361,14 +362,14 @@ Limitations
   problem, in which the variable is open/closed status of the
   switches.
 
-- In DNET, section loads are given as constant current.  Line current
+- In DNET, section loads must be given as constant *current*.  Line current
   is calculated by sweeping backward to sum up downstream section
   loads.  This is because our loss minimization method depends on this
   backward sweeping; see Section 3.1 in [theory.pdf] in detail.
   However, if you are interested in only the configuration search,
   line current can be calculated in the ordinary way with section
-  loads of constant *power*; fix dnet.core.Network.calc_current() and
-  satisfies_electric_constraints() in `script/dnet-enumerator`.
+  loads of constant *power*; fix `_calc_current()` and
+  `_satisfies_electric_constraints()` in `dnet/network.py`.
 
 - DNET assumes that all section loads are non-negative.  This can be
   an issue if introducing distributed generators; see Sections 4.1 and
@@ -380,6 +381,21 @@ Limitations
   configurations in our loss minimization method; see Section 4.1 in
   [theory.pdf] for more detail.
 
+- The search space used in the optimization process is a directed
+  acyclic graph.  The shortest path indicates the optimal solution,
+  and the path weight corresponds to the minimum loss.  We can
+  retrieve all edges with their weights as follows (vertex `'T'` is
+  the terminal one on the path).
+
+```python
+>>> for u, v in nw._search_space.edges():
+...     u, v, nw._search_space[u][v]['weight']
+...
+('4082', 'T', 227.25507204036546)
+('38', 'T', 227.25507204036546)
+('46', '38', 190.18278149818809)
+:
+```
 
 References
 ---------------------------------------------------------------------
@@ -392,6 +408,7 @@ References
   ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf))
 - Takeru Inoue, "Theory of Distribution Network Evaluation Tool."
   [theory.pdf]
+- [PyDNET : Python Package Index](https://pypi.python.org/pypi/PyDNET)
 
-[test/results/data.yaml]: http://github.com/takemaru/dnet/blob/master/test/results/data.yaml
+[test/data.yaml]: http://github.com/takemaru/dnet/blob/master/test/data.yaml
 [theory.pdf]: http://github.com/takemaru/dnet/blob/master/doc/theory.pdf?raw=true

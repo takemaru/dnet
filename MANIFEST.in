@@ -1,7 +1,5 @@
 include README.md doc/example_nw.png doc/theory.pdf \
   dnet/test/__init__.py dnet/test/network.py \
-  test/data/LNewSL.dat test/data/LNewZ.dat test/data/root.dat \
-  test/data/sw_list.dat test/data/SWed.dat \
-  test/results/data-fukui-tepco.yaml test/results/data.yaml \
-  test/results/graphset test/results/loss test/results/result.yaml \
-  test/results/subgraphs
+  test/fukui-tepco/LNewSL.dat test/fukui-tepco/LNewZ.dat \
+  test/fukui-tepco/root.dat test/fukui-tepco/sw_list.dat \
+  test/fukui-tepco/SWed.dat test/data-fukui-tepco.yaml test/data.yaml

@@ -17,7 +17,10 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from dnet.configs import Configs
+"""Module for a distribution network.
+"""
+
+from dnet.configset import ConfigSet
 from dnet.unionfind import UnionFind
 from dnet.util import flatten, is_tree
 from graphillion import GraphSet
@@ -48,40 +51,28 @@ class Network(object):
             obj = yaml.load(FukuiTepcoConverter(file_or_dir).convert())
         else:
             obj = yaml.load(open(file_or_dir))
-        self._nodes = obj['nodes']
-        self._switches = obj['switches']
-        self._sections = obj['sections']
-        for s in self._sections.values():
+        self.nodes = obj['nodes']
+        self.switches = obj['switches']
+        self.sections = obj['sections']
+        for s in self.sections.values():
             l = s['load']
-            i = s['impedance']
+            z = s['impedance']
             s['load']      = [l[0] + l[1]*1j, l[2] + l[3]*1j, l[4] + l[5]*1j]
-            s['impedance'] = [i[0] + i[1]*1j, i[2] + i[3]*1j, i[4] + i[5]*1j]
-        if [l for s in self._sections.values() for l in s['load'] if l.real < 0]:
+            s['impedance'] = [z[0] + z[1]*1j, z[2] + z[3]*1j, z[4] + z[5]*1j]
+        if [l for s in self.sections.values() for l in s['load'] if l.real < 0]:
             msg = 'Warning: it is assumed that section loads are non-negative'
             sys.stderr.write(msg + '\n')
         self._neighbor_cache = {}
         self._switch2edge = {}
         self._edge2switch = {}
-        self._roots = self._build_graph()
+        self._root_vertices = self._build_graph()
         self._search_space = None
-
-    def switch2edge(self, switch):
-        return self._switch2edge[switch]
-
-    def edge2switch(self, edge):
-        return self._edge2switch[edge]
-
-    def forest2config(self, forest):
-        return [self.edge2switch(e) for e in forest]
-
-    def config2forest(self, config):
-        return [self.switch2edge(s) for s in config]
 
     def enumerate(self):
         gs = self._enumerate_forests()
         for root in self._get_root_sections():
             gs &= self._enumerate_trees(root)
-        return Configs(self, gs)
+        return ConfigSet(self, gs)
 
     def loss(self, config):
         loss = 0
@@ -92,8 +83,8 @@ class Network(object):
     def optimize(self, gs):
         comps = self._find_components()
 
-        self._zdd = { 'B': Node('B %d B B ' % (len(self._switches) + 1)),
-                      'T': Node('T %d T T ' % (len(self._switches) + 1)) }
+        self._zdd = { 'B': Node('B %d B B ' % (len(self.switches) + 1)),
+                      'T': Node('T %d T T ' % (len(self.switches) + 1)) }
         start = None
         for line in gs.dumps().split('\n'):
             if line.startswith('.'):
@@ -117,7 +108,7 @@ class Network(object):
             comp_loss += self._search_space[x][y]['weight']
             closed_switches.extend(list(self._search_space[x][y]['config']))
         closed_switches = set(closed_switches)
-        open_switches = sorted(set(self._switches) - closed_switches)
+        open_switches = sorted(set(self.switches) - closed_switches)
 
         loss = 0
         for root in self._get_root_sections():
@@ -126,13 +117,13 @@ class Network(object):
         lower_bound = 0
         for i in range(3):
             total_loads = 0.0
-            for s in self._sections:
-                total_loads += self._sections[s]['load'][i]
+            for s in self.sections:
+                total_loads += self.sections[s]['load'][i]
             resistance_sum = 0.0
             for s in self._get_root_sections():
-                resistance_sum += 1 / self._sections[s]['impedance'][i].real
+                resistance_sum += 1 / self.sections[s]['impedance'][i].real
             for root in self._get_root_sections():
-                resistance = self._sections[root]['impedance'][i].real
+                resistance = self.sections[root]['impedance'][i].real
                 current = total_loads / (resistance * resistance_sum)
                 lower_bound += self._do_calc_loss(current, resistance)
 
@@ -144,16 +135,28 @@ class Network(object):
 
         return results
 
+    def _to_edge(self, switch):
+        return self._switch2edge[switch]
+
+    def _to_switch(self, edge):
+        return self._edge2switch[edge]
+
+    def _to_config(self, forest):
+        return [self._to_switch(e) for e in forest]
+
+    def _to_forest(self, config):
+        return [self._to_edge(s) for s in config]
+
     def _get_root_sections(self):
         root_sections = set()
-        for s in self._sections:
-            if self._sections[s]['substation']:
+        for s in self.sections:
+            if self.sections[s]['substation']:
                 root_sections.add(s)
         return root_sections
 
     def _find_neighbors(self, s):
         if s not in self._neighbor_cache:
-            neighbors = flatten([n for n in self._nodes if s in n])
+            neighbors = flatten([n for n in self.nodes if s in n])
             self._neighbor_cache[s] = set(neighbors) - set([s])
         return self._neighbor_cache[s]
 
@@ -162,7 +165,7 @@ class Network(object):
         neighbors = self._find_neighbors(root) - processed_elems
         if len(neighbors) == 1:
             s = neighbors.pop()
-            assert s in self._switches
+            assert s in self.switches
             if s in closed_switches:
                 t = (self._find_neighbors(s) - set([root])).pop()
                 branches.append((root, t))
@@ -171,7 +174,7 @@ class Network(object):
                 branches.extend(bs)
         elif len(neighbors) > 1: # junction
             for s in neighbors:
-                assert s in self._sections, (root, neighbors, s)
+                assert s in self.sections, (root, neighbors, s)
                 branches.append((root, s))
             for s in neighbors:
                 ps = processed_elems | set([root]) | neighbors
@@ -183,7 +186,7 @@ class Network(object):
         current = { root: [0, 0, 0] }
         for branch in branches:
             s, t = branch
-            load = self._sections[t]['load']
+            load = self.sections[t]['load']
             if t not in current:
                 current[t] = [0, 0, 0]
             current[t] = [current[t][i] + load[i] for i in range(3)]
@@ -197,7 +200,7 @@ class Network(object):
                     s, t = upper_branch[0]
                 else:
                     break
-        load = self._sections[root]['load']
+        load = self.sections[root]['load']
         current[root] = [current[root][i] + load[i] for i in range(3)]
         return current
 
@@ -210,7 +213,7 @@ class Network(object):
         for i in range(3):
             for s in sections:
                 j = current[s][i]
-                r = self._sections[s]['impedance'][i].real
+                r = self.sections[s]['impedance'][i].real
                 loss += self._do_calc_loss(j, r)
         return loss
 
@@ -221,16 +224,16 @@ class Network(object):
     def _build_graph(self):
         edges = []
         sorted_sections = []
-        for s in self._switches:
+        for s in self.switches:
             ns = set()
             for t in self._find_neighbors(s):
-                if t in self._sections:
+                if t in self.sections:
                     ns.add(t)
             neighbors = set()
             is_root = False
             for t in sorted(ns):
                 for u in self._find_neighbors(t):
-                    if u in self._sections and u < t:
+                    if u in self.sections and u < t:
                         t = u
                 neighbors.add(t)
                 if t not in sorted_sections:
@@ -240,11 +243,11 @@ class Network(object):
             edges.append(e)
             self._switch2edge[s] = e
             self._edge2switch[e] = s
-        assert len(edges) == len(self._switches)
+        assert len(edges) == len(self.switches)
 
         roots = set()
-        for s in self._sections:
-            if self._sections[s]['substation']:
+        for s in self.sections:
+            if self.sections[s]['substation']:
                 for t in self._find_neighbors(s):
                     if t < s:
                         s = t
@@ -256,20 +259,20 @@ class Network(object):
         return roots
 
     def _enumerate_forests(self):
-        return GraphSet.forests(roots=self._roots, is_spanning=True)
+        return GraphSet.forests(roots=self._root_vertices, is_spanning=True)
 
     def _find_neighbor_switches(self, s, processed_sections):
         switches = set()
-        if s in self._switches:
+        if s in self.switches:
             for t in self._find_neighbors(s) - processed_sections:
-                assert t in self._sections
+                assert t in self.sections
                 processed_sections.add(t)
                 for u in self._find_neighbor_switches(t, processed_sections.copy()):
                     switches.add(u)
         else:
             processed_sections.add(s)
             for t in self._find_neighbors(s) - processed_sections:
-                if t in self._switches:
+                if t in self.switches:
                     switches.add(t)
                 else:
                     for u in self._find_neighbor_switches(t, processed_sections.copy()):
@@ -287,7 +290,7 @@ class Network(object):
             return self._find_neighbor_switches(root, set())
 
     def _find_border_switches(self, root):
-        assert self._sections[root]['substation']
+        assert self.sections[root]['substation']
         border = set()
         for r in self._get_root_sections() - set([root]):
             for s in self._find_neighbor_switches(r, set()):
@@ -311,7 +314,7 @@ class Network(object):
             voltage_drop = []
             for i in range(3):
                 j = current[s][i]
-                z = self._sections[s]['impedance'][i]
+                z = self.sections[s]['impedance'][i]
                 voltage_drop.append(j * z / 2)
             bs = [b for b in branches if b[1] == s]
             assert len(bs) == 1
@@ -319,7 +322,7 @@ class Network(object):
             while True:
                 for i in range(3):
                     j = current[s][i]
-                    z = self._sections[s]['impedance'][i]
+                    z = self.sections[s]['impedance'][i]
                     voltage_drop[i] += j * z
                 upper_branch = [b for b in branches if b[1] == s]
                 assert len(upper_branch) <= 1
@@ -366,14 +369,14 @@ class Network(object):
         return gs | self._do_enumerate_trees(root, set(), border_switches)
 
     def _find_components(self):
-        switches = set(self._switches)
-        sections = set(self._sections.keys())
+        switches = set(self.switches)
+        sections = set(self.sections.keys())
         roots = self._get_root_sections()
         uf = UnionFind()
         uf.insert_objects(switches | sections - roots)
         for s in sorted(switches | sections - roots):
             neighbors = set()
-            for n in [m for m in self._nodes if s in m]:
+            for n in [m for m in self.nodes if s in m]:
                 if [t for t in n if t in roots] == []:
                     for t in n:
                         neighbors.add(t)
@@ -382,7 +385,7 @@ class Network(object):
 
         i = 1
         comps = {}
-        for s in self._switches:
+        for s in self.switches:
             c = uf.find(s)
             if c not in comps:
                 comps[c] = (i, set())
@@ -396,16 +399,16 @@ class Network(object):
 
         s = None
         for c in comps:
-            switches = [t for t in c if t in self._switches]
-            assert s is None or self._switches.index(s) < min([self._switches.index(t) for t in switches]), \
+            switches = [t for t in c if t in self.switches]
+            assert s is None or self.switches.index(s) < min([self.switches.index(t) for t in switches]), \
                 'switches must be ordered by independent components'
             s = switches[0]
             for t in switches:
-                if self._switches.index(t) > self._switches.index(s):
+                if self.switches.index(t) > self.switches.index(s):
                     s = t
 
-        assert len([t for s in self._sections if s < 0
-                    for t in self._find_neighbors(s) if t in self._switches]) == 0, \
+        assert len([t for s in self.sections if s < 0
+                    for t in self._find_neighbors(s) if t in self.switches]) == 0, \
                     'root sections must be connected to a junction, not a switch'
 
         return comps
@@ -413,14 +416,14 @@ class Network(object):
     def _find_configs(self, n, comp, closed_switches):
         n = self._zdd[n]
         configs = []
-        if n.v > len(self._switches) or self._switches[n.v - 1] not in comp:
+        if n.v > len(self.switches) or self.switches[n.v - 1] not in comp:
             configs.append((closed_switches, n.n))
         else:
             if n.l <> 'B':
                 configs2 = self._find_configs(n.l, comp, closed_switches.copy())
                 configs.extend(configs2)
             assert n.h <> 'B'
-            closed_switches.add(self._switches[n.v - 1])
+            closed_switches.add(self.switches[n.v - 1])
             configs.extend(self._find_configs(n.h, comp, closed_switches.copy()))
         return configs
 
@@ -433,13 +436,13 @@ class Network(object):
     def _rebuild(self, entries, comp):
         comp_roots = []
         for s in comp:
-            if s in self._sections:
+            if s in self.sections:
                 for t in self._find_neighbors(s):
-                    if t in self._sections and self._sections[t]['substation']:
-                        assert not self._sections[s]['substation']
+                    if t in self.sections and self.sections[t]['substation']:
+                        assert not self.sections[s]['substation']
                         barrier = set()
                         for u in self._find_neighbors(s):
-                            if u in self._sections:
+                            if u in self.sections:
                                 barrier.add(u)
                         comp_roots.append((s, barrier))
                         break
