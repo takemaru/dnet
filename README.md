@@ -13,8 +13,8 @@ Features
 --------------------------------------------------------------------------------
 
 * Highly efficient analysis tool for power distribution networks
-* Power loss minimization (nonconvex optimization over several
-  hundreds of variables!) and more
+* Power loss minimization and more (nonconvex optimization over
+  several hundreds of variables!)
 * Featuring [Graphillion], an efficient graphset operation library
 * Open source MIT license
 * Additional benefits from Python: fast prototyping, easy to teach,
@@ -55,7 +55,7 @@ DNET in your paper.
   Yoshinaka, Akihiro Kishimoto, Koji Tsuda, Shin-ichi Minato, and
   Yasuhiro Hayashi, "Loss Minimization of Power Distribution Networks
   with Guaranteed Error Bound," Hokkaido University, Division of
-  Computer Science, TCS Technical Reports, TCS-TR-A-12-59, August 2012.
+  Computer Science, TCS Technical Reports, TCS-TR-A-12-59, 2012.
   ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf))
 
 DNET is still under the development.  The current version just
@@ -431,7 +431,7 @@ References
   Yoshinaka, Akihiro Kishimoto, Koji Tsuda, Shin-ichi Minato, and
   Yasuhiro Hayashi, "Loss Minimization of Power Distribution Networks
   with Guaranteed Error Bound," Hokkaido University, Division of
-  Computer Science, TCS Technical Reports, TCS-TR-A-12-59, August 2012.
+  Computer Science, TCS Technical Reports, TCS-TR-A-12-59, 2012.
   ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf))
 - Takeru Inoue, "Theory of Distribution Network Evaluation Tool."
   [theory.pdf]
