@@ -275,9 +275,9 @@ Fukui-TEPCO format data, the switch numbers are different).
 
 ```python
 >>> nw.nodes
-[['section_-001', 'section_0302', 'section_0303'], ['section_-002', 'section_0001', 'section_0002'], ['section_-003', 'section_0008', 'section_0309'], ['section_0302', 'switch_0010'], ['section_0300', 'switch_0010'], ['section_0298', 'section_0299', 'section_0300'], ['section_0299', 'switch_0006'], ['section_1057', 'switch_0006'], ['section_1057', 'switch_0004'], ['section_0298', 'switch_0009'], ['section_0296', 'switch_0009'], ['section_0296', 'switch_0008'], ['section_0294', 'switch_0008'], ['section_0294', 'switch_0007'], ['section_0001', 'switch_0001'], ['section_1063', 'switch_0001'], ['section_1061', 'section_1062', 'section_1063'], ['section_1061', 'switch_0002'], ['section_1059', 'switch_0002'], ['section_1059', 'switch_0004'], ['section_1062', 'switch_0003'], ['section_1066', 'switch_0003'], ['section_1066', 'switch_0005'], ['section_1068', 'switch_0005'], ['section_1068', 'switch_0007'], ['section_0002', 'switch_0011'], ['section_0004', 'switch_0011'], ['section_0004', 'switch_0012'], ['section_0008', 'switch_0013'], ['section_0006', 'switch_0013'], ['section_0006', 'switch_0012'], ['section_0309', 'switch_0016'], ['section_0307', 'switch_0016'], ['section_0307', 'switch_0015'], ['section_0303', 'switch_0014'], ['section_0305', 'switch_0014'], ['section_0305', 'switch_0015']]
+[['section_-001', 'section_0302', 'section_0303'], ['section_-002', 'section_0001', 'section_0002'], ['section_-003', 'section_0008', 'section_0309'], ['section_0302', 'switch_0010'], ['section_0300', 'switch_0010'], ...
 >>> nw.sections
-{'section_1068': {'load': [(23.87780659+4.33926456j), (23.1904931+4.214360495j), (2.2606e-12+4.10814e-13j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_0309': {'load': [0j, 0j, 0j], 'impedance': [0j, 0j, 0j], 'substation': False}, 'section_1061': {'load': [0j, 0j, 0j], 'impedance': [0j, 0j, 0j], 'substation': False}, 'section_1063': {'load': [(44.97881888+8.173908016j), (44.97881888+8.173908016j), (4.1877e-12+7.61022e-13j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_1062': {'load': [(23.9360393+4.349847069j), (23.2910946+4.232642599j), (24.03419858+4.367685352j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_1066': {'load': [(44.66392127+8.116682323j), (44.66392127+8.116682323j), (24.00272553+4.361965821j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_0004': {'load': [(20.42042417+3.710961581j), (20.06612407+3.646575355j), (20.40028338+3.707301436j)], 'impedance': [(0.0308+0.0901009j), (0.0308+0.0901009j), (0.0308+0.0901009j)], 'substation': False}, 'section_0298': {'load': [(34.30076446+6.801580255j), (34.73977483+6.888632668j), (34.90301866+6.921002675j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_0006': {'load': [(20.39497836+3.706337367j), (20.36942256+3.701693163j), (20.07218254+3.647676348j)], 'impedance': [(0.0308+0.0901009j), (0.0308+0.0901009j), (0.0308+0.0901009j)], 'substation': False}, 'section_0001': {'load': [(31.40049186+5.706346643j), (30.73864637+5.586070826j), (31.42931299+5.711584247j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_0002': {'load': [0j, 0j, 0j], 'impedance': [0j, 0j, 0j], 'substation': False}, 'section_1057': {'load': [(20.62493504+4.089767476j), (20.89430331+4.143181153j), (20.97984574+4.160143565j)], 'impedance': [(0.0924+0.2706796j), (0.0924+0.2706796j), (0.0924+0.2706796j)], 'substation': False}, 'section_0307': {'load': [(35.19646721+6.979191285j), (35.15732551+6.971429785j), (34.82091116+6.904721382j)], 'impedance': [(0.0308+0.0901009j), (0.0308+0.0901009j), (0.0308+0.0901009j)], 'substation': False}, 'section_1059': {'load': [(20.21547767+3.673717077j), (19.70940575+3.581749669j), (20.27113847+3.683832199j)], 'impedance': [(0.0924+0.2706796j), (0.0924+0.2706796j), (0.0924+0.2706796j)], 'substation': False}, 'section_0305': {'load': [(34.75270268+6.89119616j), (35.17067631+6.974077147j), (35.30382301+7.000479123j)], 'impedance': [(0.0308+0.0901009j), (0.0308+0.0901009j), (0.0308+0.0901009j)], 'substation': False}, 'section_0008': {'load': [0j, 0j, 0j], 'impedance': [0j, 0j, 0j], 'substation': False}, 'section_0294': {'load': [(34.20866687+6.783318004j), (34.64111424+6.869069023j), (5.493935021+1.089405456j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_0296': {'load': [(10.63990947+2.109812982j), (14.16570414+2.808951202j), (34.82629365+6.905788689j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_0299': {'load': [0j, 0j, 0j], 'impedance': [0j, 0j, 0j], 'substation': False}, 'section_0303': {'load': [0j, 0j, 0j], 'impedance': [0j, 0j, 0j], 'substation': False}, 'section_0302': {'load': [(39.57928042+7.848269754j), (40.0886147+7.949266859j), (40.24320577+7.979921091j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_-003': {'load': [(16.08928793+0j), (41.75345413+0j), (31.2387695+0j)], 'impedance': [(0.0864+0.3678805j), (0.0864+0.3678805j), (0.0864+0.3678805j)], 'substation': True}, 'section_-002': {'load': [(41.21753365+0j), (16.02966235+0j), (31.33198201+0j)], 'impedance': [(0.0864+0.3678805j), (0.0864+0.3678805j), (0.0864+0.3678805j)], 'substation': True}, 'section_-001': {'load': [(16.3225894+0j), (16.3225894+0j), (1.29105e-11+0j)], 'impedance': [(0.0864+0.3678805j), (0.0864+0.3678805j), (0.0864+0.3678805j)], 'substation': True}, 'section_0300': {'load': [(5.446728907+1.080044844j), (10.87070486+2.155577951j), (14.37665731+2.85078161j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}}
+{'section_1068': {'load': [(23.87780659+4.33926456j), (23.1904931+4.214360495j), (2.2606e-12+4.10814e-13j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, ...
 >>> nw.switches
 ['switch_0001', 'switch_0002', 'switch_0003', 'switch_0004', 'switch_0005', 'switch_0006', 'switch_0007', 'switch_0008', 'switch_0009', 'switch_0010', 'switch_0011', 'switch_0012', 'switch_0013', 'switch_0014', 'switch_0015', 'switch_0016']
 ```
@@ -294,7 +294,7 @@ regarded as a forest of graph).  We can utilize the rich functions
 provided by Graphillion, such as counting, search, and iteration for
 configurations in the object.
 
-We count the number of all the feasible configurations.
+Count the number of all the feasible configurations.
 
 ```python
 >>> configs.len()
@@ -303,8 +303,8 @@ We count the number of all the feasible configurations.
 
 This shows that the network has 111 feasible configurations.
 
-We search for configurations by a query; e.g., switch 2 is closed
-while switch 3 is open.  Statuses of the other switches are not cared.
+Search for configurations by a query; e.g., switch 2 is closed
+while switch 3 is open, but statuses of the other switches are not cared.
 
 ```python
 >>> configs_w2_wo3 = configs.including('switch_0002').excluding('switch_0003')
@@ -326,10 +326,11 @@ follows.
 ```
 
 Each line shows a configuration, which is represented by a set of
-*closed* switches in DNET.
+*closed* switches.
 
-We select 5 configurations uniformly randomly, and calculate the
-average loss over them.
+We select 5 configurations uniformly randomly with a random iterator
+returned by `rand_iter()`, and calculate the
+average loss over them (i.e., random sampling).
 
 ```python
 >>> i = 1
@@ -358,24 +359,29 @@ configurations enumerated above.
 ```
 
 With `details` option, method `loss()` returns detailed information as
-well as loss value of the given configuration.  The minimum loss is
+well as the loss of a given configuration.  In this example, the minimum loss is
 69734 and the lower bound is 67029; the lower bound means a
 theoretical bound under which the minimum loss never be (see Section
 3.3 in [theory.pdf] in detail).  In the optimal configuration, switch
 4, switch 7, switch 12, and switch 15 are open, and the other switches
 are closed.
 
+We examined small network with 16 switches in this tutorial, but DNET
+can work with a much larger network with hundreds of switches, as
+demostrated in our papers in [references](#references).  We're really
+happy if DNET would be helpful to you.
+
 
 Additional notes
 ---------------------------------------------------------------------
 
-- DNET assumes that just switches are controllable in a distribution
+* DNET assumes that just switches are controllable in a distribution
   network while other components like capacitors are ignored; we
   consider the distribution network analysis as a combinatorial
   problem, in which the variable is open/closed status of the
   switches.
 
-- In DNET, section loads must be given as constant *current*.  Line current
+* In DNET, section loads must be given as constant *current*.  Line current
   is calculated by sweeping backward to sum up downstream section
   loads.  This is because our loss minimization method depends on this
   backward sweeping; see Section 3.1 in [theory.pdf] in detail.
@@ -384,11 +390,11 @@ Additional notes
   loads of constant *power*; fix `_calc_current()` and
   `_satisfies_electric_constraints()` in `dnet/network.py`.
 
-- DNET assumes that all section loads are non-negative.  This can be
+* DNET assumes that all section loads are non-negative.  This can be
   an issue if introducing distributed generators; see Sections 4.1 and
   8 in [theory.pdf] for more detail.
 
-- DNET can select configurations feasible for multiple load profiles
+* DNET can select configurations feasible for multiple load profiles
   by the intersection operation provided by Graphillion.  You must use
   the same network topology and the same switch order for all load
   profiles.
@@ -401,13 +407,13 @@ Additional notes
 >>> day_and_night_configs = day_configs & night_configs
 ```
 
-- In the loss minimization, switches between a substation and a
+* In the loss minimization, switches between a substation and a
   junction are assumed to be closed.  This is because such junctions
   (i.e., red circles in the figure) must be energized in any
   configurations in our loss minimization method; see Section 4.1 in
   [theory.pdf] for more detail.
 
-- The search space used in the optimization process is a directed
+* The search space used in the optimization process is a directed
   acyclic graph.  The shortest path indicates the optimal solution,
   and the path weight corresponds to the minimum loss.  We can
   retrieve all edges with their weights as follows (vertex `'T'` is
