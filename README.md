@@ -61,7 +61,7 @@ contribution on the use of DNET in your paper.
   ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf))
 
 DNET is still under the development.  The current version just
-supports power loss minimization and configuration search, but we are
+supports power loss minimization and configuration search.  We are
 thinking of service restoration for future releases.  We really
 appreciate any pull request and patch if you add some changes that
 benefit a wide variety of people.
@@ -94,7 +94,7 @@ $ sudo easy_install pyyaml
 Just type:
 
 ```bash
-$ sudo easy_install pydnet  # caution: don't type just "dnet"
+$ sudo easy_install pydnet  # not "dnet", but "pydnet"
 ```
 
 and an attempt will be made to find and install an appropriate version
@@ -288,11 +288,11 @@ Then, enumerate all feasible configurations as follows.
 >>> configs = nw.enumerate()  # set of configurations
 ```
 
-Object `configs` is an instance of ConfigSet.  ConfigSet supports
-similar interface with graphillion.GraphSet, which represents a set of
-graphs (a configuration can be regarded as a forest of graph).  We can
-utilize the rich functions provided by Graphillion, such as counting,
-search, and iteration for configuration analysis.
+Object `configs` is an instance of class `ConfigSet`, which supports
+similar interface with `graphillion.GraphSet` (a configuration can be
+regarded as a forest of graph).  We can utilize the rich functions
+provided by Graphillion, such as counting, search, and iteration for
+configurations in the object.
 
 We count the number of all the feasible configurations.
 
