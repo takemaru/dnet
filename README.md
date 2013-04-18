@@ -15,8 +15,7 @@ Features
 * Highly efficient analysis tool for power distribution networks
 * Power loss minimization (nonconvex optimization over several
   hundreds of variables!) and more
-* Featuring [Graphillion](http://graphillion.org/), an efficient
-  graphset operation library
+* Featuring [Graphillion], an efficient graphset operation library
 * Open source MIT license
 * Additional benefits from Python: fast prototyping, easy to teach,
   and multi-platform
@@ -74,12 +73,12 @@ Installing
 
 #### Python
 
-To use Graphillion, you need Python version 2.6 or later.
+To use DNET, you need Python version 2.6 or later.
 http://www.python.org/
 
 #### Graphillion, NetworkX, and PyYAML
 
-Graphillion and NetworkX are Python modules for graphs, while PyYAML
+[Graphillion] and [NetworkX] are Python modules for graphs, while PyYAML
 is another Python module for a compact syntax called
 [YAML](http://en.wikipedia.org/wiki/YAML).  They can be installed by:
 
@@ -291,7 +290,7 @@ Then, enumerate all feasible configurations as follows.
 Object `configs` is an instance of class `ConfigSet`, which supports
 similar interface with `graphillion.GraphSet` (a configuration can be
 regarded as a forest of graph).  We can utilize the rich functions
-provided by Graphillion, such as counting, search, and iteration for
+provided by [Graphillion], such as counting, search, and iteration for
 configurations in the object.
 
 Count the number of all the feasible configurations.
@@ -395,7 +394,7 @@ Additional notes
   8 in [theory.pdf] for more detail.
 
 * DNET can select configurations feasible for multiple load profiles
-  by the intersection operation provided by Graphillion.  You must use
+  by the intersection operation provided by [Graphillion].  You must use
   the same network topology and the same switch order for all load
   profiles.
 
@@ -440,8 +439,9 @@ References
   ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf))
 - Takeru Inoue, "Theory of Distribution Network Evaluation Tool."
   [theory.pdf]
-- [Graphillion - Fast, lightweight graphset operation library](http://graphillion.org/)
-- [PyDNET : Python Package Index](https://pypi.python.org/pypi/PyDNET)
+- [Graphillion - Fast, lightweight graphset operation library][Graphillion]
 
+[Graphillion]: http://graphillion.org/
+[NetworkX]: http://networkx.github.io/
 [data/test.yaml]: http://github.com/takemaru/dnet/blob/master/data/test.yaml
 [theory.pdf]: http://github.com/takemaru/dnet/blob/master/doc/theory.pdf?raw=true
