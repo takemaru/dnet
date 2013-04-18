@@ -74,11 +74,37 @@ class Network(object):
             gs &= self._enumerate_trees(root)
         return ConfigSet(self, gs)
 
-    def loss(self, config):
+    def loss(self, config, details=False):
         loss = 0
         for s in self._get_root_sections():
             loss += self._calc_loss(s, set(config), set())
-        return loss
+
+        if not details:
+            return loss
+        else:
+            comp_loss = 0  # loss in components (loss without root sections)
+            for s in self._get_root_sections():
+                comp_loss += self._calc_loss(s, set(config), set(), no_root=True)
+
+            lower_bound = 0  # theoretical lower bound in root sections
+            for i in range(3):
+                total_loads = 0.0
+                for s in self.sections:
+                    total_loads += self.sections[s]['load'][i]
+                resistance_sum = 0.0
+                for s in self._get_root_sections():
+                    resistance_sum += 1 / self.sections[s]['impedance'][i].real
+                for root in self._get_root_sections():
+                    resistance = self.sections[root]['impedance'][i].real
+                    current = total_loads / (resistance * resistance_sum)
+                    lower_bound += self._do_calc_loss(current, resistance)
+
+            open_switches = sorted(list(set(self.switches) - set(config)))
+
+            return { 'loss': loss,
+                     'lower bound': lower_bound + comp_loss,
+#                     'root sections': loss - comp_loss,
+                     'open switches': open_switches }
 
     def optimize(self, gs):
         comps = self._find_components()
@@ -101,39 +127,12 @@ class Network(object):
 
         path = nx.dijkstra_path(self._search_space, start, 'T')
 
-        comp_loss = 0
         closed_switches = []
         for i in range(len(path) - 1):
             x, y = path[i], path[i + 1]
-            comp_loss += self._search_space[x][y]['weight']
             closed_switches.extend(list(self._search_space[x][y]['config']))
-        closed_switches = set(closed_switches)
-        open_switches = sorted(set(self.switches) - closed_switches)
 
-        loss = 0
-        for root in self._get_root_sections():
-            loss += self._calc_loss(root, closed_switches, set())
-
-        lower_bound = 0
-        for i in range(3):
-            total_loads = 0.0
-            for s in self.sections:
-                total_loads += self.sections[s]['load'][i]
-            resistance_sum = 0.0
-            for s in self._get_root_sections():
-                resistance_sum += 1 / self.sections[s]['impedance'][i].real
-            for root in self._get_root_sections():
-                resistance = self.sections[root]['impedance'][i].real
-                current = total_loads / (resistance * resistance_sum)
-                lower_bound += self._do_calc_loss(current, resistance)
-
-        results= { 'minimum_loss': loss,
-                   'loss_without_root_sections': comp_loss,
-                   'lower_bound_of_minimum_loss': lower_bound + comp_loss}
-
-        results['open_switches'] = open_switches
-
-        return results
+        return sorted(list(set(closed_switches)))
 
     def _to_edge(self, switch):
         return self._switch2edge[switch]
@@ -204,14 +203,16 @@ class Network(object):
         current[root] = [current[root][i] + load[i] for i in range(3)]
         return current
 
-    def _calc_loss(self, root, closed_switches, barrier):
+    def _calc_loss(self, root, closed_switches, barrier, no_root=False):
         branches = self._build_tree(root, closed_switches, barrier)
         assert is_tree(branches), 'loop found'
         sections = set([root] + flatten(branches))
         current = self._calc_current(root, branches)
         loss = 0.0
-        for i in range(3):
-            for s in sections:
+        for s in sections:
+            if no_root and self.sections[s]['substation']:
+                continue
+            for i in range(3):
                 j = current[s][i]
                 r = self.sections[s]['impedance'][i].real
                 loss += self._do_calc_loss(j, r)

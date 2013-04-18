@@ -53,26 +53,37 @@ class TestNetwork(unittest.TestCase):
         self.assertEqual(len(configs), 111)
         self.assertEqual(configs.len(), 111)
 
-        filtered_configs = configs.including('switch_0002').excluding('switch_0003')
-        self.assertEqual(len(filtered_configs), 15)
+        configs_w2_wo3 = configs.including('switch_0002').excluding('switch_0003')
+        self.assertEqual(len(configs_w2_wo3), 15)
 
-        for config in filtered_configs:
+        for config in configs_w2_wo3:
             self.assertTrue(isinstance(config, list))
 
         i = 1
         sum = 0.0
-        for config in filtered_configs.rand_iter():
+        for config in configs_w2_wo3.rand_iter():
             sum += nw.loss(config)
             if i == 5:
                 break
             i += 1
         self.assertAlmostEqual(sum / 5, 83014.1, 0)
 
-        results = nw.optimize(configs)
-        self.assertAlmostEqual(results['minimum_loss'], 69734.3, 0)
-        self.assertAlmostEqual(results['loss_without_root_sections'], 46128.5, 0)
-        self.assertAlmostEqual(results['lower_bound_of_minimum_loss'], 67028.8, 0)
-        self.assertEqual(results['open_switches'], ['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015'])
+        optimal_config = nw.optimize(configs)
+        self.assertEqual(optimal_config,
+                         ['switch_0001', 'switch_0002', 'switch_0003',
+                          'switch_0005', 'switch_0006', 'switch_0008',
+                          'switch_0009', 'switch_0010', 'switch_0011',
+                          'switch_0013', 'switch_0014', 'switch_0016'])
+        self.assertEqual(len(nw._search_space.edges()), 10)
+        self.assertAlmostEqual(nw._search_space['38']['T']['weight'], 227.255, 3)
+
+        results = nw.loss(optimal_config, details=True)
+        self.assertAlmostEqual(results['loss'], 69734.3, 0)
+        self.assertAlmostEqual(results['lower bound'], 67028.8, 0)
+#        self.assertAlmostEqual(results['root sections'], 23605.8, 0)
+        self.assertEqual(results['open switches'],
+                         ['switch_0004', 'switch_0007', 'switch_0012',
+                          'switch_0015'])
 
     def test_fukui_tepco(self):
         nw = Network('data/test-fukui-tepco', format='fukui-tepco')
@@ -80,9 +91,18 @@ class TestNetwork(unittest.TestCase):
         configs = nw.enumerate()
         self.assertEqual(len(configs), 111)        
 
-        results = nw.optimize(configs)
-        self.assertAlmostEqual(results['minimum_loss'], 69734.3, 0)
-        self.assertEqual(results['open_switches'], ['switch_0005', 'switch_0306', 'switch_1058', 'switch_1069'])
+        config = nw.optimize(configs)
+        self.assertEqual(config,
+                         ['switch_0003', 'switch_0007', 'switch_0295',
+                          'switch_0297', 'switch_0301', 'switch_0304',
+                          'switch_0308', 'switch_1056', 'switch_1060',
+                          'switch_1064', 'switch_1065', 'switch_1067'])
+
+        results = nw.loss(config, details=True)
+        self.assertAlmostEqual(results['loss'], 69734.3, 0)
+        self.assertEqual(results['open switches'],
+                         ['switch_0005', 'switch_0306', 'switch_1058',
+                          'switch_1069'])
 
 
 if __name__ == '__main__':
