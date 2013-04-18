@@ -43,14 +43,13 @@ All feasible configurations are examined without stuck in local
 minima.  DNET handles complicated electrical constraints with
 realistic unbalanced three-phase loads.  We've optimized a large
 distribution network with 468 switches using DNET; please see papers
-listed in [references](#references) in detail.  We believe that DNET
-takes you to the next stage of power distribution network analysis.
+listed in [references] in detail.  We believe that DNET takes you to
+the next stage of power distribution network analysis.
 
 DNET can be used freely under the MIT license.  It is mainly developed
-by [JST ERATO Minato
-project](http://www-erato.ist.hokudai.ac.jp/?language=en).  We would
-really appreciate if you would refer to our paper and address our
-contribution on the use of DNET in your paper.
+by [JST ERATO Minato project].  We would really appreciate if you
+would refer to our paper and address our contribution on the use of
+DNET in your paper.
 
 > Takeru Inoue, Keiji Takano, Takayuki Watanabe, Jun Kawahara, Ryo
   Yoshinaka, Akihiro Kishimoto, Koji Tsuda, Shin-ichi Minato, and
@@ -78,9 +77,9 @@ http://www.python.org/
 
 #### Graphillion, NetworkX, and PyYAML
 
-[Graphillion] and [NetworkX] are Python modules for graphs, while PyYAML
-is another Python module for a compact syntax called
-[YAML](http://en.wikipedia.org/wiki/YAML).  They can be installed by:
+[Graphillion] and [NetworkX] are Python modules for graphs, while
+PyYAML is another Python module for a compact syntax called [YAML].
+They can be installed by:
 
 ```bash
 $ sudo easy_install graphillion
@@ -117,7 +116,8 @@ source code repository.
 
 #### GitHub repository
 
-1. Clone the Dnet repository `git clone https://github.com/takemaru/dnet.git`
+1. Clone the Dnet repository
+   `git clone https://github.com/takemaru/dnet.git`
 2. Change directory to "dnet"
 3. Run `python setup.py build` to build
 4. (optional) Run `python setup.py test -q` to execute the tests
@@ -137,8 +137,8 @@ $ python setup.py install --user
 
 If you didn't install in the standard Python site-packages directory
 you will need to set your `PYTHONPATH` variable to the alternate
-location.  See http://docs.python.org/inst/search-path.html for further
-details.
+location.  See http://docs.python.org/inst/search-path.html for
+further details.
 
 
 Network data
@@ -181,8 +181,9 @@ nodes:
 The "sections" part describes section information including load and
 impedance.  In DNET, loads are assumed to be unbalanced three-phase
 and be connected in delta.  Loads are also assumed to be uniformly
-distributed along a line section, and are modeled as constant *current*,
-not as power (see Section 2 in [theory.pdf] for more detail).
+distributed along a line section, and are modeled as constant
+*current*, not as power (see Section 2 in [theory.pdf] for more
+detail).
 
 In the data file, load and impedance are specified by six values,
 which are real and imaginary parts of the three phases; for
@@ -202,13 +203,13 @@ sections:
 
 ### Switches
 
-The "switches" part specifies the switch order in a list.
-We have to be careful to assign the order.  Switches should be
-ordered based on the proximity in the network as shown in the figure,
-because DNET's efficiency highly depends on the order.  For the loss
-minimization, the order must not step over junctions connected to a
-substation (such junctions are indicated by red circles in the
-figure); see Sections 4.1 and 5.1 in [theory.pdf] for more detail.
+The "switches" part specifies the switch order in a list.  We have to
+be careful to assign the order.  Switches should be ordered based on
+the proximity in the network as shown in the figure, because DNET's
+efficiency highly depends on the order.  For the loss minimization,
+the order must not step over junctions connected to a substation (such
+junctions are indicated by red circles in the figure); see Sections
+4.1 and 5.1 in [theory.pdf] for more detail.
 
 ```yaml
 switches:
@@ -220,24 +221,19 @@ switches:
 
 ### Fukui-TEPCO format
 
-Network data in the [Fukui-TEPCO
-format](http://www.hayashilab.sci.waseda.ac.jp/RIANT/riant_test_feeder.html)
-can be also accepted in DNET.  Since Fukui-TEPCO format lacks switch
-indicators, you have to add file `sw_list.dat` that includes switch
-names; see examples in
-[data/test-fukui-tepco/](https://github.com/takemaru/dnet/tree/master/data/test-fukui-tepco)
-in detail.
+Network data in the [Fukui-TEPCO format] can be also accepted in DNET.
+Since Fukui-TEPCO format lacks switch indicators, you have to add file
+`sw_list.dat` that includes switch names; see examples in
+[data/test-fukui-tepco/] in detail.
 
 
 Tutorial
 ---------------------------------------------------------------------
 
 We assume network data used in this tutorial is stored in a directory
-`data/`.  Download file
-[data/test.yaml](https://github.com/takemaru/dnet/blob/master/data/test.yaml?raw=true)
-or all files in
-[data/test-fukui-tepco/](https://github.com/takemaru/dnet/tree/master/data/test-fukui-tepco),
-and put it into the directory before beginning the tutorial.
+`data/`.  Download file [data/test.yaml] or all files in
+[data/test-fukui-tepco/] and put it into the directory before
+beginning the tutorial.
 
 Start the Python interpreter and import DNET.
 
@@ -302,8 +298,8 @@ Count the number of all the feasible configurations.
 
 This shows that the network has 111 feasible configurations.
 
-Search for configurations by a query; e.g., switch 2 is closed
-while switch 3 is open, but statuses of the other switches are not cared.
+Search for configurations by a query; e.g., switch 2 is closed while
+switch 3 is open, but statuses of the other switches are not cared.
 
 ```python
 >>> configs_w2_wo3 = configs.including('switch_0002').excluding('switch_0003')
@@ -328,8 +324,8 @@ Each line shows a configuration, which is represented by a set of
 *closed* switches.
 
 We select 5 configurations uniformly randomly with a random iterator
-returned by `rand_iter()`, and calculate the
-average loss over them (i.e., random sampling).
+returned by `rand_iter()`, and calculate the average loss over them
+(i.e., random sampling).
 
 ```python
 >>> i = 1
@@ -358,17 +354,17 @@ configurations enumerated above.
 ```
 
 With `details` option, method `loss()` returns detailed information as
-well as the loss of a given configuration.  In this example, the minimum loss is
-69734 and the lower bound is 67029; the lower bound means a
-theoretical bound under which the minimum loss never be (see Section
-3.3 in [theory.pdf] in detail).  In the optimal configuration, switch
-4, switch 7, switch 12, and switch 15 are open, and the other switches
-are closed.
+well as the loss of a given configuration.  In this example, the
+minimum loss is 69734 and the lower bound is 67029; the lower bound
+means a theoretical bound under which the minimum loss never be (see
+Section 3.3 in [theory.pdf] in detail).  In the optimal configuration,
+switch 4, switch 7, switch 12, and switch 15 are open, and the other
+switches are closed.
 
 We examined small network with 16 switches in this tutorial, but DNET
 can work with a much larger network with hundreds of switches, as
-demostrated in our papers in [references](#references).  We're really
-happy if DNET would be helpful to you.
+demostrated in our papers in [references].  We're really happy if DNET
+would be helpful to you.
 
 
 Additional notes
@@ -380,12 +376,12 @@ Additional notes
   problem, in which the variable is open/closed status of the
   switches.
 
-* In DNET, section loads must be given as constant *current*.  Line current
-  is calculated by sweeping backward to sum up downstream section
-  loads.  This is because our loss minimization method depends on this
-  backward sweeping; see Section 3.1 in [theory.pdf] in detail.
-  However, if you are interested in only the configuration search,
-  line current can be calculated in another way with section
+* In DNET, section loads must be given as constant *current*.  Line
+  current is calculated by sweeping backward to sum up downstream
+  section loads.  This is because our loss minimization method depends
+  on this backward sweeping; see Section 3.1 in [theory.pdf] in
+  detail.  However, if you are interested in only the configuration
+  search, line current can be calculated in another way with section
   loads of constant *power*; fix `_calc_current()` and
   `_satisfies_electric_constraints()` in `dnet/network.py`.
 
@@ -394,8 +390,8 @@ Additional notes
   8 in [theory.pdf] for more detail.
 
 * DNET can select configurations feasible for multiple load profiles
-  by the intersection operation provided by [Graphillion].  You must use
-  the same network topology and the same switch order for all load
+  by the intersection operation provided by [Graphillion].  You must
+  use the same network topology and the same switch order for all load
   profiles.
 
 ```python
@@ -441,7 +437,12 @@ References
   [theory.pdf]
 - [Graphillion - Fast, lightweight graphset operation library][Graphillion]
 
+[JST ERATO Minato project]: http://www-erato.ist.hokudai.ac.jp/?language=en
 [Graphillion]: http://graphillion.org/
 [NetworkX]: http://networkx.github.io/
+[YAML]: http://en.wikipedia.org/wiki/YAML
+[Fukui-TEPCO format]: http://www.hayashilab.sci.waseda.ac.jp/RIANT/riant_test_feeder.html
 [data/test.yaml]: http://github.com/takemaru/dnet/blob/master/data/test.yaml
+[data/test-fukui-tepco/]: https://github.com/takemaru/dnet/tree/master/data/test-fukui-tepco
 [theory.pdf]: http://github.com/takemaru/dnet/blob/master/doc/theory.pdf?raw=true
+[references]: #references
