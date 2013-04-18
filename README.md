@@ -26,7 +26,7 @@ Overview
 
 DNET (Distribution Network Evaluation Tool) is an analysis tool that
 works with power distribution networks for efficient and stable
-operation such as loss minimization and service restoration.
+operation such as loss minimization.
 
 Power distribution networks consist of several switches.  The
 structure, or *configuration*, can be reconfigured by changing the
@@ -44,7 +44,7 @@ All feasible configurations are examined without stuck in local
 minima.  DNET handles complicated electrical constraints with
 realistic unbalanced three-phase loads.  We've optimized a large
 distribution network with 468 switches using DNET; please see papers
-listed in [References](#references) in detail.  We believe that DNET
+listed in [references](#references) in detail.  We believe that DNET
 takes you to the next stage of power distribution network analysis.
 
 DNET can be used freely under the MIT license.  It is mainly developed
@@ -61,9 +61,8 @@ contribution on the use of DNET in your paper.
   ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf))
 
 DNET is still under the development.  The current version just
-supports power loss minimization and configuration search, but we
-believe service restoration is also possible if you can use DNET
-appropriately with deep understanding of the theory.  We really
+supports power loss minimization and configuration search, but we are
+thinking of service restoration for future releases.  We really
 appreciate any pull request and patch if you add some changes that
 benefit a wide variety of people.
 
@@ -191,7 +190,7 @@ which are real and imaginary parts of the three phases; for
 section_-001 in the following YAML, load current is 16.3225894 + 0j in
 the 0-th phase, and impedance is 0.0684 + 0.3678805j in the all
 phases.  Substation attribute indicates whether the line section is
-directly connected to a feeding point in a substation.
+directly connected to a feeding point in the substation.
 
 ```yaml
 sections:
@@ -235,7 +234,7 @@ Tutorial
 ---------------------------------------------------------------------
 
 We assume network data used in this tutorial is stored in a directory
-`data/`.  Download a file
+`data/`.  Download file
 [data/test.yaml](https://github.com/takemaru/dnet/blob/master/data/test.yaml?raw=true)
 or all files in
 [data/test-fukui-tepco/](https://github.com/takemaru/dnet/tree/master/data/test-fukui-tepco),
@@ -276,18 +275,24 @@ Fukui-TEPCO format data, the switch numbers are different).
 
 ```python
 >>> nw.nodes
-[['section_-001', 'section_0302', 'section_0303'], ['section_-002', 'section_0001', ...
+[['section_-001', 'section_0302', 'section_0303'], ['section_-002', 'section_0001', 'section_0002'], ['section_-003', 'section_0008', 'section_0309'], ['section_0302', 'switch_0010'], ['section_0300', 'switch_0010'], ['section_0298', 'section_0299', 'section_0300'], ['section_0299', 'switch_0006'], ['section_1057', 'switch_0006'], ['section_1057', 'switch_0004'], ['section_0298', 'switch_0009'], ['section_0296', 'switch_0009'], ['section_0296', 'switch_0008'], ['section_0294', 'switch_0008'], ['section_0294', 'switch_0007'], ['section_0001', 'switch_0001'], ['section_1063', 'switch_0001'], ['section_1061', 'section_1062', 'section_1063'], ['section_1061', 'switch_0002'], ['section_1059', 'switch_0002'], ['section_1059', 'switch_0004'], ['section_1062', 'switch_0003'], ['section_1066', 'switch_0003'], ['section_1066', 'switch_0005'], ['section_1068', 'switch_0005'], ['section_1068', 'switch_0007'], ['section_0002', 'switch_0011'], ['section_0004', 'switch_0011'], ['section_0004', 'switch_0012'], ['section_0008', 'switch_0013'], ['section_0006', 'switch_0013'], ['section_0006', 'switch_0012'], ['section_0309', 'switch_0016'], ['section_0307', 'switch_0016'], ['section_0307', 'switch_0015'], ['section_0303', 'switch_0014'], ['section_0305', 'switch_0014'], ['section_0305', 'switch_0015']]
 >>> nw.sections
-{'section_1068': {'load': [(23.87780659+4.33926456j), (23.1904931+4.214360495j), ...
+{'section_1068': {'load': [(23.87780659+4.33926456j), (23.1904931+4.214360495j), (2.2606e-12+4.10814e-13j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_0309': {'load': [0j, 0j, 0j], 'impedance': [0j, 0j, 0j], 'substation': False}, 'section_1061': {'load': [0j, 0j, 0j], 'impedance': [0j, 0j, 0j], 'substation': False}, 'section_1063': {'load': [(44.97881888+8.173908016j), (44.97881888+8.173908016j), (4.1877e-12+7.61022e-13j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_1062': {'load': [(23.9360393+4.349847069j), (23.2910946+4.232642599j), (24.03419858+4.367685352j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_1066': {'load': [(44.66392127+8.116682323j), (44.66392127+8.116682323j), (24.00272553+4.361965821j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_0004': {'load': [(20.42042417+3.710961581j), (20.06612407+3.646575355j), (20.40028338+3.707301436j)], 'impedance': [(0.0308+0.0901009j), (0.0308+0.0901009j), (0.0308+0.0901009j)], 'substation': False}, 'section_0298': {'load': [(34.30076446+6.801580255j), (34.73977483+6.888632668j), (34.90301866+6.921002675j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_0006': {'load': [(20.39497836+3.706337367j), (20.36942256+3.701693163j), (20.07218254+3.647676348j)], 'impedance': [(0.0308+0.0901009j), (0.0308+0.0901009j), (0.0308+0.0901009j)], 'substation': False}, 'section_0001': {'load': [(31.40049186+5.706346643j), (30.73864637+5.586070826j), (31.42931299+5.711584247j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_0002': {'load': [0j, 0j, 0j], 'impedance': [0j, 0j, 0j], 'substation': False}, 'section_1057': {'load': [(20.62493504+4.089767476j), (20.89430331+4.143181153j), (20.97984574+4.160143565j)], 'impedance': [(0.0924+0.2706796j), (0.0924+0.2706796j), (0.0924+0.2706796j)], 'substation': False}, 'section_0307': {'load': [(35.19646721+6.979191285j), (35.15732551+6.971429785j), (34.82091116+6.904721382j)], 'impedance': [(0.0308+0.0901009j), (0.0308+0.0901009j), (0.0308+0.0901009j)], 'substation': False}, 'section_1059': {'load': [(20.21547767+3.673717077j), (19.70940575+3.581749669j), (20.27113847+3.683832199j)], 'impedance': [(0.0924+0.2706796j), (0.0924+0.2706796j), (0.0924+0.2706796j)], 'substation': False}, 'section_0305': {'load': [(34.75270268+6.89119616j), (35.17067631+6.974077147j), (35.30382301+7.000479123j)], 'impedance': [(0.0308+0.0901009j), (0.0308+0.0901009j), (0.0308+0.0901009j)], 'substation': False}, 'section_0008': {'load': [0j, 0j, 0j], 'impedance': [0j, 0j, 0j], 'substation': False}, 'section_0294': {'load': [(34.20866687+6.783318004j), (34.64111424+6.869069023j), (5.493935021+1.089405456j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_0296': {'load': [(10.63990947+2.109812982j), (14.16570414+2.808951202j), (34.82629365+6.905788689j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_0299': {'load': [0j, 0j, 0j], 'impedance': [0j, 0j, 0j], 'substation': False}, 'section_0303': {'load': [0j, 0j, 0j], 'impedance': [0j, 0j, 0j], 'substation': False}, 'section_0302': {'load': [(39.57928042+7.848269754j), (40.0886147+7.949266859j), (40.24320577+7.979921091j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}, 'section_-003': {'load': [(16.08928793+0j), (41.75345413+0j), (31.2387695+0j)], 'impedance': [(0.0864+0.3678805j), (0.0864+0.3678805j), (0.0864+0.3678805j)], 'substation': True}, 'section_-002': {'load': [(41.21753365+0j), (16.02966235+0j), (31.33198201+0j)], 'impedance': [(0.0864+0.3678805j), (0.0864+0.3678805j), (0.0864+0.3678805j)], 'substation': True}, 'section_-001': {'load': [(16.3225894+0j), (16.3225894+0j), (1.29105e-11+0j)], 'impedance': [(0.0864+0.3678805j), (0.0864+0.3678805j), (0.0864+0.3678805j)], 'substation': True}, 'section_0300': {'load': [(5.446728907+1.080044844j), (10.87070486+2.155577951j), (14.37665731+2.85078161j)], 'impedance': [(0.1539+0.4512584j), (0.1539+0.4512584j), (0.1539+0.4512584j)], 'substation': False}}
 >>> nw.switches
-['switch_0001', 'switch_0002', 'switch_0003', 'switch_0004', 'switch_0005', ...
+['switch_0001', 'switch_0002', 'switch_0003', 'switch_0004', 'switch_0005', 'switch_0006', 'switch_0007', 'switch_0008', 'switch_0009', 'switch_0010', 'switch_0011', 'switch_0012', 'switch_0013', 'switch_0014', 'switch_0015', 'switch_0016']
 ```
 
 Then, enumerate all feasible configurations as follows.
 
 ```python
->>> configs = nw.enumerate()
+>>> configs = nw.enumerate()  # set of configurations
 ```
+
+Object `configs` is an instance of ConfigSet.  ConfigSet supports
+similar interface with graphillion.GraphSet, which represents a set of
+graphs (a configuration can be regarded as a forest of graph).  We can
+utilize the rich functions provided by Graphillion, such as counting,
+search, and iteration for configuration analysis.
 
 We count the number of all the feasible configurations.
 
@@ -298,18 +303,12 @@ We count the number of all the feasible configurations.
 
 This shows that the network has 111 feasible configurations.
 
-Object `configs` is an instance of ConfigSet.  ConfigSet supports
-similar interface with graphillion.GraphSet, which represents a set of
-graphs (a configuration can be regarded as a forest of graph).  We can
-utilize the rich functions provided by Graphillion, such as search and
-iteration, for configuration analysis.
-
 We search for configurations by a query; e.g., switch 2 is closed
 while switch 3 is open.  Statuses of the other switches are not cared.
 
 ```python
->>> filtered_configs = configs.including('switch_0002').excluding('switch_0003')
->>> filtered_configs.len()
+>>> configs_w2_wo3 = configs.including('switch_0002').excluding('switch_0003')
+>>> configs_w2_wo3.len()
 15L
 ```
 
@@ -317,7 +316,7 @@ These configurations can be visited one by one using an iterator as
 follows.
 
 ```python
->>> for config in filtered_configs:
+>>> for config in configs_w2_wo3:
 ...     config
 ...
 ['switch_0001', 'switch_0011', 'switch_0002', 'switch_0005', 'switch_0004', 'switch_0007', 'switch_0008', 'switch_0009', 'switch_0010', 'switch_0014', 'switch_0012', 'switch_0015']
@@ -335,7 +334,7 @@ average loss over them.
 ```python
 >>> i = 1
 >>> sum = 0.0
->>> for config in filtered_configs.rand_iter():
+>>> for config in configs_w2_wo3.rand_iter():
 ...     sum += nw.loss(config)
 ...     if i == 5:
 ...         break
@@ -349,18 +348,22 @@ We finally search for the minimum loss configuration from all feasible
 configurations enumerated above.
 
 ```python
->>> nw.optimize(configs)
-{ 'minimum_loss': 69734.285418826621,
-  'lower_bound_of_minimum_loss': 67028.86898923367,
-  'loss_without_root_sections': 46128.464350540948,
-  'open_switches': ['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015'] }
+>>> optimal_config = nw.optimize(configs)
+>>> optimal_config  # closed switches in the optimal configuration
+['switch_0001', 'switch_0002', 'switch_0003', 'switch_0005', 'switch_0006', 'switch_0008', 'switch_0009', 'switch_0010', 'switch_0011', 'switch_0013', 'switch_0014', 'switch_0016']
+>>> nw.loss(optimal_config, details=True)
+{ 'loss': 69734.285418826621,
+  'lower bound': 67028.86898923367,
+  'open switches': ['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015'] }
 ```
 
-The minimum loss is 69734 and the lower bound is 67029; the lower
-bound means a theoretical bound under which the minimum loss never be
-(see Section 3.3 in [theory.pdf] in detail).  In the optimal
-configuration, switch 4, switch 7, switch 12, and switch 15 are open,
-and the other switches are closed.
+With `details` option, method `loss()` returns detailed information as
+well as loss value of the given configuration.  The minimum loss is
+69734 and the lower bound is 67029; the lower bound means a
+theoretical bound under which the minimum loss never be (see Section
+3.3 in [theory.pdf] in detail).  In the optimal configuration, switch
+4, switch 7, switch 12, and switch 15 are open, and the other switches
+are closed.
 
 
 Additional notes
@@ -377,13 +380,26 @@ Additional notes
   loads.  This is because our loss minimization method depends on this
   backward sweeping; see Section 3.1 in [theory.pdf] in detail.
   However, if you are interested in only the configuration search,
-  line current can be calculated in the ordinary way with section
+  line current can be calculated in another way with section
   loads of constant *power*; fix `_calc_current()` and
   `_satisfies_electric_constraints()` in `dnet/network.py`.
 
 - DNET assumes that all section loads are non-negative.  This can be
   an issue if introducing distributed generators; see Sections 4.1 and
   8 in [theory.pdf] for more detail.
+
+- DNET can select configurations feasible for multiple load profiles
+  by the intersection operation provided by Graphillion.  You must use
+  the same network topology and the same switch order for all load
+  profiles.
+
+```python
+>>> day_nw   = Network('data/day.yaml')
+>>> night_nw = Network('data/night.yaml')
+>>> day_configs           = day_nw.enumerate()
+>>> night_configs         = night_nw.enumerate()
+>>> day_and_night_configs = day_configs & night_configs
+```
 
 - In the loss minimization, switches between a substation and a
   junction are assumed to be closed.  This is because such junctions
@@ -418,6 +434,7 @@ References
   ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf))
 - Takeru Inoue, "Theory of Distribution Network Evaluation Tool."
   [theory.pdf]
+- [Graphillion - Fast, lightweight graphset operation library](http://graphillion.org/)
 - [PyDNET : Python Package Index](https://pypi.python.org/pypi/PyDNET)
 
 [data/test.yaml]: http://github.com/takemaru/dnet/blob/master/data/test.yaml
