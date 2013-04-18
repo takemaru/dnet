@@ -402,9 +402,9 @@ Additional notes
 ```python
 >>> day_nw   = Network('data/day.yaml')
 >>> night_nw = Network('data/night.yaml')
->>> day_configs           = day_nw.enumerate()
->>> night_configs         = night_nw.enumerate()
->>> day_and_night_configs = day_configs & night_configs
+>>> day_configs   = day_nw.enumerate()    # feasible configurations just for day load profile
+>>> night_configs = night_nw.enumerate()  # feasible configurations just for night load profile
+>>> day_and_night_configs = day_configs & night_configs  # feasible for both profiles
 ```
 
 * In the loss minimization, switches between a substation and a
