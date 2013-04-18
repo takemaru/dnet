@@ -438,7 +438,7 @@ References
 - [Graphillion - Fast, lightweight graphset operation library][Graphillion]
 
 [JST ERATO Minato project]: http://www-erato.ist.hokudai.ac.jp/?language=en
-[Graphillion]: http://graphillion.org/
+[Graphillion]: https://github.com/takemaru/graphillion#graphillion---fast-lightweight-graphset-operation-library
 [NetworkX]: http://networkx.github.io/
 [YAML]: http://en.wikipedia.org/wiki/YAML
 [Fukui-TEPCO format]: http://www.hayashilab.sci.waseda.ac.jp/RIANT/riant_test_feeder.html
