@@ -280,7 +280,7 @@ Fukui-TEPCO format data, the switch numbers are different).
 Then, enumerate all feasible configurations as follows.
 
 ```python
->>> configs = nw.enumerate()  # set of configurations
+>>> configs = nw.enumerate()  # all feasible configurations
 ```
 
 Object `configs` is an instance of class `ConfigSet`, which supports
@@ -347,24 +347,32 @@ configurations enumerated above.
 >>> optimal_config = nw.optimize(configs)
 >>> optimal_config  # closed switches in the optimal configuration
 ['switch_0001', 'switch_0002', 'switch_0003', 'switch_0005', 'switch_0006', 'switch_0008', 'switch_0009', 'switch_0010', 'switch_0011', 'switch_0013', 'switch_0014', 'switch_0016']
->>> nw.loss(optimal_config, details=True)
-{ 'loss': 69734.285418826621,
-  'lower bound': 67028.86898923367,
-  'open switches': ['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015'] }
 ```
 
-With `details` option, method `loss()` returns detailed information as
-well as the loss of a given configuration.  In this example, the
-minimum loss is 69734 and the lower bound is 67029; the lower bound
-means a theoretical bound under which the minimum loss never be (see
-Section 3.3 in [theory.pdf] in detail).  In the optimal configuration,
-switch 4, switch 7, switch 12, and switch 15 are open, and the other
-switches are closed.
+We can obtain switches that are open in the optimal configuration, by
+subtracting all the switches from the closed switches.
 
-We examined small network with 16 switches in this tutorial, but DNET
-can work with a much larger network with hundreds of switches, as
-demostrated in our papers in [references].  We're really happy if DNET
-would be helpful to you.
+```python
+>>> set(nw.switches) - set(optimal_config)
+set(['switch_0004', 'switch_0007', 'switch_0012', 'switch_0015'])
+```
+
+The loss value at the optimal configuration is calculated as follows.
+
+```python
+>>> nw.loss(optimal_config, is_optimal=True)
+(69734.285418826621, 67028.86898923367)
+```
+
+With `is_optimal` option, `loss()` returns the minimum loss in the
+whole network as well as its lower bound, which means a theoretical
+bound under which loss never be (see Section 3.3 in [theory.pdf] in
+detail).  In this example, the minimum loss is 69734 while the lower
+bound is 67029.
+
+In this tutorial, we examined small network with 16 switches.  DNET,
+however, can work with a much larger network with hundreds of
+switches, as demostrated in our papers in [references].
 
 
 Additional notes
@@ -411,17 +419,20 @@ Additional notes
 * The search space used in the optimization process is a directed
   acyclic graph.  The shortest path indicates the optimal solution,
   and the path weight corresponds to the minimum loss.  We can
-  retrieve all edges with their weights as follows (vertex `'T'` is
-  the terminal one on the path).
+  retrieve all edges with their weights (vertex numbers can be
+  different in your environment).  The starting point (a vertex
+  without in-degree) is also shown, while the goal is always `'T'`.
 
 ```python
 >>> for u, v in nw._search_space.edges():
-...     u, v, nw._search_space[u][v]['weight']
+...     u, v, nw._search_space[u][v]['weight']  # an edge with its weight
 ...
 ('4082', 'T', 227.25507204036546)
 ('38', 'T', 227.25507204036546)
 ('46', '38', 190.18278149818809)
 :
+>>> [v for v, d in nw._search_space.in_degree_iter() if d == 0][0]  # starting vertex
+'4114'
 ```
 
 References

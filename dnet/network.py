@@ -74,18 +74,14 @@ class Network(object):
             gs &= self._enumerate_trees(root)
         return ConfigSet(self, gs)
 
-    def loss(self, config, details=False):
+    def loss(self, config, is_optimal=False):
         loss = 0
         for s in self._get_root_sections():
             loss += self._calc_loss(s, set(config), set())
 
-        if not details:
+        if not is_optimal:
             return loss
         else:
-            comp_loss = 0  # loss in components (loss without root sections)
-            for s in self._get_root_sections():
-                comp_loss += self._calc_loss(s, set(config), set(), no_root=True)
-
             lower_bound = 0  # theoretical lower bound in root sections
             for i in range(3):
                 total_loads = 0.0
@@ -99,12 +95,11 @@ class Network(object):
                     current = total_loads / (resistance * resistance_sum)
                     lower_bound += self._do_calc_loss(current, resistance)
 
-            open_switches = sorted(list(set(self.switches) - set(config)))
+            comp_loss = 0  # loss without root sections
+            for s in self._get_root_sections():
+                comp_loss += self._calc_loss(s, set(config), set(), no_root=True)
 
-            return { 'loss': loss,
-                     'lower bound': lower_bound + comp_loss,
-#                     'root sections': loss - comp_loss,
-                     'open switches': open_switches }
+            return loss, lower_bound + comp_loss
 
     def optimize(self, gs):
         comps = self._find_components()
