@@ -453,6 +453,7 @@ class Network(object):
                     loss = loss_cache[key]
                 else:
                     loss = self._calc_component_loss(comp_roots, closed_switches)
+                    loss_cache[key] = loss
                 if not(n in self._search_space and m in self._search_space[n] \
                            and loss > self._search_space[n][m]['weight']):
                     self._search_space.add_edge(n, m, weight=loss,
