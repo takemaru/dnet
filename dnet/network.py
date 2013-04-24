@@ -54,6 +54,7 @@ class Network(object):
         self.nodes = obj['nodes']
         self.sections = obj['sections']
         self.switches = obj['switches']
+        self._switch_set = set(self.switches)  # for fast membership query
         for s in self.sections.values():
             l = s['load']
             z = s['impedance']
@@ -159,7 +160,7 @@ class Network(object):
         neighbors = self._find_neighbors(root) - processed_elems
         if len(neighbors) == 1:
             s = neighbors.pop()
-            assert s in self.switches
+            assert s in self._switch_set
             if s in closed_switches:
                 t = (self._find_neighbors(s) - set([root])).pop()
                 branches.append((root, t))
@@ -259,7 +260,7 @@ class Network(object):
 
     def _find_neighbor_switches(self, s, processed_sections):
         switches = set()
-        if s in self.switches:
+        if s in self._switch_set:
             for t in self._find_neighbors(s) - processed_sections:
                 assert t in self.sections
                 processed_sections.add(t)
@@ -268,7 +269,7 @@ class Network(object):
         else:
             processed_sections.add(s)
             for t in self._find_neighbors(s) - processed_sections:
-                if t in self.switches:
+                if t in self._switch_set:
                     switches.add(t)
                 else:
                     for u in self._find_neighbor_switches(t, processed_sections.copy()):
@@ -395,7 +396,7 @@ class Network(object):
 
         s = None
         for c in comps:
-            switches = [t for t in c if t in self.switches]
+            switches = [t for t in c if t in self._switch_set]
             assert s is None or self.switches.index(s) < min([self.switches.index(t) for t in switches]), \
                 'switches must be ordered by independent components'
             s = switches[0]
@@ -404,7 +405,7 @@ class Network(object):
                     s = t
 
         assert len([t for s in self.sections if s < 0
-                    for t in self._find_neighbors(s) if t in self.switches]) == 0, \
+                    for t in self._find_neighbors(s) if t in self._switch_set]) == 0, \
                     'root sections must be connected to a junction, not a switch'
 
         return comps
