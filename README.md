@@ -364,8 +364,8 @@ The loss value at the optimal configuration is calculated as follows.
 (69734.285418826621, 67028.86898923367)
 ```
 
-With `is_optimal` option, `loss()` returns the minimum loss in the
-whole network as well as its lower bound, which means a theoretical
+With `is_optimal` option, `loss()` returns the loss at the optimal
+configuration as well as the lower bound, which means a theoretical
 bound under which loss never be (see Section 3.3 in [theory.pdf] in
 detail).  In this example, the minimum loss is 69734 while the lower
 bound is 67029.
