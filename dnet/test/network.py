@@ -42,11 +42,17 @@ class TestNetwork(unittest.TestCase):
         self.assertAlmostEqual(nw.sections['section_1068']['impedance'][0], 0.1539000+0.4512584j, 3)
         self.assertFalse(nw.sections['section_1068']['substation'])
 
-        self.assertEqual(len(nw._switch2edge), 16)
-        self.assertEqual(nw._switch2edge['switch_0001'], (1, 2))
-        self.assertEqual(len(nw._edge2switch), 16)
-        self.assertEqual(nw._edge2switch[(1, 2)], 'switch_0001')
-        self.assertEqual(nw._root_vertices, set([1, 10, 13]))
+        self.assertTrue(nw.graph)
+        self.assertEqual(nw.graph.edges, [(1, 2), (3, 2), (2, 4), (5, 3),
+                                          (4, 6), (7, 5), (8, 6), (8, 9),
+                                          (9, 7), (10, 7), (1, 11), (11, 12),
+                                          (13, 12), (10, 14), (14, 15),
+                                          (13, 15)])
+        self.assertEqual(nw.graph.roots, set([1, 10, 13]))
+        self.assertEqual(len(nw.graph._switch2edge), 16)
+        self.assertEqual(nw.graph._switch2edge['switch_0001'], (1, 2))
+        self.assertEqual(len(nw.graph._edge2switch), 16)
+        self.assertEqual(nw.graph._edge2switch[(1, 2)], 'switch_0001')
 
         configs = nw.enumerate()
         self.assertTrue(isinstance(configs, ConfigSet))

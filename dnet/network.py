@@ -29,6 +29,17 @@ import networkx as nx
 import yaml
 
 
+class Graph(object):
+    """Is a dual representation graph of the distribution network.
+    """
+
+    def __init__(self):
+        self.edges = []
+        self.roots = set()
+        self._switch2edge = {}
+        self._edge2switch = {}
+
+
 class Node(object):
     """Represents a ZDD node.
     """
@@ -64,9 +75,7 @@ class Network(object):
             msg = 'Warning: it is assumed that section loads are non-negative'
             sys.stderr.write(msg + '\n')
         self._neighbor_cache = {}
-        self._switch2edge = {}
-        self._edge2switch = {}
-        self._root_vertices = self._build_graph()
+        self.graph = self._build_graph()
         self._search_space = None
 
     def enumerate(self):
@@ -131,10 +140,10 @@ class Network(object):
         return sorted(list(set(closed_switches)))
 
     def _to_edge(self, switch):
-        return self._switch2edge[switch]
+        return self.graph._switch2edge[switch]
 
     def _to_switch(self, edge):
-        return self._edge2switch[edge]
+        return self.graph._edge2switch[edge]
 
     def _to_config(self, forest):
         return [self._to_switch(e) for e in forest]
@@ -219,7 +228,7 @@ class Network(object):
         return current.real**2 * resistance
 
     def _build_graph(self):
-        edges = []
+        graph = Graph()
         sorted_sections = []
         for s in self.switches:
             ns = set()
@@ -237,26 +246,25 @@ class Network(object):
                     sorted_sections.append(t)
             e = tuple([sorted_sections.index(t) + 1 for t in sorted(neighbors)])
             assert len(e) == 2
-            edges.append(e)
-            self._switch2edge[s] = e
-            self._edge2switch[e] = s
-        assert len(edges) == len(self.switches)
+            graph.edges.append(e)
+            graph._switch2edge[s] = e
+            graph._edge2switch[e] = s
+        assert len(graph.edges) == len(self.switches)
 
-        roots = set()
         for s in self.sections:
             if self.sections[s]['substation']:
                 for t in self._find_neighbors(s):
                     if t < s:
                         s = t
-                roots.add(sorted_sections.index(s) + 1)
-        assert len(roots) == len(self._get_root_sections())
+                graph.roots.add(sorted_sections.index(s) + 1)
+        assert len(graph.roots) == len(self._get_root_sections())
 
-        GraphSet.set_universe(edges, traversal='as-is')
+        GraphSet.set_universe(graph.edges, traversal='as-is')
 
-        return roots
+        return graph
 
     def _enumerate_forests(self):
-        return GraphSet.forests(roots=self._root_vertices, is_spanning=True)
+        return GraphSet.forests(roots=self.graph.roots, is_spanning=True)
 
     def _find_neighbor_switches(self, s, processed_sections):
         switches = set()
@@ -337,8 +345,8 @@ class Network(object):
         return True
 
     def _find_trees(self, closed_switches, open_switches):
-        closed_switches = [self._switch2edge[s] for s in closed_switches]
-        open_switches = [self._switch2edge[s] for s in open_switches]
+        closed_switches = [self._to_edge(s) for s in closed_switches]
+        open_switches = [self._to_edge(s) for s in open_switches]
         return GraphSet({'include': closed_switches, 'exclude': open_switches})
 
     def _do_enumerate_trees(self, root, closed_switches, fixed_switches):
