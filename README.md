@@ -207,9 +207,10 @@ The "switches" part specifies the switch order in a list.  We have to
 be careful to assign the order.  Switches should be ordered based on
 the proximity in the network as shown in the figure, because DNET's
 efficiency highly depends on the order.  For the loss minimization,
-the order must not step over junctions connected to a substation (such
-junctions are indicated by red circles in the figure); see Sections
-4.1 and 5.1 in [theory.pdf] for more detail.
+switches must be ordered so as not to step over junctions connected to
+a substation as few as possible (such junctions are indicated by red
+circles in the figure); see Sections 4.1 and 5.1 in [theory.pdf] for
+more detail.
 
 ```yaml
 switches:
@@ -417,13 +418,15 @@ Additional notes
   [theory.pdf] for more detail.
 
 * The search space used in the optimization process is a directed
-  acyclic graph.  The shortest path indicates the optimal solution,
-  and the path weight corresponds to the minimum loss.  We can
-  retrieve all edges with their weights (vertex numbers can be
-  different in your environment).  The starting point (a vertex
-  without in-degree) is also shown, while the goal is always `'T'`.
+  acyclic graph.  The shortest path on the graph indicates the optimal
+  solution, and the path weight corresponds to the minimum loss.  We
+  can retrieve the graph with their weights (vertex numbers in the
+  following example may be different in your environment).  The
+  starting point (a vertex without in-degree) is also shown, while the
+  goal is always `'T'`.
 
 ```python
+>>> optimal_config = nw.optimize(configs)
 >>> for u, v in nw._search_space.edges():
 ...     u, v, nw._search_space[u][v]['weight']  # an edge with its weight
 ...
