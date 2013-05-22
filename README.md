@@ -420,22 +420,22 @@ Additional notes
 * The search space used in the optimization process is a directed
   acyclic graph.  The shortest path on the graph indicates the optimal
   solution, and the path weight corresponds to the minimum loss.  We
-  can retrieve the graph with their weights (vertex numbers in the
-  following example may be different in your environment).  The
-  starting point (a vertex without in-degree) is also shown, while the
-  goal is always `'T'`.
+  can retrieve the graph with their weights and configuration (vertex
+  numbers in the following example may be different in your
+  environment).  The starting and ending vertices are also shown.
 
 ```python
 >>> optimal_config = nw.optimize(configs)
->>> for u, v in nw._search_space.edges():
-...     u, v, nw._search_space[u][v]['weight']  # an edge with its weight
+>>> graph = nw.search_space.graph
+>>> for u, v in graph.edges():
+...     u, v, graph[u][v]['weight'], graph[u][v]['config']  # an edge with its weight and config
 ...
-('4082', 'T', 227.25507204036546)
-('38', 'T', 227.25507204036546)
-('46', '38', 190.18278149818809)
+('4082', 'T', 227.25507204036546, set(['switch_0016', 'switch_0014']))
+('38', 'T', 227.25507204036546, set(['switch_0016', 'switch_0014']))
+('46', '38', 190.18278149818809, set(['switch_0013', 'switch_0012']))
 :
->>> [v for v, d in nw._search_space.in_degree_iter() if d == 0][0]  # starting vertex
-'4114'
+>>> nw.search_space.start, nw.search_space.end  # starting and ending vertices
+('4114', 'T')
 ```
 
 References

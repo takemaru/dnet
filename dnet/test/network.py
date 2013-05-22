@@ -86,10 +86,10 @@ class TestNetwork(unittest.TestCase):
                          set(['switch_0004', 'switch_0007', 'switch_0012',
                               'switch_0015']))
 
-        start = [v for v, d in nw._search_space.in_degree_iter() if d == 0][0]
-        self.assertEqual(len(nw._search_space.edges()), 10)
-        self.assertAlmostEqual(nw._search_space['38']['T']['weight'], 227.255, 3)
-        self.assertEqual(start, '4114')
+        self.assertEqual(len(nw.search_space.graph.edges()), 10)
+        self.assertAlmostEqual(nw.search_space.graph['38']['T']['weight'], 227.255, 3)
+        self.assertEqual(nw.search_space.start, '4114')
+        self.assertEqual(nw.search_space.end, 'T')
 
         loss, lower_bound = nw.loss(optimal_config, is_optimal=True)
         self.assertAlmostEqual(loss, 69734.3, 0)

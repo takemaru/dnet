@@ -52,6 +52,16 @@ class Node(object):
         self.h = h
 
 
+class SearchSpace(object):
+    """Represents a search space for the optimization.
+    """
+
+    def __init__(self):
+        self.graph = nx.DiGraph()
+        self.start = None
+        self.end = None
+
+
 class Network(object):
     """Represents a distribution network.
     """
@@ -76,7 +86,7 @@ class Network(object):
             sys.stderr.write(msg + '\n')
         self._neighbor_cache = {}
         self.graph = self._build_graph()
-        self._search_space = None
+        self.search_space = SearchSpace()
 
     def enumerate(self):
         gs = self._enumerate_forests()
@@ -116,26 +126,26 @@ class Network(object):
 
         self._zdd = { 'B': Node('B %d B B ' % (len(self.switches) + 1)),
                       'T': Node('T %d T T ' % (len(self.switches) + 1)) }
-        start = None
         for line in gs.dumps().split('\n'):
             if line.startswith('.'):
                 break
             n = Node(line)
             self._zdd[n.n] = n
-            start = n.n
+            self.search_space.start = n.n
 
-        self._search_space = nx.DiGraph()
-
-        entries = set([start])
+        entries = set([self.search_space.start])
         for comp in comps:
             entries = self._rebuild(entries, comp)
 
-        path = nx.dijkstra_path(self._search_space, start, 'T')
+        self.search_space.end = 'T'
+
+        path = nx.dijkstra_path(self.search_space.graph, self.search_space.start,
+                                self.search_space.end)
 
         closed_switches = []
         for i in range(len(path) - 1):
             x, y = path[i], path[i + 1]
-            closed_switches.extend(list(self._search_space[x][y]['config']))
+            closed_switches.extend(list(self.search_space.graph[x][y]['config']))
 
         return sorted(list(set(closed_switches)))
 
@@ -463,10 +473,11 @@ class Network(object):
                 else:
                     loss = self._calc_component_loss(comp_roots, closed_switches)
                     loss_cache[key] = loss
-                if not(n in self._search_space and m in self._search_space[n] \
-                           and loss > self._search_space[n][m]['weight']):
-                    self._search_space.add_edge(n, m, weight=loss,
-                                                config=closed_switches)
+                if not(n in self.search_space.graph \
+                           and m in self.search_space.graph[n] \
+                           and loss > self.search_space.graph[n][m]['weight']):
+                    self.search_space.graph.add_edge(n, m, weight=loss,
+                                                     config=closed_switches)
 
         return next_entries
 
