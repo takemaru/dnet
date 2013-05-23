@@ -142,7 +142,7 @@ class ConfigSet(object):
     def _conv_weights(weights):
         weights2 = {}
         for s, w in weights.iteritems():
-            weights2[self._nw._to_edge] = w
+            weights2[self._nw._to_edge(s)] = w
         return weights2
 
     def __contains__(self, config_or_switch):
