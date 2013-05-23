@@ -117,6 +117,11 @@ class TestNetwork(unittest.TestCase):
         self.assertAlmostEqual(loss, 69734.3, 0)
         self.assertAlmostEqual(lower_bound, 67028.8, 0)
 
+    def test_restore(self):
+        nw = Network('data/test-fukui-tepco', format='fukui-tepco')
+
+        configs = nw.enumerate(topology_constraints_only=True)
+        self.assertEqual(len(configs), 279)
 
 if __name__ == '__main__':
     unittest.main()
