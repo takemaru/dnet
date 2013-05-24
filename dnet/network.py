@@ -88,8 +88,8 @@ class Network(object):
         self.graph = self._build_graph()
         self.search_space = SearchSpace()
 
-    def enumerate(self, topology_constraints_only=None):
-        gs = self._enumerate_forests()
+    def enumerate(self, topology_constraints_only=None, open_switches=None):
+        gs = self._enumerate_forests(open_switches=open_switches)
         if not topology_constraints_only:
             for root in self._get_root_sections():
                 gs &= self._enumerate_trees(root)
@@ -274,8 +274,13 @@ class Network(object):
 
         return graph
 
-    def _enumerate_forests(self):
-        return GraphSet.forests(roots=self.graph.roots, is_spanning=True)
+    def _enumerate_forests(self, open_switches=None):
+        if open_switches:
+            gs = GraphSet({'exclude': [self._to_edge(s) for s in open_switches]})
+        else:
+            gs = None
+        return GraphSet.forests(roots=self.graph.roots, is_spanning=True,
+                                graphset=gs)
 
     def _find_neighbor_switches(self, s, processed_sections):
         switches = set()
