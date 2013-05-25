@@ -148,7 +148,7 @@ class TestNetwork(unittest.TestCase):
                                 l3.append(t2)
                     l2.append(l3)
                 l.append(l2)
-            ok = False
+            blocking_sections = []
             for i in range(2**len(l)):
                 nw2 = Network('data/test-fukui-tepco', format='fukui-tepco')
                 unloaded_sections = []
@@ -158,9 +158,10 @@ class TestNetwork(unittest.TestCase):
                         unloaded_sections.append(t)
                 configs = nw2.enumerate(open_switches=switches)
                 if len(configs) == 0:
-                    ok = True
-                    break
-            self.assertTrue(ok)  # no false positive in this data
+                    blocking_sections.append(unloaded_sections)
+#                    break
+            self.assertTrue(blocking_sections)  # no false positive in this data
+#            print (bool(blocking_sections), switches, blocking_sections)
 
 if __name__ == '__main__':
     unittest.main()
