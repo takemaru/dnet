@@ -123,8 +123,8 @@ class TestNetwork(unittest.TestCase):
         configs = nw.enumerate(topology_constraints_only=True)
         self.assertEqual(len(configs), 279)
 
-        topol_blocking = configs.blocking()
-        self.assertEqual(len(topol_blocking), 64864)
+        topol_blocking = configs.blocking().minimal()
+        self.assertEqual(len(topol_blocking), 50)
 
         configs = nw.enumerate(topology_constraints_only=False)
         self.assertEqual(len(configs), 111)
