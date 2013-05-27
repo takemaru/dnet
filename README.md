@@ -338,7 +338,7 @@ returned by `rand_iter()`, and calculate the average loss over them
 ...     i += 1
 ...
 >>> sum / 5
-83014.06804812004
+85848.080193479094
 ```
 
 We finally search for the minimum loss configuration from all feasible
@@ -362,7 +362,7 @@ The loss value at the optimal configuration is calculated as follows.
 
 ```python
 >>> nw.loss(optimal_config, is_optimal=True)
-(69734.285418826621, 67028.86898923367)
+(72055.704210858064, 69238.43315354317)
 ```
 
 With `is_optimal` option, `loss()` returns the loss at the optimal
@@ -430,9 +430,9 @@ Additional notes
 >>> for u, v in graph.edges():
 ...     u, v, graph[u][v]['weight'], graph[u][v]['config']  # an edge with its weight and config
 ...
-('4082', 'T', 227.25507204036546, set(['switch_0016', 'switch_0014']))
-('38', 'T', 227.25507204036546, set(['switch_0016', 'switch_0014']))
-('46', '38', 190.18278149818809, set(['switch_0013', 'switch_0012']))
+('4082', 'T', 236.19071155693283, set(['switch_0016', 'switch_0014']))
+('38', 'T', 236.19071155693283, set(['switch_0016', 'switch_0014']))
+('46', '38', 196.46357613253261, set(['switch_0013', 'switch_0012']))
 :
 >>> nw.search_space.start, nw.search_space.end  # starting and ending vertices
 ('4114', 'T')

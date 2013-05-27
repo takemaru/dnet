@@ -76,7 +76,7 @@ class TestNetwork(unittest.TestCase):
             if i == 5:
                 break
             i += 1
-        self.assertAlmostEqual(sum / 5, 83014.1, 0)
+        self.assertAlmostEqual(sum / 5, 85848.1, 0)
 
         optimal_config = nw.optimize(configs)
         self.assertEqual(optimal_config,
@@ -91,13 +91,13 @@ class TestNetwork(unittest.TestCase):
                               'switch_0015']))
 
         self.assertEqual(len(nw.search_space.graph.edges()), 10)
-        self.assertAlmostEqual(nw.search_space.graph['38']['T']['weight'], 227.255, 3)
+        self.assertAlmostEqual(nw.search_space.graph['38']['T']['weight'], 236.191, 3)
         self.assertEqual(nw.search_space.start, '4114')
         self.assertEqual(nw.search_space.end, 'T')
 
         loss, lower_bound = nw.loss(optimal_config, is_optimal=True)
-        self.assertAlmostEqual(loss, 69734.3, 0)
-        self.assertAlmostEqual(lower_bound, 67028.8, 0)
+        self.assertAlmostEqual(loss, 72055.7, 0)
+        self.assertAlmostEqual(lower_bound, 69238.4, 0)
 
     def test_tutorial_fukui_tepco(self):
         nw = Network('data/test-fukui-tepco', format='fukui-tepco')
@@ -118,8 +118,8 @@ class TestNetwork(unittest.TestCase):
                               'switch_1069']))
 
         loss, lower_bound = nw.loss(optimal_config, is_optimal=True)
-        self.assertAlmostEqual(loss, 69734.3, 0)
-        self.assertAlmostEqual(lower_bound, 67028.8, 0)
+        self.assertAlmostEqual(loss, 72055.7, 0)
+        self.assertAlmostEqual(lower_bound, 69238.4, 0)
 
 
 if __name__ == '__main__':
