@@ -62,6 +62,10 @@ class TestNetwork(unittest.TestCase):
         configs_w2_wo3 = configs.including('switch_0002').excluding('switch_0003')
         self.assertEqual(len(configs_w2_wo3), 15)
 
+        configs_w2 = configs.including('switch_0002')
+        configs_wo3 = configs.excluding('switch_0003')
+        self.assertTrue(configs_w2 & configs_wo3 == configs_w2_wo3)
+
         for config in configs_w2_wo3:
             self.assertTrue(isinstance(config, list))
 

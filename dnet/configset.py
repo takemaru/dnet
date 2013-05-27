@@ -42,34 +42,58 @@ class ConfigSet(object):
         return bool(self._gs)
 
     def union(self, *others):
+        for other in others:
+            if not self._nw._has_same_topology(other._nw):
+                raise TypeError, other
         others = [other._gs for other in others]
         return ConfigSet(self._nw, self._gs.union(*others))
 
     def intersection(self, *others):
+        for other in others:
+            if not self._nw._has_same_topology(other._nw):
+                raise TypeError, other
         others = [other._gs for other in others]
         return ConfigSet(self._nw, self._gs.intersection(*others))
 
     def difference(self, *others):
+        for other in others:
+            if not self._nw._has_same_topology(other._nw):
+                raise TypeError, other
         others = [other._gs for other in others]
         return ConfigSet(self._nw, self._gs.difference(*others))
 
     def symmetric_difference(self, *others):
+        for other in others:
+            if not self._nw._has_same_topology(other._nw):
+                raise TypeError, other
         others = [other._gs for other in others]
         return ConfigSet(self._nw, self._gs.symmetric_difference(*others))
 
     def update(self, *others):
+        for other in others:
+            if not self._nw._has_same_topology(other._nw):
+                raise TypeError, other
         self._gs.update(*[other._gs for other in others])
         return self
 
     def intersection_update(self, *others):
+        for other in others:
+            if not self._nw._has_same_topology(other._nw):
+                raise TypeError, other
         self._gs.intersection_update(*[other._gs for other in others])
         return self
 
     def difference_update(self, *others):
+        for other in others:
+            if not self._nw._has_same_topology(other._nw):
+                raise TypeError, other
         self._gs.difference_update(*[other._gs for other in others])
         return self
 
     def symmetric_difference_update(self, *others):
+        for other in others:
+            if not self._nw._has_same_topology(other._nw):
+                raise TypeError, other
         self._gs.symmetric_difference_update(*[other._gs for other in others])
         return self
 
@@ -87,28 +111,39 @@ class ConfigSet(object):
     __ixor__ = symmetric_difference_update
 
     def isdisjoint(self, other):
+        if not self._nw._has_same_topology(other._nw):
+            raise TypeError, other
         return self._gs.isdisjoint(other._gs)
 
     def issubset(self, other):
+        if not self._nw._has_same_topology(other._nw):
+            raise TypeError, other
         return self._gs.issubset(other._gs)
 
     def issuperset(self, other):
+        if not self._nw._has_same_topology(other._nw):
+            raise TypeError, other
         return self._gs.issuperset(other._gs)
 
     __le__ = issubset
     __ge__ = issuperset
 
     def __lt__(self, other):
+        if not self._nw._has_same_topology(other._nw):
+            raise TypeError, other
         return self._gs < other._gs
 
     def __gt__(self, other):
+        if not self._nw._has_same_topology(other._nw):
+            raise TypeError, other
         return self._gs > other._gs
 
     def __eq__(self, other):
-        return self._nw == other._nw and self._gs == other._gs
+        return self._nw._has_same_topology(other._nw) and self._gs == other._gs
 
     def __ne__(self, other):
-        return self._nw != other._nw or self._gs != other._gs
+        return not self._nw._has_same_topology(other._nw) or \
+            self._gs != other._gs
 
     def __len__(self):
         return len(self._gs)
