@@ -239,7 +239,7 @@ class Network(object):
 
     def _do_calc_loss(self, current, resistance):
         assert not isinstance(resistance, complex)
-        return current.real**2 * resistance
+        return abs(current)**2 * resistance
 
     def _build_graph(self):
         graph = Graph()
