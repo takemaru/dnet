@@ -150,6 +150,9 @@ class Network(object):
 
         return sorted(list(set(closed_switches)))
 
+    def _has_same_topology(self, other):
+        return self.nodes == other.nodes and self.switches == other.switches
+
     def _to_edge(self, switch):
         return self.graph._switch2edge[switch]
 
