@@ -88,10 +88,11 @@ class Network(object):
         self.graph = self._build_graph()
         self.search_space = SearchSpace()
 
-    def enumerate(self):
+    def enumerate(self, topology_constraints_only=None):
         gs = self._enumerate_forests()
-        for root in self._get_root_sections():
-            gs &= self._enumerate_trees(root)
+        if not topology_constraints_only:
+            for root in self._get_root_sections():
+                gs &= self._enumerate_trees(root)
         return ConfigSet(self, gs)
 
     def loss(self, config, is_optimal=False):
