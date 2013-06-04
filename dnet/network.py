@@ -38,6 +38,8 @@ class Graph(object):
         self.roots = set()
         self._switch2edge = {}
         self._edge2switch = {}
+        self._section2vertex = {}
+        self._vertex2sections = {}
 
 
 class Node(object):
@@ -252,12 +254,18 @@ class Network(object):
             neighbors = set()
             is_root = False
             for t in sorted(ns):
+                junctions = set([t])
                 for u in self._find_neighbors(t):
+                    if u in self.sections:
+                        junctions.add(u)
                     if u in self.sections and u < t:
                         t = u
                 neighbors.add(t)
                 if t not in sorted_sections:
                     sorted_sections.append(t)
+                    v = sorted_sections.index(t) + 1
+                    graph._section2vertex[t] = v
+                    graph._vertex2sections[v] = list(junctions)
             e = tuple([sorted_sections.index(t) + 1 for t in sorted(neighbors)])
             assert len(e) == 2
             graph.edges.append(e)
