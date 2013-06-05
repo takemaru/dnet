@@ -81,8 +81,11 @@ class Network(object):
         for s in self.sections.values():
             l = s['load']
             z = s['impedance']
-            s['load']      = [l[0] + l[1]*1j, l[2] + l[3]*1j, l[4] + l[5]*1j]
-            s['impedance'] = [z[0] + z[1]*1j, z[2] + z[3]*1j, z[4] + z[5]*1j]
+            s['load'] = []
+            s['impedance'] = []
+            for i in range(Network.NUM_PHASES):
+                s['load'].append(l[2*i] + l[2*i + 1]*1j)
+                s['impedance'].append(z[2*i] + z[2*i + 1]*1j)
         if [l for s in self.sections.values() for l in s['load'] if l.real < 0]:
             msg = 'Warning: it is assumed that section loads are non-negative'
             sys.stderr.write(msg + '\n')
@@ -106,7 +109,7 @@ class Network(object):
             return loss
         else:
             lower_bound = 0  # theoretical lower bound in root sections
-            for i in range(3):
+            for i in range(Network.NUM_PHASES):
                 total_loads = 0.0
                 for s in self.sections:
                     total_loads += self.sections[s]['load'][i]
@@ -203,17 +206,18 @@ class Network(object):
         return branches
 
     def _calc_current(self, root, branches):
+        n_phases = Network.NUM_PHASES
         current = { root: [0, 0, 0] }
         for branch in branches:
             s, t = branch
             load = self.sections[t]['load']
             if t not in current:
                 current[t] = [0, 0, 0]
-            current[t] = [current[t][i] + load[i] for i in range(3)]
+            current[t] = [current[t][i] + load[i] for i in range(n_phases)]
             while True:
                 if s not in current:
                     current[s] = [0, 0, 0]
-                current[s] = [current[s][i] + load[i] for i in range(3)]
+                current[s] = [current[s][i] + load[i] for i in range(n_phases)]
                 upper_branch = [b for b in branches if b[1] == s]
                 assert len(upper_branch) <= 1
                 if len(upper_branch) == 1:
@@ -221,7 +225,7 @@ class Network(object):
                 else:
                     break
         load = self.sections[root]['load']
-        current[root] = [current[root][i] + load[i] for i in range(3)]
+        current[root] = [current[root][i] + load[i] for i in range(n_phases)]
         return current
 
     def _calc_loss(self, root, closed_switches, barrier, no_root=False):
@@ -233,7 +237,7 @@ class Network(object):
         for s in sections:
             if no_root and self.sections[s]['substation']:
                 continue
-            for i in range(3):
+            for i in range(Network.NUM_PHASES):
                 j = current[s][i]
                 r = self.sections[s]['impedance'][i].real
                 loss += self._do_calc_loss(j, r)
@@ -335,16 +339,15 @@ class Network(object):
             return False
 
         current = self._calc_current(root, branches)
-        if abs(current[root][0]) > Network.MAX_CURRENT or \
-                abs(current[root][1]) > Network.MAX_CURRENT or \
-                abs(current[root][2]) > Network.MAX_CURRENT:
-            return False
+        for i in range(Network.NUM_PHASES):
+            if abs(current[root][i]) > Network.MAX_CURRENT:
+                return False
         assert len(current) == len(set(flatten(branches)))
 
         leaves = set(flatten(branches)) - set([b[0] for b in branches])
         for s in leaves:
             voltage_drop = []
-            for i in range(3):
+            for i in range(Network.NUM_PHASES):
                 j = current[s][i]
                 z = self.sections[s]['impedance'][i]
                 voltage_drop.append(j * z / 2)
@@ -352,7 +355,7 @@ class Network(object):
             assert len(bs) == 1
             s, t = bs[0]
             while True:
-                for i in range(3):
+                for i in range(Network.NUM_PHASES):
                     j = current[s][i]
                     z = self.sections[s]['impedance'][i]
                     voltage_drop[i] += j * z
@@ -362,12 +365,12 @@ class Network(object):
                     s, t = upper_branch[0]
                 else:
                     break
-            v1, v2, v3 = voltage_drop
+            v = voltage_drop
             v0 = Network.SENDING_VOLTAGE
             vl, vh = Network.VOLTAGE_RANGE
-            if abs(v0 - v1) < vl or abs(v0 - v2) < vl or abs(v0 - v3) < vl or \
-                    vh < abs(v0 - v1) or vh < abs(v0 - v2) or vh < abs(v0 - v3):
-                return False
+            for i in range(Network.NUM_PHASES):
+                if abs(v0 - v[i]) < vl or vh < abs(v0 - v[i]):
+                    return False
 
         return True
 
@@ -501,3 +504,4 @@ class Network(object):
     MAX_CURRENT     = 300
     SENDING_VOLTAGE = 6600 / sqrt(3)
     VOLTAGE_RANGE   = (6300 / sqrt(3), 6900 / sqrt(3))
+    NUM_PHASES = 3
