@@ -83,7 +83,7 @@ nodes:
 sections:
   section_-001:
     impedance: [0.0922, 0.047]
-    load: [7.92788393443, 4.75673036066]
+    load: [7.92788393443, -4.75673036066]
     substation: true
   section_0038:
     impedance: [0.0, 0.0]
@@ -91,7 +91,7 @@ sections:
     substation: false
   section_0039:
     impedance: [0.493, 0.2511]
-    load: [7.26544287049, 3.22908572022]
+    load: [7.26544287049, -3.22908572022]
     substation: false
   section_0040:
     impedance: [0.0, 0.0]
@@ -99,15 +99,15 @@ sections:
     substation: false
   section_0041:
     impedance: [0.366, 0.1864]
-    load: [9.79005351493, 6.52670234329]
+    load: [9.79005351493, -6.52670234329]
     substation: false
   section_0042:
     impedance: [0.3811, 0.1941]
-    load: [4.94755740912, 2.47377870456]
+    load: [4.94755740912, -2.47377870456]
     substation: false
   section_0043:
     impedance: [0.819, 0.707]
-    load: [5.07905917202, 1.69301972401]
+    load: [5.07905917202, -1.69301972401]
     substation: false
   section_0044:
     impedance: [0.0, 0.0]
@@ -115,11 +115,11 @@ sections:
     substation: false
   section_0045:
     impedance: [0.1872, 0.6188]
-    load: [16.9947307121, 8.49736535607]
+    load: [16.9947307121, -8.49736535607]
     substation: false
   section_0046:
     impedance: [0.7114, 0.2351]
-    load: [17.0849311354, 8.54246556771]
+    load: [17.0849311354, -8.54246556771]
     substation: false
   section_0047:
     impedance: [0.0, 0.0]
@@ -127,7 +127,7 @@ sections:
     substation: false
   section_0048:
     impedance: [1.03, 0.74]
-    load: [5.16121850556, 1.72040616852]
+    load: [5.16121850556, -1.72040616852]
     substation: false
   section_0049:
     impedance: [0.0, 0.0]
@@ -135,15 +135,15 @@ sections:
     substation: false
   section_0050:
     impedance: [1.044, 0.74]
-    load: [5.19459279646, 1.73153093215]
+    load: [5.19459279646, -1.73153093215]
     substation: false
   section_0051:
     impedance: [0.1966, 0.065]
-    load: [3.89969430428, 2.59979620285]
+    load: [3.89969430428, -2.59979620285]
     substation: false
   section_0052:
     impedance: [0.3744, 0.1238]
-    load: [5.20837656711, 3.03821966415]
+    load: [5.20837656711, -3.03821966415]
     substation: false
   section_0053:
     impedance: [0.0, 0.0]
@@ -151,15 +151,15 @@ sections:
     substation: false
   section_0054:
     impedance: [1.468, 1.155]
-    load: [5.24428477745, 3.05916612018]
+    load: [5.24428477745, -3.05916612018]
     substation: false
   section_0055:
     impedance: [0.5416, 0.7129]
-    load: [10.5156435303, 7.01042902022]
+    load: [10.5156435303, -7.01042902022]
     substation: false
   section_0056:
     impedance: [0.591, 0.526]
-    load: [5.26625452402, 0.877709087337]
+    load: [5.26625452402, -0.877709087337]
     substation: false
   section_0057:
     impedance: [0.0, 0.0]
@@ -167,15 +167,15 @@ sections:
     substation: false
   section_0058:
     impedance: [0.7463, 0.545]
-    load: [5.27440132899, 1.75813377633]
+    load: [5.27440132899, -1.75813377633]
     substation: false
   section_0059:
     impedance: [1.289, 1.721]
-    load: [5.28652828918, 1.76217609639]
+    load: [5.28652828918, -1.76217609639]
     substation: false
   section_0060:
     impedance: [0.732, 0.574]
-    load: [7.9352246447, 3.52676650876]
+    load: [7.9352246447, -3.52676650876]
     substation: false
   section_0061:
     impedance: [0.0, 0.0]
@@ -183,15 +183,15 @@ sections:
     substation: false
   section_0062:
     impedance: [0.164, 0.1565]
-    load: [7.13905198999, 3.17291199555]
+    load: [7.13905198999, -3.17291199555]
     substation: false
   section_0063:
     impedance: [1.5042, 1.3554]
-    load: [7.16474838958, 3.18433261759]
+    load: [7.16474838958, -3.18433261759]
     substation: false
   section_0064:
     impedance: [0.4095, 0.4784]
-    load: [7.16984811453, 3.18659916201]
+    load: [7.16984811453, -3.18659916201]
     substation: false
   section_0065:
     impedance: [0.0, 0.0]
@@ -199,7 +199,7 @@ sections:
     substation: false
   section_0066:
     impedance: [0.7089, 0.9373]
-    load: [7.17459333717, 3.18870814985]
+    load: [7.17459333717, -3.18870814985]
     substation: false
   section_0067:
     impedance: [0.0, 0.0]
@@ -207,15 +207,15 @@ sections:
     substation: false
   section_0068:
     impedance: [0.4512, 0.3083]
-    load: [7.29214993953, 4.05119441085]
+    load: [7.29214993953, -4.05119441085]
     substation: false
   section_0069:
     impedance: [0.898, 0.7091]
-    load: [34.2670151201, 16.3176262477]
+    load: [34.2670151201, -16.3176262477]
     substation: false
   section_0070:
     impedance: [0.896, 0.7011]
-    load: [34.3846073675, 16.3736225559]
+    load: [34.3846073675, -16.3736225559]
     substation: false
   section_0071:
     impedance: [0.0, 0.0]
@@ -223,19 +223,19 @@ sections:
     substation: false
   section_0072:
     impedance: [0.203, 0.1034]
-    load: [5.09782928952, 2.1240955373]
+    load: [5.09782928952, -2.1240955373]
     substation: false
   section_0073:
     impedance: [0.2842, 0.1447]
-    load: [5.12338247865, 2.13474269944]
+    load: [5.12338247865, -2.13474269944]
     substation: false
   section_0074:
     impedance: [1.059, 0.9337]
-    load: [5.12338247865, 1.70779415955]
+    load: [5.12338247865, -1.70779415955]
     substation: false
   section_0075:
     impedance: [0.8042, 0.7006]
-    load: [10.6340963177, 6.20322285202]
+    load: [10.6340963177, -6.20322285202]
     substation: false
   section_0076:
     impedance: [0.0, 0.0]
@@ -243,19 +243,19 @@ sections:
     substation: false
   section_0077:
     impedance: [0.5075, 0.2585]
-    load: [17.8691549439, 53.6074648317]
+    load: [17.8691549439, -53.6074648317]
     substation: false
   section_0078:
     impedance: [0.9744, 0.963]
-    load: [13.4683728322, 6.28524065502]
+    load: [13.4683728322, -6.28524065502]
     substation: false
   section_0079:
     impedance: [0.3105, 0.3619]
-    load: [18.8752438773, 8.98821137016]
+    load: [18.8752438773, -8.98821137016]
     substation: false
   section_0080:
     impedance: [0.341, 0.5302]
-    load: [5.3950229264, 3.59668195093]
+    load: [5.3950229264, -3.59668195093]
     substation: false
   section_0081:
     impedance: [0.0, 0.0]
