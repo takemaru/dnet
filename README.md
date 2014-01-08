@@ -54,9 +54,9 @@ DNET in your paper.
 > Takeru Inoue, Keiji Takano, Takayuki Watanabe, Jun Kawahara, Ryo
   Yoshinaka, Akihiro Kishimoto, Koji Tsuda, Shin-ichi Minato, and
   Yasuhiro Hayashi, "Distribution Loss Minimization with Guaranteed
-  Error Bound," IEEE Transactions on Smart Grid, to appear.
-  ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf),
-  draft version)
+  Error Bound," IEEE Transactions on Smart Grid, vol.5, issue.1,
+  pp.102-111, January 2014.
+  ([pdf](http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=6693788))
 
 DNET is still under the development.  The current version just
 supports power loss minimization and configuration search.  We are
@@ -379,6 +379,12 @@ switches, as demostrated in our papers in [references].
 Additional notes
 ---------------------------------------------------------------------
 
+* DNET has been modified from our paper's version.  The current
+  version is much faster than the paper version.  Some loss values
+  presented in the paper are inconsistent with those by the current
+  version since implementation bugs have been fixed, though they have
+  no impact on conclusions of the paper.
+
 * DNET assumes that just switches are controllable in a distribution
   network while other components like capacitors are ignored; we
   consider the distribution network analysis as a combinatorial
@@ -444,9 +450,9 @@ References
 - Takeru Inoue, Keiji Takano, Takayuki Watanabe, Jun Kawahara, Ryo
   Yoshinaka, Akihiro Kishimoto, Koji Tsuda, Shin-ichi Minato, and
   Yasuhiro Hayashi, "Distribution Loss Minimization with Guaranteed
-  Error Bound," IEEE Transactions on Smart Grid, to appear.
-  ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_12_59/tcstr_12_59.pdf),
-  draft version)
+  Error Bound," IEEE Transactions on Smart Grid, vol.5, issue.1,
+  pp.102-111, January 2014.
+  ([pdf](http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=6693788))
 - Takeru Inoue, "Theory of Distribution Network Evaluation Tool."
   [theory.pdf]
 - [Graphillion - Fast, lightweight graphset operation library][Graphillion]
