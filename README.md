@@ -64,11 +64,10 @@ thinking of service restoration for future releases based on the
 following our paper.
 
 > Takeru Inoue, Norihito Yasuda, Shunsuke Kawano, Yuji Takenobu,
-  Shin-ichi Minato, and Yasuhiro Hayashi, "Verifying Distribution
-  Networks for Secure Restoration by Enumerating All Critical Failures,"
-  Hokkaido University, Division of Computer Science, TCS Technical
-  Reports, TCS-TR-A-14-70, January 2014.
-  ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_14_70/tcstr_14_70.pdf))
+  Shin-ichi Minato, and Yasuhiro Hayashi, "Distribution Network
+  Verification for Secure Restoration by Enumerating All Critical
+  Failures," IEEE Transactions on Smart Grid. (to appear;
+  [draft](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_14_70/tcstr_14_70.pdf))
 
 We really appreciate any pull request and patch if you add some
 changes that benefit a wide variety of people.
@@ -457,11 +456,10 @@ References
 ---------------------------------------------------------------------
 
 - Takeru Inoue, Norihito Yasuda, Shunsuke Kawano, Yuji Takenobu,
-  Shin-ichi Minato, and Yasuhiro Hayashi, "Verifying Distribution
-  Networks for Secure Restoration by Enumerating All Critical Failures,"
-  Hokkaido University, Division of Computer Science, TCS Technical
-  Reports, TCS-TR-A-14-70, January 2014.
-  ([pdf](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_14_70/tcstr_14_70.pdf))
+  Shin-ichi Minato, and Yasuhiro Hayashi, "Distribution Network
+  Verification for Secure Restoration by Enumerating All Critical
+  Failures," IEEE Transactions on Smart Grid. (to appear;
+  [draft](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_14_70/tcstr_14_70.pdf))
 - Takeru Inoue, Keiji Takano, Takayuki Watanabe, Jun Kawahara, Ryo
   Yoshinaka, Akihiro Kishimoto, Koji Tsuda, Shin-ichi Minato, and
   Yasuhiro Hayashi, "Distribution Loss Minimization with Guaranteed
