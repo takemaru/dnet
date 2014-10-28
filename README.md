@@ -66,8 +66,7 @@ following our paper.
 > Takeru Inoue, Norihito Yasuda, Shunsuke Kawano, Yuji Takenobu,
   Shin-ichi Minato, and Yasuhiro Hayashi, "Distribution Network
   Verification for Secure Restoration by Enumerating All Critical
-  Failures," IEEE Transactions on Smart Grid. (to appear;
-  [draft](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_14_70/tcstr_14_70.pdf))
+  Failures," IEEE Transactions on Smart Grid, October 2014. ([pdf](http://dx.doi.org/10.1109/TSG.2014.2359114))
 
 We really appreciate any pull request and patch if you add some
 changes that benefit a wide variety of people.
@@ -458,8 +457,7 @@ References
 - Takeru Inoue, Norihito Yasuda, Shunsuke Kawano, Yuji Takenobu,
   Shin-ichi Minato, and Yasuhiro Hayashi, "Distribution Network
   Verification for Secure Restoration by Enumerating All Critical
-  Failures," IEEE Transactions on Smart Grid. (to appear;
-  [draft](http://www-alg.ist.hokudai.ac.jp/~thomas/TCSTR/tcstr_14_70/tcstr_14_70.pdf))
+  Failures," IEEE Transactions on Smart Grid, October 2014. ([pdf](http://dx.doi.org/10.1109/TSG.2014.2359114))
 - Takeru Inoue, Keiji Takano, Takayuki Watanabe, Jun Kawahara, Ryo
   Yoshinaka, Akihiro Kishimoto, Koji Tsuda, Shin-ichi Minato, and
   Yasuhiro Hayashi, "Distribution Loss Minimization with Guaranteed
