@@ -222,6 +222,8 @@ class ConfigSet(object):
     def blocking(self):
         return ConfigSet(self._nw, self._gs.blocking())
 
+    hitting = blocking
+
     def smaller(self, size):
         return ConfigSet(self._nw, self._gs.smaller(size))
 

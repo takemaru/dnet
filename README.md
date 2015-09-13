@@ -13,8 +13,9 @@ Features
 --------------------------------------------------------------------------------
 
 * Highly efficient analysis tool for power distribution networks
-* Power loss minimization and more (nonconvex optimization over
-  several hundreds of variables!)
+* Power loss minimization (nonconvex optimization over several
+  hundreds of variables!)
+* Distribution network verification to guarantee secure restoration
 * Featuring [Graphillion], an efficient graphset operation library
 * Open source MIT license
 * Additional benefits from Python: fast prototyping, easy to teach,
@@ -25,7 +26,7 @@ Overview
 
 DNET (Distribution Network Evaluation Tool) is an analysis tool that
 works with power distribution networks for efficient and stable
-operation such as loss minimization.
+operation such as loss minimization and verification.
 
 Power distribution networks consist of several switches.  The
 structure, or *configuration*, can be reconfigured by changing the
@@ -35,16 +36,16 @@ switches, which makes network analysis a quite tough problem due to
 the huge size of search space.  Moreover, power distribution networks
 are generally operated in a radial structure under the complicated
 operational constraints such as line capacity and voltage profiles.
-The loss minimization in a distribution network is a hard nonconvex
-optimization problem.
+The loss minimization and verification in a distribution network is a
+hard nonconvex optimization problem.
 
 DNET finds the best configuration you want with a great efficiency.
 All feasible configurations are examined without stuck in local
 minima.  DNET handles complicated electrical constraints with
-realistic unbalanced three-phase loads.  We've optimized a large
-distribution network with 468 switches using DNET; please see papers
-listed in [references] in detail.  We believe that DNET takes you to
-the next stage of power distribution network analysis.
+realistic unbalanced three-phase loads.  We've optimized and verified
+a large distribution network with 468 switches using DNET; please see
+papers listed in [references] in detail.  We believe that DNET takes
+you to the next stage of power distribution network analysis.
 
 DNET can be used freely under the MIT license.  It is mainly developed
 by [JST ERATO Minato project].  We would really appreciate if you
@@ -58,15 +59,14 @@ DNET in your paper.
   pp.102-111, January 2014.
   ([pdf](http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=6693788))
 
-DNET is still under the development.  The current version just
-supports power loss minimization and configuration search.  We are
-thinking of service restoration for future releases based on the
-following our paper.
-
 > Takeru Inoue, Norihito Yasuda, Shunsuke Kawano, Yuji Takenobu,
   Shin-ichi Minato, and Yasuhiro Hayashi, "Distribution Network
   Verification for Secure Restoration by Enumerating All Critical
   Failures," IEEE Transactions on Smart Grid, October 2014. ([pdf](http://dx.doi.org/10.1109/TSG.2014.2359114))
+
+DNET is still under the development.  The current version supports
+power loss minimization, configuration search, and verification.  We
+are thinking of service restoration for future releases.
 
 We really appreciate any pull request and patch if you add some
 changes that benefit a wide variety of people.
@@ -267,7 +267,8 @@ Load the network data as follows.
 ```
 
 If your data is in the Fukui-TEPCO format, specify data directory with
-the format type.
+the format type (this is just for the explanation, don't do this line
+for this tutorial).
 
 ```python
 >>> nw = Network('data/test-fukui-tepco', format='fukui-tepco')
@@ -348,7 +349,7 @@ returned by `rand_iter()`, and calculate the average loss over them
 85848.080193479094
 ```
 
-We finally search for the minimum loss configuration from all feasible
+We search for the minimum loss configuration from all feasible
 configurations enumerated above.
 
 ```python
@@ -377,6 +378,24 @@ configuration as well as the lower bound, which means a theoretical
 bound under which loss never be (see Section 3.3 in [theory.pdf] in
 detail).  In this example, the minimum loss is 69734 while the lower
 bound is 67029.
+
+Finally, we enumerate all the line cuts, under which the distribution
+network cannot be restored.  The following enumerate such
+"unrestorable cuts" with size of two or less.
+
+```python
+>>> unrestorable_cuts = nw.unrestorable_cuts(2)
+>>> len(unrestorable_cuts)
+25
+>>> unrestorable_cuts[0]
+(('section_0299', 'section_0298', 'section_0300'), ('section_0006',)))
+```
+
+This network has 25 unrestorable cuts with size of two or less.  One
+of them includes a cut either of section 299, 298, or 300, and another
+cut of section 6.  If the two cuts are placed at the same time, the
+network is still physically connected but cannot be restored due to
+the violation of electrical constraints.
 
 In this tutorial, we examined small network with 16 switches.  DNET,
 however, can work with a much larger network with hundreds of

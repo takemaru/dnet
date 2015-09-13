@@ -23,6 +23,7 @@
 from dnet.configset import ConfigSet
 from dnet.unionfind import UnionFind
 from dnet.util import flatten, is_tree
+from itertools import product
 from graphillion import GraphSet
 from math import sqrt
 import networkx as nx
@@ -34,6 +35,7 @@ class Graph(object):
     """
 
     def __init__(self):
+        self.graph = None
         self.edges = []
         self.roots = set()
         self._switch2edge = {}
@@ -92,12 +94,15 @@ class Network(object):
         self._neighbor_cache = {}
         self.graph = self._build_graph()
         self.search_space = SearchSpace()
+        self._elec_feasible_configs = {}
 
-    def enumerate(self, topology_constraints_only=None):
-        gs = self._enumerate_forests()
+    def enumerate(self, topology_constraints_only=None, suspicious_cut=[]):
+        gs = self._enumerate_forests(suspicious_cut)
         if not topology_constraints_only:
             for root in self._get_root_sections():
-                gs &= self._enumerate_trees(root)
+                if root not in self._elec_feasible_configs:
+                    self._elec_feasible_configs[root] = self._enumerate_trees(root)
+                gs &= self._elec_feasible_configs[root]
         return ConfigSet(self, gs)
 
     def loss(self, config, is_optimal=False):
@@ -155,6 +160,22 @@ class Network(object):
 
         return sorted(list(set(closed_switches)))
 
+    def unrestorable_cuts(self, max_cut_size):
+        unrestorable_cuts = set()
+        graph = self.graph.graph
+        max_degree = max([graph.degree(v) for v in graph.nodes()])
+        configs = self.enumerate()
+        hitting_sets = configs.hitting().minimal()
+        for k in range(1, max_cut_size * (max_degree - 1) + 1):
+            for hitting_set in hitting_sets.len(k):
+                for suspicious_cut in self._cut_from_hit(hitting_set):
+                    suspicious_cut = sorted(list(set(suspicious_cut)))
+                    if len(suspicious_cut) <= max_cut_size and \
+                       len(self.enumerate(suspicious_cut=suspicious_cut)) == 0:
+                        unrestorable_cut = tuple([self._to_section(v) for v in suspicious_cut])
+                        unrestorable_cuts.add(unrestorable_cut)
+        return list(unrestorable_cuts)
+
     def _has_same_topology(self, other):
         return self.nodes == other.nodes and self.switches == other.switches
 
@@ -163,6 +184,9 @@ class Network(object):
 
     def _to_switch(self, edge):
         return self.graph._edge2switch[edge]
+
+    def _to_section(self, vertex):
+        return self.graph._vertex2sections[vertex]
 
     def _to_config(self, forest):
         return [self._to_switch(e) for e in forest]
@@ -269,7 +293,7 @@ class Network(object):
                     sorted_sections.append(t)
                     v = sorted_sections.index(t) + 1
                     graph._section2vertex[t] = v
-                    graph._vertex2sections[v] = list(junctions)
+                    graph._vertex2sections[v] = tuple(junctions)
             e = tuple([sorted_sections.index(t) + 1 for t in sorted(neighbors)])
             assert len(e) == 2
             graph.edges.append(e)
@@ -286,11 +310,20 @@ class Network(object):
         assert len(graph.roots) == len(self._get_root_sections())
 
         GraphSet.set_universe(graph.edges, traversal='as-is')
+        graph.graph = nx.Graph(graph.edges)
 
         return graph
 
-    def _enumerate_forests(self):
-        return GraphSet.forests(roots=self.graph.roots, is_spanning=True)
+    def _enumerate_forests(self, suspicious_cut):
+        vg = [[r] for r in self.graph.roots]
+        dc = {}
+        l = len(self.graph.graph.nodes())
+        for v in self.graph.graph.nodes():
+            if   v in suspicious_cut:   dc[v] = 0
+            elif v in self.graph.roots: dc[v] = xrange(l)
+            else:                       dc[v] = xrange(1, l)
+        return GraphSet.graphs(vertex_groups=vg, degree_constraints=dc,
+                               no_loop=True)
 
     def _find_neighbor_switches(self, s, processed_sections):
         switches = set()
@@ -495,6 +528,11 @@ class Network(object):
                                                      config=closed_switches)
 
         return next_entries
+
+    def _cut_from_hit(self, hitting_set):
+        hitting_edge_set = [self._to_edge(sw) for sw in hitting_set]
+        for hitting_vertex_set in product(*hitting_edge_set):
+            yield hitting_vertex_set
 
     MAX_CURRENT     = 300
     SENDING_VOLTAGE = 6600 / sqrt(3)

@@ -99,6 +99,12 @@ class TestNetwork(unittest.TestCase):
         self.assertAlmostEqual(loss, 72055.7, 0)
         self.assertAlmostEqual(lower_bound, 69238.4, 0)
 
+        unrestorable_cuts = nw.unrestorable_cuts(2)
+        self.assertEqual(len(unrestorable_cuts), 25)
+        self.assertEqual(unrestorable_cuts[0],
+                         (('section_0299', 'section_0298', 'section_0300'),
+                          ('section_0006',)))
+
     def test_tutorial_fukui_tepco(self):
         nw = Network('data/test-fukui-tepco', format='fukui-tepco')
 
