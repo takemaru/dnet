@@ -158,7 +158,7 @@ using an example, [data/test.yaml] in the DNET package.  This example
 network consists of three feeders and 16 switches, as shown in the
 figure.
 
-![Example network](http://github.com/takemaru/dnet/blob/master/doc/example_nw.png?raw=true)
+![Example network](https://github.com/takemaru/dnet/blob/master/doc/example_nw.png?raw=true)
 
 The data file is divided into three parts; nodes, sections, and
 switches.  Since YAML rules are quite simple, we believe it is not so
