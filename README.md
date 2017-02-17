@@ -473,10 +473,21 @@ Additional notes
 References
 ---------------------------------------------------------------------
 
+- Yuji Takenobu, Norihito Yasuda, Shunsuke Kawano, Yasuhiro Hayashi,
+  and Shin-ichi Minato, "Evaluation of Annual Energy Loss Reduction
+  Based on Reconfiguration Scheduling," IEEE Transactions on Smart
+  Grid, September 2016.
+  ([doi](https://doi.org/10.1109/TSG.2016.2604922))
+- Y. Takenobu, S. Kawano, Y. Hayashi, N. Yasuda and S. Minato,
+  "Maximizing hosting capacity of distributed generation by network
+  reconfiguration in distribution system," Proc. of Power Systems
+  Computation Conference (PSCC), pp.1-7, June 2016.
+  ([doi](https://doi.org/10.1109/PSCC.2016.7540965))
 - Takeru Inoue, Norihito Yasuda, Shunsuke Kawano, Yuji Takenobu,
   Shin-ichi Minato, and Yasuhiro Hayashi, "Distribution Network
   Verification for Secure Restoration by Enumerating All Critical
-  Failures," IEEE Transactions on Smart Grid, October 2014. ([pdf](http://dx.doi.org/10.1109/TSG.2014.2359114))
+  Failures," IEEE Transactions on Smart Grid, October 2014.
+  ([doi](http://dx.doi.org/10.1109/TSG.2014.2359114))
 - Takeru Inoue, Keiji Takano, Takayuki Watanabe, Jun Kawahara, Ryo
   Yoshinaka, Akihiro Kishimoto, Koji Tsuda, Shin-ichi Minato, and
   Yasuhiro Hayashi, "Distribution Loss Minimization with Guaranteed

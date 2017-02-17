@@ -17,6 +17,6 @@ operation such as loss minimization and service restoration.
       url='https://github.com/takemaru/dnet',
       license=release.license,
       packages=['dnet'],
-      requires=['graphillion', 'networkx', 'yaml'],
+      install_requires=['graphillion', 'networkx', 'pyyaml'],
       test_suite='dnet.test',
       )
