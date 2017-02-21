@@ -80,7 +80,7 @@ class Network(object):
         self.sections = obj['sections']
         self.switches = obj['switches']
         self._switch_set = set(self.switches)  # for fast membership query
-        for s in self.sections.values():
+        for s in list(self.sections.values()):
             l = s['load']
             z = s['impedance']
             s['load'] = []
@@ -88,7 +88,7 @@ class Network(object):
             for i in range(Network.NUM_PHASES):
                 s['load'].append(l[2*i] + l[2*i + 1]*1j)
                 s['impedance'].append(z[2*i] + z[2*i + 1]*1j)
-        if [l for s in self.sections.values() for l in s['load'] if l.real < 0]:
+        if [l for s in list(self.sections.values()) for l in s['load'] if l.real < 0]:
             msg = 'Warning: it is assumed that section loads are non-negative'
             sys.stderr.write(msg + '\n')
         self._neighbor_cache = {}
@@ -158,7 +158,7 @@ class Network(object):
             x, y = path[i], path[i + 1]
             closed_switches.extend(list(self.search_space.graph[x][y]['config']))
 
-        return sorted(list(set(closed_switches)))
+        return sorted(set(closed_switches))
 
     def unrestorable_cuts(self, max_cut_size):
         unrestorable_cuts = set()
@@ -169,12 +169,12 @@ class Network(object):
         for k in range(1, max_cut_size * (max_degree - 1) + 1):
             for hitting_set in hitting_sets.len(k):
                 for suspicious_cut in self._cut_from_hit(hitting_set):
-                    suspicious_cut = sorted(list(set(suspicious_cut)))
+                    suspicious_cut = sorted(set(suspicious_cut))
                     if len(suspicious_cut) <= max_cut_size and \
                        len(self.enumerate(suspicious_cut=suspicious_cut)) == 0:
-                        unrestorable_cut = tuple([self._to_section(v) for v in suspicious_cut])
+                        unrestorable_cut = tuple(sorted([self._to_section(v) for v in suspicious_cut]))
                         unrestorable_cuts.add(unrestorable_cut)
-        return list(unrestorable_cuts)
+        return sorted(unrestorable_cuts)
 
     def _has_same_topology(self, other):
         return self.nodes == other.nodes and self.switches == other.switches
@@ -293,7 +293,7 @@ class Network(object):
                     sorted_sections.append(t)
                     v = sorted_sections.index(t) + 1
                     graph._section2vertex[t] = v
-                    graph._vertex2sections[v] = tuple(junctions)
+                    graph._vertex2sections[v] = tuple(sorted(junctions))
             e = tuple([sorted_sections.index(t) + 1 for t in sorted(neighbors)])
             assert len(e) == 2
             graph.edges.append(e)
@@ -320,8 +320,8 @@ class Network(object):
         l = len(self.graph.graph.nodes())
         for v in self.graph.graph.nodes():
             if   v in suspicious_cut:   dc[v] = 0
-            elif v in self.graph.roots: dc[v] = xrange(l)
-            else:                       dc[v] = xrange(1, l)
+            elif v in self.graph.roots: dc[v] = range(l)
+            else:                       dc[v] = range(1, l)
         return GraphSet.graphs(vertex_groups=vg, degree_constraints=dc,
                                no_loop=True)
 
@@ -456,7 +456,7 @@ class Network(object):
             comps[c][1].add(s)
             for t in self._find_neighbors(s):
                 comps[c][1].add(t)
-        assert sum([len(c[1]) for c in comps.values()]) == len(switches | sections - roots)
+        assert sum([len(c[1]) for c in list(comps.values())]) == len(switches | sections - roots)
 
         comps = [comps[c][1] for c in sorted(comps, key=lambda c: comps[c][0])]
 
@@ -470,7 +470,7 @@ class Network(object):
                 if self.switches.index(t) > self.switches.index(s):
                     s = t
 
-        assert len([t for s in self.sections if s < 0
+        assert len([t for s in self.sections if s.startswith('section_-')
                     for t in self._find_neighbors(s) if t in self._switch_set]) == 0, \
                     'root sections must be connected to a junction, not a switch'
 
@@ -482,10 +482,10 @@ class Network(object):
         if n.v > len(self.switches) or self.switches[n.v - 1] not in comp:
             configs.append((closed_switches, n.n))
         else:
-            if n.l <> 'B':
+            if n.l != 'B':
                 configs2 = self._find_configs(n.l, comp, closed_switches.copy())
                 configs.extend(configs2)
-            assert n.h <> 'B'
+            assert n.h != 'B'
             closed_switches.add(self.switches[n.v - 1])
             configs.extend(self._find_configs(n.h, comp, closed_switches.copy()))
         return configs

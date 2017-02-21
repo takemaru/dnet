@@ -61,11 +61,11 @@ def Ackerman(inp, memo={0:1}):
 		memo[inp] = 2**ackerman(inp-1)
 		return memo[inp]
 	else:
-		print "Such a number is not representable by all the subatomic\nparticles in the universe."
+		print("Such a number is not representable by all the subatomic\nparticles in the universe.")
 		ackerman(4);
 		out = (inp-4)*"2**" + str(memo[4])
-		print out
-		raise Exception, "NumberCannotBeRepresentedByAllSubatomicParticlesInUniverse"
+		print(out)
+		raise Exception("NumberCannotBeRepresentedByAllSubatomicParticlesInUniverse")
 
 
 def inverseAckerman(inp):
@@ -133,19 +133,19 @@ Included for testing purposes only.
 All information needed from the union find data structure can be attained
 using find.'''
         sets = {}
-        for i in xrange(len(self.objects_to_num)):
+        for i in range(len(self.objects_to_num)):
             sets[i] = []
         for i in self.objects_to_num:
             sets[self.objects_to_num[self.find(i)]].append(i)
         out = []
-        for i in sets.itervalues():
+        for i in sets.values():
             if i:
                 out.append(repr(i))
         return ', '.join(out)
 
 
 if __name__ == '__main__':
-    print "Testing..."
+    print("Testing...")
     uf = UnionFind()
     az = "abcdefghijklmnopqrstuvwxyz"
     az += az.upper()
@@ -155,10 +155,10 @@ if __name__ == '__main__':
     while len(uf.num_weights) > 20:
         cnt += 1
         uf.union(random.choice(az), random.choice(az))
-    print uf, cnt
-    print uf.find('-1')
+    print(uf, cnt)
+    print(uf.find('-1'))
     for i in range(10):
         object = random.choice(az)
-        print object, uf.find(object)
-    print "Testing complete."
+        print(object, uf.find(object))
+    print("Testing complete.")
 ## end of http://code.activestate.com/recipes/215912/ }}}

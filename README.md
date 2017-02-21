@@ -79,31 +79,31 @@ Installing
 
 #### Python
 
-To use DNET, you need Python version 2.6 or later.
-http://www.python.org/
-
-#### Graphillion, NetworkX, and PyYAML
-
-[Graphillion] and [NetworkX] are Python modules for graphs, while
-PyYAML is another Python module for a compact syntax called [YAML].
-They can be installed by:
-
-```bash
-$ sudo easy_install graphillion
-$ sudo easy_install networkx
-$ sudo easy_install pyyaml
-```
+To use DNET, you need [Python](http://www.python.org/) version 2.7 or
+Python 3.4.
 
 ### Quick install
 
 Just type:
 
 ```bash
-$ sudo easy_install pydnet  # not "dnet", but "pydnet"
+$ sudo pip install pydnet  # not "dnet", but "pydnet"
 ```
 
 and an attempt will be made to find and install an appropriate version
 that matches your operating system and Python version.
+
+All the required modules should be automatically installed along with
+DNET; if not, please install them by manual, as follows:
+
+```bash
+$ sudo pip install graphillion
+$ sudo pip install networkx
+$ sudo pip install pyyaml
+```
+
+[Graphillion] and [NetworkX] are Python modules for graphs, while
+PyYAML is another Python module for a compact syntax called [YAML].
 
 ### Installing from source
 

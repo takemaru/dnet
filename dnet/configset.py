@@ -38,62 +38,62 @@ class ConfigSet(object):
     def copy(self):
         return ConfigSet(self._nw, self._gs.copy())
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._gs)
 
     def union(self, *others):
         for other in others:
             if not self._nw._has_same_topology(other._nw):
-                raise TypeError, other
+                raise TypeError(other)
         others = [other._gs for other in others]
         return ConfigSet(self._nw, self._gs.union(*others))
 
     def intersection(self, *others):
         for other in others:
             if not self._nw._has_same_topology(other._nw):
-                raise TypeError, other
+                raise TypeError(other)
         others = [other._gs for other in others]
         return ConfigSet(self._nw, self._gs.intersection(*others))
 
     def difference(self, *others):
         for other in others:
             if not self._nw._has_same_topology(other._nw):
-                raise TypeError, other
+                raise TypeError(other)
         others = [other._gs for other in others]
         return ConfigSet(self._nw, self._gs.difference(*others))
 
     def symmetric_difference(self, *others):
         for other in others:
             if not self._nw._has_same_topology(other._nw):
-                raise TypeError, other
+                raise TypeError(other)
         others = [other._gs for other in others]
         return ConfigSet(self._nw, self._gs.symmetric_difference(*others))
 
     def update(self, *others):
         for other in others:
             if not self._nw._has_same_topology(other._nw):
-                raise TypeError, other
+                raise TypeError(other)
         self._gs.update(*[other._gs for other in others])
         return self
 
     def intersection_update(self, *others):
         for other in others:
             if not self._nw._has_same_topology(other._nw):
-                raise TypeError, other
+                raise TypeError(other)
         self._gs.intersection_update(*[other._gs for other in others])
         return self
 
     def difference_update(self, *others):
         for other in others:
             if not self._nw._has_same_topology(other._nw):
-                raise TypeError, other
+                raise TypeError(other)
         self._gs.difference_update(*[other._gs for other in others])
         return self
 
     def symmetric_difference_update(self, *others):
         for other in others:
             if not self._nw._has_same_topology(other._nw):
-                raise TypeError, other
+                raise TypeError(other)
         self._gs.symmetric_difference_update(*[other._gs for other in others])
         return self
 
@@ -112,17 +112,17 @@ class ConfigSet(object):
 
     def isdisjoint(self, other):
         if not self._nw._has_same_topology(other._nw):
-            raise TypeError, other
+            raise TypeError(other)
         return self._gs.isdisjoint(other._gs)
 
     def issubset(self, other):
         if not self._nw._has_same_topology(other._nw):
-            raise TypeError, other
+            raise TypeError(other)
         return self._gs.issubset(other._gs)
 
     def issuperset(self, other):
         if not self._nw._has_same_topology(other._nw):
-            raise TypeError, other
+            raise TypeError(other)
         return self._gs.issuperset(other._gs)
 
     __le__ = issubset
@@ -130,12 +130,12 @@ class ConfigSet(object):
 
     def __lt__(self, other):
         if not self._nw._has_same_topology(other._nw):
-            raise TypeError, other
+            raise TypeError(other)
         return self._gs < other._gs
 
     def __gt__(self, other):
         if not self._nw._has_same_topology(other._nw):
-            raise TypeError, other
+            raise TypeError(other)
         return self._gs > other._gs
 
     def __eq__(self, other):
@@ -176,7 +176,7 @@ class ConfigSet(object):
 
     def _conv_weights(weights):
         weights2 = {}
-        for s, w in weights.iteritems():
+        for s, w in weights.items():
             weights2[self._nw._to_edge(s)] = w
         return weights2
 
@@ -257,7 +257,7 @@ class ConfigSet(object):
         elif isinstance(obj, list):
             obj = self._nw._to_forest(obj)
         else:
-            raise TypeError, obj
+            raise TypeError(obj)
         return ConfigSet(self._nw, self._gs.included(obj))
 
     def choice(self):

@@ -35,55 +35,60 @@ class FukuiTepcoConverter(object):
 
     def convert(self):
         switch_numbers = set()
-        for line in open(self._files['switch']):
-            for s in line.split():
-                switch_numbers.add(int(s))
+        with open(self._files['switch']) as f:
+            for line in f:
+                for s in line.split():
+                    switch_numbers.add(int(s))
 
         switches = set()
         sections = set()
         nodes = {}
-        for line in open(self._files['topology']):
-            s, m, n, _ = line.split()
-            s, m, n = int(s), int(m), int(n)
-            if m not in nodes: nodes[m] = set()
-            if n not in nodes: nodes[n] = set()
-            nodes[m].add(s)
-            nodes[n].add(s)
-            if s in switch_numbers:
-                switches.add(s)
-            else:
-                sections.add(s)
+        with open(self._files['topology']) as f:
+            for line in f:
+                s, m, n, _ = line.split()
+                s, m, n = int(s), int(m), int(n)
+                if m not in nodes: nodes[m] = set()
+                if n not in nodes: nodes[n] = set()
+                nodes[m].add(s)
+                nodes[n].add(s)
+                if s in switch_numbers:
+                    switches.add(s)
+                else:
+                    sections.add(s)
 
         loads = {}
-        for line in open(self._files['load']):
-            _, s, m, n, ur, ui, vr, vi, wr, wi = line.split()
-            loads[int(s)] = [float(ur), float(ui), float(vr), float(vi), \
-                                 float(wr), float(wi)]
+        with open(self._files['load']) as f:
+            for line in f:
+                _, s, m, n, ur, ui, vr, vi, wr, wi = line.split()
+                loads[int(s)] = [float(ur), float(ui), float(vr), float(vi), \
+                                     float(wr), float(wi)]
 
         impedances = {}
-        for line in open(self._files['impedance']):
-            s, p, m, n, ur, ui, vr, vi, wr, wi = line.split()
-            s = int(s)
-            if p == '0':
-                impedances[s] = [float(ur), float(ui)]
-            elif p == '1':
-                impedances[s].extend([float(vr), float(vi)])
-            else:
-                impedances[s].extend([float(wr), float(wi)])
+        with open(self._files['impedance']) as f:
+            for line in f:
+                s, p, m, n, ur, ui, vr, vi, wr, wi = line.split()
+                s = int(s)
+                if p == '0':
+                    impedances[s] = [float(ur), float(ui)]
+                elif p == '1':
+                    impedances[s].extend([float(vr), float(vi)])
+                else:
+                    impedances[s].extend([float(wr), float(wi)])
 
         roots = set()
-        for line in open(self._files['root']):
-            _, n, lu, lv, lw, ir, ii = line.split()
-            n = int(n)
-            nodes[n].add(-n)
-            sections.add(-n)
-            roots.add(-n)
-            loads[-n] = [float(lu), 0, float(lv), 0, float(lw), 0]
-            impedances[-n] = [float(ir), float(ii)] * 3
+        with open(self._files['root']) as f:
+            for line in f:
+                _, n, lu, lv, lw, ir, ii = line.split()
+                n = int(n)
+                nodes[n].add(-n)
+                sections.add(-n)
+                roots.add(-n)
+                loads[-n] = [float(lu), 0, float(lv), 0, float(lw), 0]
+                impedances[-n] = [float(ir), float(ii)] * 3
 
         def find_neighbors(s):
             neighbors = []
-            for ns in nodes.values():
+            for ns in list(nodes.values()):
                 if s in ns:
                     neighbors.extend(ns)
             return set(neighbors) - set([s])
@@ -95,7 +100,7 @@ class FukuiTepcoConverter(object):
         uf.insert_objects(switches | sections - roots)
         for s in sorted(switches | sections - roots):
             neighbors = set()
-            for n in [m for m in nodes.values() if s in m]:
+            for n in [m for m in list(nodes.values()) if s in m]:
                 if [t for t in n if t in roots] == []:
                     for t in n:
                         neighbors.add(t)
@@ -124,11 +129,11 @@ class FukuiTepcoConverter(object):
                 comps[c] = (i, set())
                 i += 1
             comps[c][1].add(s)
-        assert sum([len(c[1]) for c in comps.values()]) == len(switches | sections - roots)
+        assert sum([len(c[1]) for c in list(comps.values())]) == len(switches | sections - roots)
 
         sorted_switches = []
         for i in range(1, len(comps) + 1):
-            comp = [c for c in comps.values() if c[0] == i][0]
+            comp = [c for c in list(comps.values()) if c[0] == i][0]
             visited = []
             queue = []
             s = sorted(comp[1])[0]
